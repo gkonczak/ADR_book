@@ -1,0 +1,302 @@
+# Funkcje i operacje matematyczne oraz statystyczne
+
+::: {.callout-note icon="false" appearance="simple"}
+
+
+Użytkownik ma w programie **R** dostępnych wiele wbudowanych funkcji. Są to m.in. funkcje matematyczne, statystyczne, łańcuchowe, logiczne, .... Zestaw dostępnych funkcji może być rozszerzony poprzez instalację i załadowanie dodatkowych bibliotek.
+
+Szczegónie interesująca jest możliwość konstrukcji funkcji projektowanych przez użytkownika.
+Takie funkcje mogą być póxniej wykorzystywane w przygotowywanych programach, znacznie zwiększaj ac ich przejrzystość.
+
+W rozdziale przedstawiono charakterystykę wybranych funkcjI:
+
+-   matematycznych,
+-   statystycznych,
+-   tekstowych,
+-   logicznych,
+
+a także konstrukcję funkcji użytkownika.
+:::
+
+## Funkcje i operacje matematyczne i statystyczne
+
+
+Środowisko **R** oferuje szeroki zakres wbudowanych funkcji i operacji matematycznych oraz statystycznych, które umożliwiają szybkie i efektywne przetwarzanie danych liczbowych. Do najczęściej używanych funkcji matematycznych należą m.in. `sum(), mean(), median(), min(), max(), sqrt()` czy `abs()`. **R** ma także wbudowanych wiele  funkcji statystycznych, takich jak `mean(), sd(), var()` czy `cor()`, które są niezbędne w analizie danych. Dzięki tym narzędziom użytkownik może wykonywać proste, jak i zaawansowane obliczenia na wektorach, macierzach czy ramkach danych.
+
+
+
+
+```{r}
+x=c(-2,4,6,10,-3)
+y=c(7,5,-12,4,-1)
+```
+
+```{r}
+pmin(x,y)
+pmax(x,y)
+```
+
+```{r}
+sum(x)
+mean(x)
+abs(x)
+min(x)
+max(x)
+```
+
+
+```{r}
+median(x)
+
+quantile(x)
+quantile(x,c(0.75))
+quantile(x,seq(0.1,0.9,0.1))
+```
+
+
+```{r}
+wariancja=sum((x-mean(x))^2)/length(x)
+wariancja
+wariancja_s=sum((x-mean(x))^2)/(length(x)-1)
+wariancja_s
+var(x)
+
+odch_st=sqrt(wariancja)
+odch_st
+odch_st_s=sqrt(wariancja_s)
+odch_st_s
+o_st=sd(x)
+o_st
+```
+
+```{r}
+x=c(23,NA,2,-12,32)
+mean(x)
+mean(x,na.rm=TRUE)
+
+#Dzielenie modulo.
+10%%2
+10%%4
+```
+
+
+
+## Funkcje tekstowe
+
+Funkcje tekstowe (łańcuchowe) służą do pracy z napisami (łańcuchami znaków). Pozwalają m.in. na łączenie, dzielenie, wyszukiwanie, zamianę i modyfikację tekstu.
+
+
+```{r}
+# Łączenie napisów
+paste("Ala","ma","kota")
+paste("Ala","ma","kota", sep="-")
+paste0("Ala","ma","kota")  # Bez spacji
+
+# Zmiana wielkości liter
+toupper("Ala ma kota")
+tolower("Ala MA KOTA")
+
+# Długość napisu
+nchar("Ala ma kota")
+
+# Wyodrębnianie fragmentu napisu
+substr("Ala ma kota", 5, 6)  # "ma"
+
+# Zamiana fragmentu napisu
+sub("kota", "psa", "Ala ma kota")  # tylko pierwsze wystąpienie
+gsub("a", "A", "Ala ma kota")      # wszystkie wystąpienia
+
+# Wyszukiwanie wzorca
+grepl("kot", "Ala ma kota")  # TRUE
+grep("kot", c("pies", "kot", "mysz"))  # 2 (indeks)
+
+# Dzielenie napisu na części
+strsplit("Ala,ma,kota", split=",")
+```
+
+
+
+
+
+
+## Funkcje logiczne
+
+Funkcje logiczne służą do porównywania wartości, sprawdzania warunków i operacji na wartościach logicznych (TRUE, FALSE)
+
+```{r}
+x = c(3, 7, 2, 9, 5)
+
+# Porównania
+x > 5
+x == 7
+x != 2
+
+# Sprawdzanie, czy dowolny/każdy element spełnia warunek
+any(x > 8)   # TRUE, bo 9 > 8
+all(x > 0)   # TRUE, bo wszystkie > 0
+
+# Negacja
+!any(x < 0)  # TRUE, bo żaden nie jest < 0
+
+# Sprawdzanie wartości logicznych
+isTRUE(3 > 2)    # TRUE
+isFALSE(3 == 5)  # TRUE
+
+# Sprawdzanie NA
+z = c(1, NA, 3)
+is.na(z)         # TRUE dla drugiego elementu
+any(is.na(z))    # TRUE, bo jest NA
+
+# Operacje logiczne
+a = TRUE
+b = FALSE
+a & b   # AND
+a | b   # OR
+xor(a, b) # XOR
+```
+
+
+
+
+
+
+
+## Funkcje użytkownika
+
+```{r}
+# Konstrukcja funkcji obliczającej i zwracającej sumę liczb.
+
+suma=function(a,b){
+a+b
+}
+
+suma(3,5)	#Suma liczb 3 i 5, gdzie a=3 i b=5.
+
+# Poniższy kod nie zwróci wyniku.
+
+suma=function(a,b){
+s=a+b
+}
+suma(3,5)
+# s	
+# Obiekt s nie jest zwracany, bo istnieje w funkcji, 
+# ale nie w przestrzeni nazw, obiektów R.
+
+# Funkcja return pozwala na zwracanie wyniku.
+
+suma=function(a,b){
+s=a+b
+return(s)
+}
+suma(3,5)
+```
+
+### Wyniki zaleca się zapisać na liście
+
+```{r}
+suma=function(a,b){
+s=a+b
+list(suma=s)
+}
+suma(3,5)
+
+# Funkcja użytkowanika zwracająca sumę, różnicę, iloczyn, iloraz i potęgę liczb.
+
+matma=function(a,b){
+s=a+b
+r=a-b
+il=a/b
+ilocz=a*b
+p=a^b
+
+list(suma=s,różnica=r,iloraz=il,iloczyn=ilocz,potęga=p)
+}
+
+matma(4,3)
+
+# Wyświetlenie iloczynu liczb.
+matma(4,3)$iloczyn
+matma(4,3)[4]
+matma(4,3)[[4]]
+
+# Obliczenia w funkcji "matma" można wykonać  
+# nie tylko dla pojedynczych wartości, ale i dla wektorów.
+
+x=1:5
+y=c(2,5,1,3,2)
+matma(x,y)
+
+# Funkcja zwracająca 4 największe wartości z wektora liczb.
+
+x=1:20
+
+największe=function(a){
+s=sort(a,decreasing=T)	#Dane sortowane są malejąco.
+s[1:4]	#Z danych posortowanych malejąco wybierane są 4 pierwsze wartości.
+}
+
+największe(x)
+
+# Funkcja użytkownika, która zwraca 
+# wartość minimalną, maksymalną, średnią, 
+# odchylenie ćwiartkowe i współczynnik asymetrii Yule'a Kendall'a.
+
+f=function(a){
+m=min(a)
+mx=max(a)
+s=mean(a)
+o=sd(a)
+q1=quantile(a,0.25)[[1]]
+q2=quantile(a,0.5)[[1]]
+q3=quantile(a,0.75)[[1]]
+w=((q3-q2)-(q2-q1))/(q3-q1)
+
+list(minimum=m,maksimum=mx,średnia=s,odchylenie_ćwiartkowe=o,wsp_asymetrii=w)
+}
+wektor=c(12,3,4,65,32)
+f(wektor)
+```
+
+### Wartości domyślne funkcji użytkownika
+
+```{r}
+obliczenia=function(a=99,b=12){	#W tej linijce są definiowane wartości domyślne argumentów a i b.
+
+s=a+b
+r=a-b
+il=a/b
+ilocz=a*b
+p=a^b
+list(suma=s,różnica=r,iloraz=il,iloczyn=ilocz,potęga=p)
+}
+
+obliczenia(b=3)	#Funkcja użytkownika zostanie wykonana dla a=99 (wartość domyślna) i b=3.
+obliczenia(23)	#Funkcja użytkownika zostanie wykonana dla a=23 i b=12 (wartość domyślna). 23 stoi na pierwszym miejscu i zostało potraktowane jako a, ponieważ a znajduje się na 1 miejscu w zapisie function().
+obliczenia(3,4)
+```
+
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Dany jest wektor x = c(5, -3, 8, 0, 12, -7, 4).
+Oblicz sumę, średnią, medianę i odchylenie standardowe tego wektora. wyznacz największą i najmniejszą wartość oraz ich indeksy w wektorze.
+
+2. Dany jest wektor imion: imiona = c("Anna", "Piotr", "Kasia", "Marek", "Ola").
+Zamień wszystkie litery na wielkie.
+
+3. Dany jest wektor y = c(2, 7, 0, -1, 8, 5). Sprawdź, które elementy są większe od 4.
+
+4. Dany jest wektor z = c(10, NA, 5, NA, 3, 8).
+Sprawdź, które elementy są brakujące. Oblicz średnią z pominięciem brakujących danych.
+
+
+5. Napisz funkcję, która dla podanego wektora liczb:
+
+zwraca listę zawierającą: sumę, średnią, liczbę elementów większych od zera oraz napis "Wszystkie dodatnie", jeśli wszystkie liczby są dodatnie, lub "Nie wszystkie dodatnie" w przeciwnym przypadku.
+
+Przetestuj funkcję na wektorze c(3, -5, 3, 6, 1).
+
+
+:::
+

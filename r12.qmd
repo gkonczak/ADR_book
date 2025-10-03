@@ -1,0 +1,457 @@
+# Podstawy animacji. Pakiety **gapminder** i **gganimate**
+
+
+::: {.callout-note icon="false" appearance="simple"}
+Środowisko **R** poza zaawansowanymi prezentacjami graficznymi umożliwia także konstrukcję animacji. 
+Najpopularniejszym i najczęściej używanym pakietem do tworzenia dynamicznych wizualizacji opartych na pakiecie **ggplot2** jest **gganimate**. Pozwala on w prosty sposób dodać "*wymiar ruchu*" do statycznych wykresów, pokazując np. zmiany w danych w czasie, ewolucję rozkładu czy wyniki symulacji w kolejnych krokach.
+Utworzone animacje nie będą mogły być przedstawione w dokumentach statycznych (\*.pdf, ....), ale mogą być z powodzeniem wykorzystywane np. na stronach internetowych (\*.html), w prezentacjach revealjs a nawet w dokumentach \*.docx.
+
+:::
+
+
+Na wstępie niezbędne jest załadowanie wykorzystywanych w tym rozdziale pakietów.
+Realizują to kolejne komendy.
+
+```{r}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| results: hide
+library(ggplot2)
+library(dplyr)
+library(gapminder)
+```
+
+## Charakterystyka pakietu i zbioru **gapminder**
+
+::: callout-tip
+## **gapminder**
+
+Pakiet **gapminder** w programie **R** zawiera dane używane przez Hansa Roslinga, szwedzkiego statystyka i popularyzatora wizualizacji danych, w jego słynnych prezentacjach o rozwoju świata.
+Zbiór danych o nazwie **gapminder** jest głównym elementem pakietu. Dodatkowo są tam zawarte kody państw i odpowiednio przygotowane palety kolorystyczne.
+
+
+:::
+
+W tej części wykorzystywany będzie zbiór danych **gapminder**, który jest dostępny po załadowaniu pakietu o takiej samej nazwie: **gapminder**.
+
+
+🔗 [Opis zbioru `gapminder`](https://vincentarelbundock.github.io/Rdatasets/doc/causaldata/gapminder.html)
+
+::: callout-important
+## **gapminder**
+
+Zbiór **gapminder** to ramka danych (data.frame). 
+Zbiór liczy 1704 obserwacje i 6 zmiennych.
+
+W zbiorze sa następujące zmienne:
+
+- *country* (kraj, 142 poziomy)
+- *continent* (kontynent, na którym położony jest dany kraj, 5 poziomów)
+- *year* (rok, dla kltórego pobrano dane. Zakres lat od 1952 do 2007 co 5 lat)
+- *lifeExp* (przeciętna długość życia w momencie urodzin)
+- *pop* (populacja kraju)
+- *gdpPercap* (PKB na osobę wyrażony w USD)
+
+:::
+
+
+Komenda `summary` pozwala na uzyskanie podstawowych informacji o zbiorze **gapminder**.
+
+
+```{r }
+summary(gapminder)
+```
+
+Otrzymane wyniki wskazują, że dla poszczególnych państw dostępne są informacje o *pop, lifeExp i gdpPercap* dla dwunastu lat: 1952, 1957, ..., 2007.
+Dodatkowe informacje można uzyskać wykorzystując funkcję `table`.
+
+```{r }
+table(gapminder$continent, gapminder$year)
+```
+
+Z powyższych danych wynika, że w zbiorze uwzględniono 30 państw z Europy. Biorąc pod uwagę, że dla każdego państwa jest 12 obserwacji (poszczególne lata), to łącznie dla państw europejskich jest 360 obserwacji w zbiorze **gapminder**.
+
+## Wybrane wykresy dla danych ze zbioru **gapminder**
+
+Przed przystąpieniem do konstrukcji animacji wykonanych zostanie kilka wykresów, które pozwolą na lepsze poznanie zbioru **gapminder**.
+Zgodnie z informacjami z poprzedniego rozdziału konstrukcja wykresu słupkowego przedstawiającego liczbę obserwacji dla poszczególnych kontynentów może przebiegać następująco:
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-liczba1
+#| fig-cap: Liczba obserwacji według kontynentów
+ggplot(gapminder, aes(x=continent)) + 
+  geom_bar()
+```
+
+Na @fig-liczba1 przedstawiono liczbę obserwacji według kontynentów w zbiorze **gapminder**.
+Taki sam wykres, ale z dodatkowym wyróżnieniem kolorem poszczególnych kontynentów realizuje poniższy kod, a efekt jest widoczny na @fig-liczba2.
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-liczba2
+#| fig-cap: Liczba obserwacji według kontynentów - rozróżnienie kolorem kontynentów
+ggplot(gapminder, aes(x=continent, fill=continent)) + 
+  geom_bar() +
+  guides(fill='none')
+```
+
+
+Wykres poprzedni (@fig-liczba2) można zapamiętać w obiekcie o nazwie **rys** jak w poniższym kodzie:
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-liczba3
+#| fig-cap: Liczba obserwacji według kontynentów
+rys=ggplot(gapminder, aes(x=continent, fill=continent)) + 
+  geom_bar()+
+  guides(fill='none')
+```
+
+Zapamiętanie wykresu w formie obiektu pozwala na wygodne modyfikacje, tak jak w kolejnych dwóch przykładach:
+
+
+- wykres słupkowy w orientacji poziomej (@fig-liczba4)
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-liczba4
+#| fig-cap: Liczba obserwacji według kontynentów - układ poziomy
+rys +
+  coord_flip()
+```
+
+- przedstawienie wykresu we współrzędnych biegunowych (@fig-liczba5)
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-liczba5
+#| fig-cap: Liczba obserwacji według kontynentów - współrzędne biegunowe
+rys + 
+  coord_polar()
+```
+
+
+Nieznaczna modyfikkacja kodu pozwala uzyskać typowy wykres kołowy (por. @fig-liczba6):
+
+
+```{r}
+#| echo: true
+#| warning: false
+#| label: fig-liczba6
+#| fig-cap: Struktura liczby obserwacji według kontynentów
+dane = as.data.frame(table(gapminder$continent))
+colnames(dane) = c("continent", "n")  
+
+ggplot(dane, aes(x = "", y = n, fill = continent)) +
+     geom_bar(stat = "identity", width = 1) +
+     coord_polar(theta = "y") +
+     theme_void() +
+     geom_text(aes(label = continent), position = position_stack(vjust = 0.5)) +
+     guides(fill = "none")  
+```
+
+
+
+Rozkład przeciętnej długości życia w 2007 roku przedstawić można z wykorzystaniem histogramu. Odpowiedni kod i wynik jego realizacji przedstawiono na @fig-hist
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-hist
+#| fig-cap: Przeciętna długość życia w państwach w roku 2007
+gapminder %>%
+  filter(year==2007) %>%
+  ggplot( aes(lifeExp)) + 
+  geom_histogram( binwidth=4, color="black", fill="lightblue", alpha=0.5)+
+  labs(x="Oczekiwana długość życia", y="Liczba państw")
+```
+
+Dla wygodniejszej oceny rozkładu czasu przeciętnego trwania życia w roku 2007 można do histogramu dodać linię gęstości (por @fig-hist2)
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-hist2
+#| fig-cap: Przeciętna długość życia w państwach w roku 2007 wraz z krzywą teoretyczną
+gapminder %>%
+  filter(year==2007) %>%
+  ggplot( aes(lifeExp)) + 
+  geom_histogram(aes(y=after_stat(density)), binwidth=2, color="black", fill="lightblue", alpha=0.5)+
+  geom_density()+
+  labs(x="oczekiwana długość życia", y="Liczba państw")
+```
+
+
+Dane w zbiorze **gapminder** zawierają informacje o przeciętnej długości życia w różnych latach.
+Dla przedstawienia zmian przeciętnej długości życia w latach 1952 - 2007 w wybranych państwach można wykorzystać wykres liniowy. Dla wybranych państw Polska, Niemcy, Czechy, Austria i Rumunia odpowiedni wykres przedstawia @fig-liniowy uzyskany jako realizacja poniższego kodu:
+
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-liniowy
+#| fig-cap: Przeciętna długość życia w wybranych państwach w latach 1952 - 2007
+
+kraje <- c("Poland", "Germany", "Czech Republic", "Austria","Romania")
+ggplot(subset(gapminder, country %in% kraje), aes(x = year, y = lifeExp, color = country)) + 
+  geom_line() + 
+  geom_point()+
+  labs(x="Rok", y="Oczekiwana długość życia",color="")+
+	theme(legend.position='bottom')	####
+```
+@fig-liniowy pozwala dostrzec nieustanne zwiększanie się przeciętnego trwania życia w badanym okresie we wszystkich analizowanych państwach.
+
+
+Interesujące może być przedstawienie gęstości czasu trwania życia według kontynentów. Realizuje to poniższy kod.
+
+
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-gest
+#| fig-cap: Przeciętna długość życia według kontynentów
+gapminder %>%
+  filter(year==2007) %>%
+  ggplot( aes(x=lifeExp, fill=continent)) +
+  geom_density(alpha=0.3) +
+  labs(x="Rok", y="oczekiwana długość życia",fill="Kontynent")
+```
+
+Na @fig-gest przedstawiono oceny gęstości rozkładu przeciętnego czasu trwania życia w roku 2007 według kontynentów. Zauważalne jest, że najkrócej się żyje w Afryce, a najdłużej W Oceani (tylko dwa państwa Australia i Nowa Zelandia) oraz w Europie.
+
+Ze względu na uproszczenie kolejnych zapisów kodu wygodnie będzie utworzyć obiekt `rys1` zgodnie z następującym kodem:
+
+```{r }
+rys1 <- gapminder %>%
+  filter(year==2007) %>%
+  ggplot(aes(continent, lifeExp, fill=continent)) +
+  labs(x="", y="Oczekiwana długość życia") +
+  theme(legend.position='none')
+```
+
+W kolejnych przykładach obiekt `rys1` zostanie przedstawiony z wykorzystaniem różnych reprezentacji geometrycznych.
+Pierwsza z takich reprezentacji to `geom_boxplot()` została przedstawiona na @fig-boxplot
+
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-boxplot
+#| fig-cap: Przeciętna długość życia według kontynentów - reprezentacja geom_boxplot()
+rys1 +
+    geom_boxplot(outlier.size=2)
+```
+
+Podobną reprezentacją do `geom_boxplot()` jest reprezentacja `geom_violin()`. Odpowiedni wykres przedstawia @fig-violin
+
+Wyświetlenie obiektu `rys1` z reprezentacją geometryczną `violin`
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-violin
+#| fig-cap: Przeciętna długość życia według kontynentów - reprezentacja geom_violin()
+rys1 +
+  geom_violin()
+```
+
+Podobna jak poprzednio konstrukcja obiektu graficznego `rys2`.
+Na tym wykresie zamieszczono dane z wszystkich 12 okresów czasowych.
+
+
+```{r }
+rys2 <- gapminder %>%
+  ggplot(aes(x=gdpPercap, y=lifeExp))+
+  labs(x='PKB na osobę', y='Oczekiwana długość życia')
+```
+
+Wyświetlenie obiektu `rys2` z reprezentacją geometryczną `geom_point()`.
+
+UWAGA: na wykresie zamieszczono jednocześnie dane z różnych lat
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-point
+#| fig-cap: Produkt krajowy brutto na osobę i przeciętna długość życia 
+rys2 + 
+  geom_point()
+```
+
+W kolejnym kroku do obiektu **rys2** z reprezentacją geometryczną `geom_point()` dodano kolory według kontynentów. Wykres przedstawiono na @fig-point_col
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-point_col
+#| fig-cap: Produkt krajowy brutto na osobę i przeciętna długość życia według kontynentów
+rys2 + 
+  geom_point(aes(color=continent))
+```
+
+W kolejnym kroku wyświetlono obiekt **rys2** z reprezentacją graficzną `geom_point()`, kolorami dla kontynentów w oddzielnych oknach. Odpowiedni wykres jest przedstawiony na @fig-point_panel
+
+```{r }
+#| echo: true
+#| warning: false
+#| label: fig-point_panel
+#| fig-cap: Produkt krajowy brutto na osobę i przeciętna długość życia według kontynentów
+rys2+
+  geom_point(aes(color=continent)) + 
+  facet_wrap(.~continent)+
+  theme(legend.position='none')
+```
+
+Na @fig-point_panel przedstawione punkty reprezentują państwa, ale dla jednego kraju jest to aż 12 punktów (lata 1952, 1957, ..., 2007). Przy konstrukcji aniomacji w kolejnych etpach będą widoczne punkty odpowiadające określonemu ustalonym okresom czasowym.
+
+
+## Animacje w ggplot2 - pakiet **gganimation**
+
+Program **R** po zainstalowaniu odpowiednich pakietów umożliwia przygotowanie różnorodnych animacji.
+Jednym z takich pakietów jest **gganimation**.
+
+::: callout-tip
+## **gganimate**
+
+Program **R** poza zaawansowaną wizualizacją danych umożliwia również konstrukcję dynamicznych animacji. W tym rozdziale zostaną przedstawione podstawowe możliwosci animacji z wykorzystaniem pakietu **gganimate**.
+Animacje takie mogą zostać zamieszczone na stronach internetowych, osadzone w prezentacjach a także w plikach formatu docx.
+:::
+
+
+### Załadowanie bibliotek dla animacji
+
+```{r}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| results: hide
+
+library(gganimate)
+library(gifski)
+```
+
+Dla przygotowania animacji w pierwszej kolejności zostanie przygotowany i następnie wyświetlony obiekt **p1**.
+
+```{r }
+library(scales)
+p1 <- ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, colour = country)) +
+  geom_point(alpha = 0.7) +
+  scale_x_log10(labels = label_comma()) +  
+  theme_minimal() + 
+  theme(legend.position = 'none') +
+  labs(title = 'Rok: {frame_time}', x = 'PKB na osobę', y = 'Oczekiwana długość życia') +
+  transition_time(year)
+p1
+```
+
+Utworzenie i wyświetlenie obiektu **p2**.
+
+```{r }
+#| fig-width: 16
+#| fig-height:  8
+
+p2 <- ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, colour = country)) +
+  geom_point(alpha = 0.7) +
+  scale_x_log10(labels = label_comma()) +  
+  theme_minimal() +  
+  theme(legend.position = 'none') +
+  facet_wrap(~continent,nrow=1) +
+  labs(title = 'Rok: {frame_time}', x = 'PKB na osobę', y = 'Oczekiwana długość życia') +
+  transition_time(year)
+p2
+```
+
+
+Utworzone zostały dwa obiekty **p1** i **p2**. Obiekty te można animować za pomoca funkcji `animate()`.
+
+
+```{r }
+animate(p1, 100, 10)
+```
+
+Dodatkowo można uruchomić animację z zadanymi wartościami dla wybranych parametrów.
+
+```{r }
+animate(p1, nframes=100, fps=10,height = 20, width = 30, units = "cm",res=150)
+```
+
+Przygotowując animację możliwe jest określenie wartości różnych parametrów. Odpowiedni przykład prezentuje kod:
+
+
+```{r }
+p3 <- ggplot(gapminder, aes(gdpPercap, lifeExp, size = pop, colour = country)) +
+  geom_point(alpha = 0.7) +
+  theme(legend.position = 'none') +
+  facet_wrap(~continent) +
+  labs(title = 'Rok: {frame_time}', x = 'PKB na osobę', y = 'Oczekiwana długość życia') +
+  transition_time(year)+
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10(labels = label_comma()) +  
+  theme_minimal() +  
+  facet_wrap(~continent) +
+  theme(legend.position = 'none') +
+  labs(title = 'Year: {frame_time}', x = 'PKB na osobę', y = 'Oczekiwana długość życia') +
+  transition_time(year) +
+  ease_aes('linear')
+p3
+```
+
+Utworzone animacje mogą zostać zapisane np. w plikach formatu \*.gif. Takie rozwiązanie pozwala na późniejsze umieszczenie takiego pliku np. na stronie internetowej. Zapisanie animacji w pliku \*.gif i wyświetlenie w zewnętrznym oknie realizuje poniższy kod:
+
+```{r}
+#| eval: true
+#| echo: true
+#| warning: false
+#| message: false
+#| results: hide
+animacja <- function(){
+  datalist <- split(gapminder, gapminder$year)
+  lapply(datalist, function(data){
+    p4 <- ggplot(data, aes(gdpPercap, lifeExp, size = pop, color = continent)) +
+      scale_size("", limits = range(gapminder$pop)) + 
+      geom_point() + ylim(20, 90) +
+    #  scale_x_log10(limits = range(gapminder$gdpPercap)) + 
+      scale_x_log10(labels = label_comma(), limits = range(gapminder$gdpPercap)) +  
+      labs(x='PKB na osobę', y='Oczekiwana długość życia',  color='')+
+      ggtitle(data$year) + 
+      theme_minimal()+
+      theme(legend.position='bottom')
+    print(p4)
+  })
+}
+gif_file <- file.path(tempdir(), 'gapminder.gif')
+save_gif(animacja(), gif_file, 1280, 720, res = 144)
+utils::browseURL(gif_file)
+```
+
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Sprawdź, jakie są średnie wartości *gdpPercap* (PKB na osobę) i *lifeExp* (oczekiwana długość życia) w różnych krajach w danym roku (np. 2007)
+
+2. Utwórz wykres punktowy, na którym oś OX przedstawia *gdpPercap* (PKB na osobę), a oś OY przedstawia *lifeExp* (oczekiwaną długość życia). Kolor punktów niech zależy od kontynentu (*continent*), a rozmiar punktu od populacji kraju.
+
+3. Oblicz średnią wartość *gdpPercap* i *lifeExp* dla każdego kontynentu w 2007 roku.
+
+
+4. Stwórz animację, w której oś OX przedstawia *gdpPercap*, a oś OY *lifeExp*. Każdy punkt to kraj, który zmienia swoją pozycję w zależności od roku, a kolor punktów zależy od kontynentu.
+
+
+5. Utwórz wykres linii, na którym porównasz zmiany średniej długości życia w czasie (*lifeExp*) na różnych kontynentach.
+
+6.  Utwórz animację, która pokazuje, jak zmienia się populacja (*pop*) w różnych krajach w czasie. Wartości *gdpPercap* (PKB na osobę) i *lifeExp* (oczekiwana długość życia) będą zmieniały się w zależności od roku, a wielkość punktu będzie zależała od populacji.
+
+:::
+

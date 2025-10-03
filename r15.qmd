@@ -1,0 +1,684 @@
+# Analizy odtwarzalne - **Quarto**
+
+::: {.callout-note icon="false" appearance="simple"}
+
+Quarto to narzędzie do publikowania dokumentów i raportów naukowych, które pozwala na integrację kodu, tekstu i wykresów w jednym pliku. Jego elastyczność sprawia, że jest popularne w środowiskach związanych z analizą danych, nauką i badaniami. 
+
+
+**Quarto** umożliwia integrację tekstu z następującymi językami programowania:
+
+- **R**
+- **Python**
+- **Julia**
+- **JavaScript**
+
+**Quarto** umożliwia uzyskanie wyników w różnych formatach. Do najczęściej wykorzystywanych należą:
+
+- **PDF**
+- **HTML**
+- **Microsoft Word**
+- **PowerPoint**
+- **Jupyter Notebooks**
+
+W rozdziale przedstawiono kluczowe możliwości, które oferuje **Quarto**.
+:::
+
+Przed rozpoczęciem pracy niezbędne jest załadowanie wykorzystywanych w tym rozdziale bibliotek. Realizują to następujace komendy:
+
+
+```{r}
+library(ggplot2)
+```
+
+
+Formaty dokumentów możliwe do uzyskania w Quarto prezentuje @tbl-formaty.
+
+: Przykłady zapisu wzorów w **Quarto** {#tbl-formaty}
+
+| Typ  | Format         |
+|-------------------|------------------|
+| Dokumenty         |html, docx, pdf, epub, odt     |
+| Prezentacje       |revealjs, pptx,  beamer   |
+| Markdown          |GitHub, CommonMark, Hugo, Docusaurus, Markua    |
+| Wikis             |MediaWiki, DokuWiki, ZimWiki, JiraWiki, XWiki   |
+| Inne formaty  |JATS (Journal Article Tag Suite), Jupyter, ConTeXt, RTF, reST, AsciiDoc, Org-Mode, Muse, GNU TexInfo, Groff Man Page, Groff Manuscript, Haddock markup, OPML, Textile, DocBook, InDesign, TEI Simple, FictionBook |
+
+https://quarto.org/docs/output-formats/all-formats.html
+
+
+**Quarto** może łączyć kod analityczny z tekstem, co pozwala na dynamiczne tworzenie analiz danych. Można z łatwością wprowadzać wykresy, tabele i inne elementy wizualne.
+
+
+Utworzenie dokumentu **Quarto** w **RStudio**.
+
+Z menu programu należy wybrać kolejno: 
+
+- *Plik* 
+
+- *Nowy plik* 
+
+- *Quarto Dokument* 
+
+a następnie wskazać typ dokumentu.
+Utworzony zostanie standardowy dokument **Quarto**.
+
+Struktura dokumentu **Quarto** została przedstawiona poniżej:
+
+
+::: callout-note
+## Struktura dokumentu **Quarto**
+
+Dokument **Quarto** zasadniczo składa się z tekstu trzech typów: 
+
+- nagłówek YAML 
+
+- tekst główny
+
+  - Pisany w markdown, może zawierać nagłówki, listy, tabele, cytaty, wzory matematyczne itp.
+
+- bloki kodu
+
+  - Fragmenty kodu (np. w języku R) otoczone \`\`\`\{r\} oraz \`\`\`
+:::
+
+Dokument otwiera nagłówek YAML, a tekst główny i bloki kodu w dalszej części mogą występować w dowolnych układach.
+
+
+Przykład kompletnego, prostego  dokumentu **Quarto** przedstawia rys. 15.1 (po lewej), a wynik realizacji tego kodu prezentuje rys. 15.1 (po prawej) :
+
+::::: columns
+::: {.column width="5%%"}
+![Zawartość dokumentu Quarto](pic/quarto1.png)
+:::
+
+::: {.column width="45%"}
+![Rezultat w formacie html](pic/quarto2.png)
+:::
+:::::
+Rys. 15.1. Zawartość dokumentu Quarto (po lewej) i rezultat w formacie html (po prawej)
+
+
+Zmiana formatu w kodzie (rys. 15.1) z "html" na "docx" pozwoli na uzyskanie dokumentu w formacie Microsoft Word, a zmiana na "pptx" na uzyskanie prezentacji w formacie Power Point.
+Dokument renderowany jest do wybranego formatu (HTML, PDF, Word, prezentacja itp.). Quarto automatycznie uruchamia kod, wstawia wyniki i generuje końcowy dokument.
+
+Wykaz dostępnych formatów przedstawia @tbl-formaty.
+
+
+## Wybrane elementy składni Quarto
+
+### Nagłówki
+
+Nagłówki są wykorzystywane głównie jako tytuły rozdziałów, podrozdziałów, punktów i podpunktów. Można deklarować nagłówki sześciu rzędów. Na podstawie utworzonych nagłówków **Quarto** może sporządzić automatycznie spis treści dokumentu.
+
+Nagłówki kolejnego rzędu deklaruje się następująco:
+
+```markdown
+# Nagłówek I stopnia
+
+## Nagłówek II stopnia
+
+...
+
+###### Nagłówek VI stopnia
+```
+
+Efekty wprowadzonych deklaracji są następujące:
+
+
+# Nagłówek I stopnia {.unnumbered}
+
+## Nagłówek II stopnia {.unnumbered}
+
+...
+
+###### Nagłówek VI stopnia {.unnumbered}
+
+
+### Formatowanie tekstu
+
+
+Dla uzyskania zapisu *tekstu kursywą* należy zapisać: `*tekst kursywa*`
+
+Dla uzyskania **tekstu pogrubionego** należy zastosować zapis: `**tekst pogrubiony**`
+
+Dla uzyskania ***tekstu pogrubionego kursywą*** należy zastosować zapis: `***tekst pogrubiony kursywa***`
+
+
+Wybrane sposoby formatowania tekstu przedstawia @tbl-formatowanie
+
+: Przykłady formatowania tekstu w Quarto {#tbl-formatowanie}
+
+| *Markdown Syntax* | *Output* |
+|-------------------------------------------------|-----------------------|
+| `*italics*`, `**bold**`, `***bold italics***` | *italics*, **bold**, ***bold italics*** |
+| `indeks_górny^2^` / `indeks_dolny~2~` | indeks_górny^2^ / indeks_dolny~2~ |
+| `~~strikethrough~~` | ~~strikethrough~~ |
+| `verbatim code` | `verbatim code` |
+
+
+
+**Quarto** umożliwia wprowadzanie w tekście łączy do stron internetowych oraz obrazków.
+
+Przykład wprowadzenia łącza do strony internetowej:
+
+```markdown
+[Uniwersytet Ekonomiczny w Katowicach](http://ue.katowice.pl)
+```
+
+Efekt powyższego zapisu jest następujący:
+
+
+[Uniwersytet Ekonomiczny w Katowicach](http://ue.katowice.pl)
+
+
+```markdown
+![Uniwersytet Ekonomiczny w Katowicach](pic/ue.png)
+```
+
+
+Efekt jest następujący:
+
+![Uniwersytet Ekonomiczny w Katowicach](pic/ue.png)
+
+
+
+## Konstrukcja tabeli
+
+**Quarto** umożliwia wprowadzanie danych w tabeli.
+
+Przykład konstrukcji tabeli jest zamieszczony poniżej.
+
+```markdown
+| Do prawej | Do lewej | Domyślnie | Centrowanie |
+
+|----------:|:---------|-----------|:-----------:|
+
+|       12  |      12  |      12   |         12  |
+
+|      123  |      123 |     123   |        123  |
+
+|        1  |        1 |       1   |          1  |
+```
+
+
+Rezultat powyższego zapisu przedstawia @tbl-tabela.
+
+: Przykład konstrukcji tabeli w Quarto {#tbl-tabela}
+
+| Do prawej | Do lewej | Domyślnie | Centrowanie |
+|------:|:-----|---------|:------:|
+|   12  |  12  |    12   |    12  |
+|  123  |  123 |   123   |   123  |
+|    1  |    1 |     1   |     1  |
+
+
+
+## Wprowadzanie wzorów matematycznych
+
+**Quarto** pozwala na wprowadzanie nawet skomplikowanych wzorów.
+Przy zapisie wzorów można korzystać ze składni $\LaTeX$.
+
+Dla wprowadzenia wzoru na średnią arytmetyczną należy wpisać:
+
+
+`$$\bar{x}=\frac{1}{n} \sum_{i=1}^n x_i$$`
+
+Rezultat powyższego zapisu jest następujący
+
+$$\bar{x}=\frac{1}{n} \sum_{i=1}^n x_i$$
+
+Dla wprowadzenia wzoru na wartość oczekiwaną zmiennej losowej ciągłej $X$ z wykorzystaniem całki należy wprowadzić:
+
+`$$EX = \int_{-\infty}^\infty xf(x)dx$$`
+
+Efekt wprowadzenia powyższego zapisu jest następujący:
+
+$$EX = \int_{-\infty}^\infty xf(x)dx$$
+
+W @tbl-wzory przedstawiono przykłady zapisu wybranych wzorów i formuł matematycznych w **Quarto**. W kolumnie drugiej przedstawiono formę zapisu, a w trzeciej kolumnie uzyskany końcowy efekt.
+
+
+: Przykłady zapisu wzorów w Quarto {#tbl-wzory}
+
+| Opis matematyczny         |Zapis w Quarto                             | Renderowany wzór         |
+|---------------------------|-------------------------------------------|-------------------------------------|
+| Średnia arytmetyczna      | `\bar{x}`                                 | $$\bar{x}$$                         |
+| Suma                      | `\sum_{i=1}^{n} x_i`                       | $$\sum_{i=1}^{n} x_i$$              |
+| Całka                     | `\int_a^b f(x)\,dx`                        | $$\int_a^b f(x)\,dx$$               |
+| Odchylenie standardowe    | `\sigma`                                   | $$\sigma$$                          |
+| Wariancja                 | `\sigma^2`                                 | $$\sigma^2$$                        |
+| Indeks dolny              | `x_i`                                      | $$x_i$$                             |
+| Indeks górny              | `x^2`                                      | $$x^2$$                             |
+| Równanie liniowe          | `y = \beta_0 + \beta_1 x`                  | $$y = \beta_0 + \beta_1 x$$         |
+| Logarytm                  | `\log(x)`                             | $$\log(x)$$                         |
+| Prawdopodobieństwo        | `P(A)`                                     | $$P(A)$$                            |
+| Dystrybuanta              | `F(x) = P(X < x)`                        | $$F(x) = P(X < x)$$               |
+| Estymator                 | `\hat{\theta}`                             | $$\hat{\theta}$$                    |
+| Wartość oczekiwana        | `\mathbb{E}(X)`                            | $$\mathbb{E}(X)$$                   |
+| Wariancja z definicji     | `\mathrm{Var}(X) = \mathbb{E}(X^2) - \mathbb{E}(X)^2` | $$\mathrm{Var}(X) = \mathbb{E}(X^2) - \mathbb{E}(X)^2$$ |
+
+W **Quarto** używa się zapisu  ```markdown $...$``` dla wzorów w tekście oraz ```markdown $$...$$``` dla wzorów blokowych (umieszczanych w osobnej linii).
+
+
+## Kody
+
+
+Najważniejszą z punktu widzenia analiz statystycznych jest możliwość wprowadzania w **Quarto** wykonywalnych kodów.
+Kody zamieszczane są w `chunkach`, a kod ten jest wykonywany i wyniki są standardowo wyświetlane pod treścią kodu.
+Przykład `chunku` przedstawiono poniżej.
+
+
+
+\`\`\`\{r\}
+
+head(chickwts)
+
+\`\`\`
+
+
+Efekt powyższego zapisu jest następujący:
+
+```{r}
+head(chickwts)
+```
+
+
+Poza możliwymi wskazanymi powyżej `chunkami` można realizować obliczenia "wewnątrz" tekstu.
+Przykład takiego obliczenia przedstawia poniższy kod:
+
+
+
+Liczba badanych samochodów wynosi: `r nrow(mtcars)`. Przeciętna liczba mil przejechanych na jednym galonie paliwa wynosiła `r mean(mtcars$mpg)` , a współczynnik korelacji liowej pomiędzy liczbą mil przejechanych na galonie paliwa a wagą samochodu wynosi `r cor(mtcars$mpg,mtcars$wt)`.
+
+
+Rezultat powyższego zapisu jest następujący:
+
+Liczba badanych samochodów wynosi: `r nrow(mtcars)`. Przeciętna liczba mil przejechanych na jednym galonie paliwa wynosiła `r mean(mtcars$mpg)`, a współczynnik korelacji liowej pomiędzy liczbą mil przejechanych na galonie paliwa a wagą samochodu wynosi `r cor(mtcars$mpg,mtcars$wt)`.
+
+
+Kody w `chunkach` mogą być poprzedzone ustawieniem wartości róznych parametrów. Dzięki wprowadzeniu odpowiednich parametrów mogą nie być wyświetlanie ostrzeżenia (`warning: false`), kody mogą nie być wykonywane (`eval: false`).
+
+Przykład kodu w  `chunk` z ustawionymi wartościami parametrów:
+
+```{r}
+#| message: false
+#| warning: false
+#| echo: fenced
+#| eval: true
+#| label: fig-rys
+#| fig-cap: Tytuł wykresu
+#| fig-width: 8
+#| fig-height: 6
+ggplot(mtcars, aes(wt,mpg))+
+  geom_point()
+```
+
+Ustawienie parametru `label` na "fig-rys" pozwala na wprowadzenie odwołań do rysunku.
+Realizuje się to w następujący sposób:
+
+W tekście w **Quarto** wprowadza się zapis:
+
+```markdown
+Na @fig-rys przedstawiono...
+```
+
+Rezultat takiego zapisu jest następujący:
+
+Na @fig-rys przedstawiono...
+
+W @tbl-chunk przedstawiono najczęściej wykorzystywane parametry w `chunkach` wraz z objaśnieniem ich znaczenia.
+
+: Wybrane parametry chunków {#tbl-chunk}
+
+| Parametr       | Objaśnienie                                                                                   |
+|:---------------|:----------------------------------------------------------------------------------------------|
+| `message`      | Wyświetlanie komunikatów (np. o ładowaniu pakietów). `false` – ukrywa komunikaty.             |
+| `warning`      | Wyświetlanie ostrzeżeń generowanych przez kod. `false` – ukrywa ostrzeżenia.                  |
+| `echo`         | Wyświetlanie kodu źródłowego w dokumencie. `false` – ukrywa kod.                              |
+| `eval`         | Wyświetlanie kodu chunku. `false` – kod nie jest wykonywany.                                  |
+| `label`        | Etykieta chunku, używana do odwołań lub identyfikacji.                                        |
+| `fig-cap`      | Podpis (caption) pod wykresem generowanym w chunku.                                           |
+| `fig-width`    | Szerokość wykresu (w calach).                                                                 |
+| `fig-height`   | Wysokość wykresu (w calach).                                                                  |
+| `fig-align`    | Wyrównanie wykresu: `left`, `center`, `right`.                                                |
+| `collapse`     | Łączy kod i wyniki w jednym bloku.                                                            |
+| `comment`      | Znak lub tekst poprzedzający wyniki (np. `# `).                                               |
+| `highlight`    | Sposób podświetlania składni kodu.                                                            |
+
+
+## Dodatkowe elementy formatowania
+
+W edytorach tekstu często wykorzystuje sie punktory nienumerowane lub numerowane.
+**Quarto** również umożliwia wprowadzanie takich punktorów.
+W dalszej części przedstawiono możliwości wprowadzania bloków I i II stopnia, podziału treści na kolumny oraz wprowadzania callout.
+W przypadku zapisu poniżej treści w dwóch kolumnach po lewej stronie jest wprowadzany zapis, a po prawej uzyskiwany efekt.
+
+
+
+### Punktory nienumerowane {.unnumbered}
+
+::: columns
+
+::: column
+
+`-   to pierwszy punkt`
+
+`-   to kolejny punkt`
+
+`-   to następny punkt`
+
+:::
+
+::: column
+-   to pierwszy punkt
+-   to kolejny punkt
+-   to następny punkt
+
+:::
+:::
+
+
+### Punktory numerowane {.unnumbered}
+
+::: columns
+
+::: column
+
+
+`1.  to punkt pierwszy`
+
+`1.  to drugi`
+
+`5.  a to trzeci i ostatni`
+
+::: 
+
+::: column
+
+1.  to punkt pierwszy
+2.  to drugi
+3.  a to trzeci i ostatni
+
+:::
+
+:::
+
+
+
+
+### Blok I stopnia {.unnumbered}
+
+Niektóre fragmenty teskstu mogą być wyróżnione jako bloki tekstu.
+
+Przykłady konstrukcji takich bloków oraz widoczny efekt zostały przedstawione poniżej.
+
+
+::::: columns
+::: column
+`> Tak zapisuje się wyróżnienie` 
+
+`> blok` 
+
+`> blok`
+:::
+
+::: column
+
+> Tak zapisuje się wyróżnienie <br>
+>
+> blok <br>
+>
+> blok
+
+:::
+:::::
+
+
+### Blok II stopnia {.unnumbered}
+
+::::: columns
+::: column
+`>> Tak zapisuje się wyróżnienie` 
+
+`>> blok` 
+
+`>> blok`
+:::
+
+::: column
+
+>> Tak zapisuje się wyróżnienie 
+>>
+>> blok 
+>>
+>> blok
+
+:::
+:::::
+
+
+
+
+### Podział treści na kolumny {.unnumbered}
+
+**Quarto** umożliwia podział treści na kolumny.
+Wprowadza sie je w poniżej opisany sposób.
+
+
+```markdown
+::::: columns
+::: column
+
+To jest tekst
+<br>
+umieszczony 
+<br>
+w pierwszej kolumnie
+
+:::
+
+::: column
+To jest tekst
+<br>
+umieszczony
+<br>
+w drugiej kolumnie
+:::
+:::::
+
+```
+
+W efekcie wprowadzenia powyższego kodu uzyskuje się podział tekstu na dwie kolumny jak poniżej:
+
+
+::::: columns
+::: column
+To jest tekst
+<br>
+umieszczony 
+<br>
+w pierwszej kolumnie
+:::
+
+::: column
+To jest tekst
+<br>
+umieszczony 
+<br>
+w drugiej kolumnie
+:::
+:::::
+
+
+
+### Callout {.unnumbered}
+
+
+Callout  w **Quarto** to specjalne bloki treści, które pozwalają na wyróżnienie kluczowych informacji w dokumencie. Służą do zwrócenia uwagi czytelnika na ważne fragmenty tekstu, wskazówki, ostrzeżenia, definicje czy przykłady. Są one renderowane w sposób wizualnie odmienny od reszty tekstu, często z ikoną i kolorem tła, co zwiększa ich czytelność i skuteczność w komunikowaniu treści.
+
+Ponizej przedstawiono zapis wprowadzający callout oraz końcowy rezultat.
+
+:::::: columns
+::: column
+
+`::: callout-note` 
+
+`## Nagłówek callout`
+
+`Tu tekst widoczny w callout` 
+
+`:::`
+
+:::
+
+:::: column
+
+::: callout-note
+## Nagłówek callout-note
+
+Tu tekst widoczny w callout
+
+:::
+::::
+::::::
+
+
+
+W **Quarto** standardowo dostępnych jest 5 rodzajów callout: note, tip, warning, caution oraz important.
+Zostały one przedstawione poniżej.
+
+
+- callout-note
+
+::: callout-note
+## Nagłówek callout-note
+
+Tekst widoczny w callout
+
+:::
+
+- callout-tip
+
+::: callout-tip
+## Nagłówek callout-tip
+
+Tekst widoczny w callout
+
+:::
+
+- callout-important
+
+::: callout-important
+## Nagłówek callout-important
+
+Tekst widoczny w callout
+
+:::
+
+
+- callout-warning
+
+::: callout-warning
+## Nagłówek callout-warning
+
+Tekst widoczny w callout
+
+:::
+
+
+- callout-caution
+
+::: callout-caution
+## Nagłówek callout-caution
+
+Tekst widoczny w callout
+
+:::
+
+Dodatkowo dla każdego z wyżej wymienionych callout możliwe jest ustawienie dodatkowych parametrów. Przykłady i rezultaty dla callout-note przedstawiono poniżej:
+
+
+::: columns
+
+::: column
+
+Wprowadzony zapis:
+
+`::: {.callout-note icon=false}`
+
+`To jest callout bez ikony.`
+
+`:::`
+
+:::
+
+::: column
+
+Efekt zapisu:
+
+::: {.callout-note icon=false}
+To jest callout bez ikony.
+:::
+
+:::
+
+:::
+
+
+::: columns
+
+::: column
+
+Wprowadzony zapis:
+
+`::: {.callout-note appearance="simple"}`
+
+`To jest callout bez ikony i tytułu.`
+
+`:::`
+
+:::
+
+::: column
+
+
+Efekt zapisu:
+
+::: {.callout-note appearance="simple"}
+To jest callout bez ikony i tytułu.
+:::
+
+:::
+
+:::
+
+
+
+
+::: columns
+
+::: column
+
+Wprowadzony zapis:
+
+`::: {.callout-note appearance="minimal"}`
+
+`To jest callout z  wyglądem 'minimal'.`
+
+`:::`
+
+:::
+
+::: column
+
+Efekt zapisu:
+
+::: {.callout-note appearance="minimal"}
+To jest callout z  wyglądem 'minimal'.
+:::
+
+
+:::
+
+:::
+

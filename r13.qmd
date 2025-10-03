@@ -1,0 +1,477 @@
+# Analizy on-line dla danych z  BDL
+
+::: {.callout-note icon="false" appearance="simple"}
+Bank Danych Lokalnych (BDL) jest największą w Polsce bazą danych o gospodarce, społeczeństwie i środowisku. W bazie jest dostępnych, przede wszystkim w układzie przestrzennym, ponad 40 tys. cech statystycznych pogrupowanych tematycznie. Najstarsze dane pochodzą z 1995 roku. Dostępne są między innymi dane i wskaźniki opisujące miejscowości statystyczne, gminy, powiaty, województwa i Polskę, a także jednostki zgodne z nomenklaturą NTS: podregiony i regiony. Ponadto użytkownicy mają dostęp do zasobów informacyjnych jak wybrane statystyki roczne i krótkookresowe. Statystyki te są na bieżąco aktualizowane i uzupełniane. 
+
+W pierwszej części rozdziału przedstawiono przykłady dotyczące liczby sklepów i stacji paliw. Odwołano sie wyłącznie do funkcji graficznych dostępnych w pakiecie **bdl**. W drugiej części rozdziału przedstawiono przykłady wykresów dla liczby urodzeń żywych na 1000 ludności i liczby zgonów na 1000 ludności w latach 2002-2023. W tym przypadku odwołano sie do funkcji graficznych z pakietu **ggplot2**.
+
+:::
+
+Przed pobraniem danych z Banku danych lokalnych niezbędne jest załadowanie wymaganych bibliotek.
+
+```{r}
+#| warning: false
+#| message: false
+library(bdl)
+library(ggplot2)
+library(gganimate)
+library(plotly)
+library(gifski)
+library(dplyr)
+library(patchwork)
+library(tidyverse)
+```
+
+
+```{r}
+#| warning: false
+#| message: false
+#| eval: true
+#| echo: false
+
+# options(bdl.api_private_key = "1bdf99f5-46a1-4892-43e2-08dddcf3b124a")
+```
+
+
+
+## Wykres bezpośrednio przy pozyskaniu danych
+
+Pakiet **bdl** umozliwia wyszukiwanie informacji o dostępnych zmiennych na podstawie określonych słów kluczowych. Przykład poszukiwania informacji o sklepach z wykorzystaniem funkcji `search_variables()`. 
+Można zauważyć, że sklepy oraz stacje paliw to grupa "P2323". Dla pozyskania informacji o liczbie sklepów należy skorzystać z "id" = 58964.
+Następnie na podstawie otrzymanych informacji możliwe pozyskanie danych w oparciu o funkcję `get_variables()`. Odpowiednie komendy przedstawia poniższy kod.
+
+
+```{r}
+#| warning: false
+#| message: false
+search_variables("sklepy")
+get_variables("P2323")
+```
+
+Pobranie danych z Banku Danych Lokalnych o liczbie sklepów i stacji paliw w roku 2023 realizuje następująca komenda
+
+```{r }
+sklepy=get_data_by_variable("58964",year="2023",unitLevel=2)
+stacje_paliw=get_data_by_variable("58965",year="2023",unitLevel=2)
+```
+
+
+## Podstawowe wykresy - sklepy i stacje paliw
+
+### Wykres kołowy 
+
+Do prezentacji struktury rozmieszczenia stacji paliw  można wykorzystać wykres kołowy. Do konstrukcji można skorzystać z funkcji `pie_plot()` z pakietu **bdl**.
+
+
+```{r }
+#| echo: true
+#| label: fig-paliwo
+#| fig-cap: Struktura liczby stacji paliw według makroregionów
+pie_plot(data_type ="variable" ,"58965", "2023", unitLevel = "1")
+```
+
+Na @fig-paliwo przedstawiono strukturę liczby stacji paliw  według makroregionów w roku 2023. Najwięcej stacji paliw funkcjonuje w makroregionie pólnocnym (1269), a najmniej w makroregionie południowo-zachodnim (717).
+
+### Wykres rozrzutu 
+
+Dla wykonania wykresu rozrzutu można wykorzystać funkcję `scatter_2var_plot()`.
+
+```{r ,  warning=FALSE, message=FALSE}
+#| echo: true
+#| label: fig-sklepy_paliwo
+#| fig-cap: Liczba sklepów i stacji paliw według województw
+#| fig-width: 12
+scatter_2var_plot(data_type = "variable" ,c("58964", "58965"), unitLevel = "2",year=2023)
+```
+
+Na @fig-sklepy_paliwo przedstawiono wykres rozrzutu dla liczby sklepów oraz liczby stacji paliw według województw.
+Na wykresie dodatkowo została zamieszczona liniowa funkcja regresji liczby stacji paliw względem liczby sklepów.
+Widoczne jest, że większej liczbie sklepów w województwie zwykle towarzyszy większa liczba stacji paliw. Wniosek ten jest oczywisty, ponieważ na obie zmienne ma wpływ wielkość województwa.
+
+### Wykres liniowy 
+
+Dla przedstawienia zmian w czasie można wykorzystac wykres liniowy, który można utworzyć z wykorzystaniem funkcji dostępnej w pakiecie **bdl** funkcji `line_plot()`.
+
+```{r }
+#| echo: true
+#| label: fig-sklepy
+#| fig-cap: Liczba sklepów i stacji paliw według województw
+line_plot(data_type = "variable", unitParentId = "010000000000", varId = "58964",unitLevel=2)
+```
+Na @fig-sklepy przedstawiono liczbę sklepów w województwach śląskim i małopolskim w latach 2004-2023. W badanym okresie widoczne jest zmniejszanie sie liczby sklepów w obu województwach.
+
+### Kartogram 
+
+W oparciu o funkcje z pakietu **bdl** można także konstruować wykresy mapowe. W tym przypadku należy się odwołać do funkcji `generate_map()`.
+
+```{r }
+#| echo: true
+#| label: fig-mapa
+#| fig-cap: Liczba stacji paliw według województw
+#| fig-width: 8
+#| fig-height: 8
+# generate_map(varId = "58965", year = "2023")
+```
+
+Na @fig-mapa widoczne jest, że najwięcej stacji paliw jest w województwie mazowieckim, a najmniej w województwie opolskim. Jest to wniosek dość oczywisty zważywszy na wielkości województw.
+W takich przypadkach znacznie ciekawsza jest analiza, gdzie dana zmienna jest przeliczona w stosunku do liczby ludnosci lub powierzchni danego wojewodztwa.
+Przykład takiej analizy zostanie przedstawiony w następnym punkcie.
+
+
+## Urodzenia żywe na 1000 ludności i zgony na 1000 ludności
+
+W poprzednim punkcie dane z BDL były pobierane bezpośrednio przy wywołaniu funkcji graficznej.
+Zdecydowanie wygodniej jest pobrać dane i już na odpowiednio przygotowanym zbiorze przeprowadzić analizy.
+Po pobraniu zbioru danych z BDL można wykorzystać przedstawione w poprzednim rozdziale funkcje pakietu **ggplot2**. 
+
+
+Przy poszukiwaniu danych dotyczących liczby urodzeń żywych na 1000 ludności dla pozyskania 
+wystarczy wprowadzić komendę:
+
+```{r}
+#| warning: false
+#| message: false
+search_variables('urodzenia żywe na 1000 ludności')
+```
+
+Dla pozyskania szczegółowych informacji o 'subjectId' P3428 należy wprowadzić komendę:
+
+```{r}
+get_variables("P3428")
+```
+
+W dalszej części będą wykorzystywane dane dotyczące:
+
+
+::: {.callout-note icon="false" appearance="simple"}
+
+<!-- 59 P1873 Urodzenia żywe ogółem  -->
+
+<!-- 65 P1873 Zgony ogółem ogółem  -->
+
+<!-- 68 Przyrost naturalny ogółem -->
+
+72305 Ludność ogółem 
+
+450540 urodzenia żywe na 1000 ludności 
+
+450541 zgony na 1000 ludności
+:::
+
+
+Pozyskanie i przekształcenie otrzymanych danych w układzie wojewódzkim realizuje kod: 
+
+```{r }
+woj=get_data_by_variable(c("72305","450540","450541"),unitLevel=2)
+woj$year=as.numeric(woj$year)
+woj=woj %>% filter(year >2001)
+woj=woj[,2:6]
+names(woj)=c('województwo','rok','populacja','urodzenia_1000','zgony_1000')
+head(woj)
+```
+
+### wykres liniowy
+
+Pozyskane dane dotyczące liczby urodzeń żywych na 1000 ludności i liczby zgonów na 1000 ludności można przedstawić graficznie jak poniżej (@fig-ur_lin).
+
+```{r}
+#| label: fig-ur_lin
+#| fig-cap: Urodzenia żywe na 1000 ludności województwach w latach 2005-2023
+#| fig-width: 12
+#| fig-height: 8
+p1=ggplot(woj, aes(x = rok, y = urodzenia_1000,color=województwo))+
+ geom_line()+
+  theme(legend.position="none") +
+  labs(y='Urodzenia żywe na 1000 ludności')
+
+p2=ggplot(woj, aes(x = rok, y = zgony_1000,color=województwo))+
+ geom_line()+
+  theme(legend.position="bottom") +
+  labs(y='Zgony na 1000 ludności',color='') 
+
+p1/p2
+```
+
+Na @fig-ur_lin widoczny jest systeatyczny spadek liczby urodzeń żywych na 1000 ludności we wszystkich województwach w ostatnich latach. Zauważalny jest także znaczny wzrost liczby zgonów na 1000 ludności w latach 2020 i 2021, na co miała wpływ m.in. pandemia COVID-19.
+
+
+## Porównanie zmiennych w dwóch okresach
+
+Na @fig-ur_zg_wojew przedstawiono liczbę urodzeń żywych i liczbę zgonów w województwach w latach 2008 i 2023. Na wykresach zaznaczono przekątną. Punkty odpowiadające  województwom, w których liczba urodzeń żywych na 1000 ludności jest większa niż liczba zgonów na 1000 ludności znajdują sie poniżej przekątnej i oznaczone zostały kolorem zielonym. O ile w roku 2008 w większości województw liczba urodzeń żywych przewyższała liczbę zgonów, to w roku 2023 we wszystkich województwach liczba zgonów była większa od liczby urdzeń żywych.
+
+
+```{r}
+#| label: fig-ur_zg_wojew
+#| fig-cap: Urodzenia żywe i zgony na 1000 ludności w województwach w latach 2008 i 2023
+#| fig-width: 12
+#| fig-height: 6
+library(ggrepel)
+woj %>% 
+  filter(rok==2008 | rok==2023) %>%
+  ggplot( aes(x = urodzenia_1000, y = zgony_1000, label=województwo,color=(urodzenia_1000>zgony_1000))) +
+  geom_point(size=2) +
+  xlim(4,14)+ylim(4,14) +
+  geom_abline(slope=1, intercept=0,lty=2) +
+  geom_text_repel()+
+  theme(legend.position='none') +
+  labs(x = "Urodzenia żywe na 1000 ludności", y = "Zgony  na 1000 ludności") +
+  facet_wrap(~rok)
+```
+
+### Wykres rozrzutu
+
+Do sporządzenia wykresu rozrzutu dla liczby urodzeń żywych i liczby zgonów na 1000 ludności (@fig-02) wykorzystano dodatkową zmienna liczbę ludności, którą na wykresie reprezentuje wielkość punktów.
+
+```{r }
+#| echo: true
+#| label: fig-02
+#| fig-cap: Urodzenia żywe i zgony na 1000 ludności 
+#| fig-width: 12
+#| fig-height: 8
+woj %>% filter(rok==2023) %>%
+ggplot(
+  aes(x = urodzenia_1000, y=zgony_1000, size = populacja/1000000, colour = województwo)  ) +
+  geom_point(show.legend = TRUE, alpha = 0.6) +
+  scale_color_viridis_d() +
+  scale_size(range = c(2, 10)) +
+  labs(x = "Urodzenia żywe na 1000 ludności", y = "Zgony  na 1000 ludności") +
+  labs(color="Województwo",size="Ludność w mln.")
+```
+Na @fig-02 przedstawiono liczby urodzeń żywych na 1000 ludności, liczby zgonów na 1000 ludności oraz liczbe ludności w województwie w roku 2023. Najwięcej urodzeń żywych na 1000 ludnosci w roku 2023 byłoo w województwach małopolskim (8,26), mazowieckim (8,15) oraz pomorskim (8,11). Najmniejsze wartosci tej zmiennej zanotowano w świętokrzyskim (6,17) i warmińsko-mazurskim (6,23). Największa liczba zgonów na 1000 ludności w roku 2023 miała miejsce w województwach łódzkim (12,8) i świętokrzyskim (12,3). Najmniejsze wartości tych zmiennych miały miejsce w podkarpackim (9,49), małopolskim (9,56) oraz pomorskim (9,73). 
+
+### Kartogram
+
+Ponizszy kod prowadzi do uzyskania kartogramu dla liczby urodzeń żywych na 1000 ludnosci według województw w roku 2023. Efekt widoczny jest na @fig-mapa1.
+
+```{r }
+#| echo: true
+#| label: fig-mapa1
+#| fig-cap: Urodzenia żywe na 1000 ludności według województw w roku 2023
+#| fig-width: 8
+#| fig-height: 8
+# generate_map(varId = "450540", year = "2023",unitLevel=2)
+```
+
+Dla uzyskania wykresu mapowego, ale według powiatów wystarczy wartość parametru "unitLevel" ustawić na 5.
+
+```{r }
+#| echo: true
+#| label: fig-mapa2
+#| fig-cap: Urodzenia żywe na 1000 ludności według powiatów w roku 2023
+#| fig-width: 8
+#| fig-height: 8
+# generate_map(varId = "450540", year = "2023",unitLevel=5)
+```
+
+
+
+
+
+### Dane dla powiatów
+
+Ponizej przedstawione analizy będą wykonane w ujeciu powiatowym. Niezbędne jest pobranie danych z BDL dla powiatów. Konstrukcję takiego zbioru realizują następujace komendy:
+
+```{r }
+pow=get_data_by_variable(c("72305","450540","450541"),unitLevel=5)
+pow$year=as.numeric(pow$year)
+pow=pow %>% filter(year >2004)
+pow$Województwo=str_sub(pow$id,1,4)
+pow=pow[,c(1:6,19)]
+names(pow)=c('id','powiat','rok','populacja','urodzenia_1000','zgony_1000','województwo')
+```
+
+```{r}
+pow <- pow %>%
+  mutate(
+    województwo = recode(województwo,
+      '0714' = 'MAZOWIECKIE',
+      '0620' = 'PODLASKIE',
+      '0618' = 'PODKARPACKIE',
+      '0606' = 'LUBELSKIE',
+      '0526' = 'ŚWIĘTOKRZYSKIE',
+      '0510' = 'ŁÓDZKIE',
+      '0428' = 'WARMIŃSKO-MAZURSKIE',
+      '0422' = 'POMORSKIE',
+      '0404' = 'KUJAWSKO-POMORSKIE',
+      '0316' = 'OPOLSKIE',
+      '0302' = 'DOLNOŚLĄSKIE',
+      '0232' = 'ZACHODNIOPOMORSKIE',
+      '0230' = 'WIELKOPOLSKIE',
+      '0208' = 'LUBUSKIE',
+      '0124' = 'ŚLĄSKIE',
+      '0112' = 'MAŁOPOLSKIE'
+    )
+  )
+```
+
+
+Liczbę powiatów według województw można wyznaczyć nastepująco:
+
+```{r}
+#| label: fig-pow_liczba
+#| fig-cap: Liczba powiatów według województw w roku 2023
+#| width: 10
+#| height: 6
+pow %>%
+  filter(rok==2023) %>%
+  ggplot(aes(województwo))+
+  geom_bar(fill='blue')+
+  labs(y='Liczba powiatów')+
+  geom_text(stat = "count", aes(label = after_stat(count)), hjust = 0)+
+  theme(legend.position='none')+
+  coord_flip()
+```
+
+
+
+Na @fig-pow_liczba przedstawiono liczbę powiatów w województwach. Najwięcej powiatów jest w województwach: mazowieckim (42), śląskim (36) i wielkopolskim (35). Najmniej powiatów znajduje się w województwach: opolskim (12), lubuskim (14) oraz podlaskim (17). 
+
+
+Kolejny kod prowadzi do konstrukcji wykresu rozrzutu dla zmiennych liczba urodzeń żywych na 1000 ludności i liczba zgonów na 1000 ludności według powiatów w latach 2008 i 2023. 
+
+```{r}
+#| label: fig-powiaty
+#| fig-cap: Urodzenia żywe na 1000 ludności i zgony na 1000 ludności w powiatach w latach 2008 i 2023
+#| fig-width: 12
+#| fig-height: 6
+pow %>%
+  filter(rok==2008 | rok==2023) %>%
+  ggplot( aes(x = urodzenia_1000, y = zgony_1000, color=(urodzenia_1000>zgony_1000))) + 
+  geom_point(size=2)+xlim(5,18)+ylim(5,18) +
+  geom_abline(slope=1, intercept=0,lty=2)+
+  labs(x='Urodzenia żywe na 1000 ludności', y='Zgony na 1000 ludności')+
+  theme(legend.position='none')+
+  facet_wrap (~rok)
+
+```
+
+
+
+
+Na @fig-powiaty zauważalne jest, że w roku 2023 w niewielu powiatach liczba urodzeń żywych na 1000 ludności była większa od liczby zgonów na 1000 ludnosci, podczas gdy w roku 2008 taklie powiaty sytanowiły wyraźną większość.
+
+
+Zmiana rozkładów badanych zmiennych w latach 2008 i 2023 przedstawiono na wykresach gęstości. 
+
+```{r}
+#| label: fig-ur_zg_wojew1
+#| fig-cap: Urodzenia żywe / liczby zgonów w powiatach w latach 2008 i 2023
+#| fig-width: 12
+#| fig-height: 6
+
+library(patchwork)
+p1 <- 
+  pow %>%
+  filter (rok==2008) %>%
+  ggplot(aes(x=x) ) +
+  # Top
+  geom_density( aes(x = urodzenia_1000, y = ..density..), fill="green" ) +
+  geom_label( aes(x=6.5, y=0.25, label="Urodzenia żywe")) +
+  # Bottom
+  geom_density( aes(x = zgony_1000, y = -..density..), fill= "blue") +
+  geom_label( aes(x=6.5, y=-0.25, label="Zgony")) +
+  scale_y_continuous(
+    labels = function(x) format(x, digits = 1) ) +
+  xlim(4,17)+
+  labs(x="Wskaźnik na 1000 ludności",y="gęstość",title='2008')
+
+p2 <- 
+  pow %>%
+  filter (rok==2023) %>%
+  ggplot(aes(x=x) ) +
+  geom_density( aes(x = urodzenia_1000, y = ..density..), fill="green" ) +
+  geom_label( aes(x=6.5, y=0.25, label="Urodzenia żywe")) +
+  # Bottom
+  geom_density( aes(x = zgony_1000, y = -..density..), fill= "blue") +
+  geom_label( aes(x=6.5, y=-0.25, label="Zgony")) +
+  scale_y_continuous(
+    labels = function(x) format(x, digits = 1) ) +
+  xlim(4,17)+
+  labs(x="Wskaźnik na 1000 ludności",y="gęstość",title='2023')
+
+p1/p2
+
+```
+
+Urodzenia żywe na 1000 ludności i zgony na 1000 ludności w latach 2008 i 2023 przedstawia @fig-ur_zg_wojew1.  Dla zwiększenia czytelności wykresu oraz w celu zaznaczenia istoty różnic w pojęciach "urodzenie" i "zgon" wykresy gęstości zostały przedstawione ponad osią OX (urodzenia) i pod osią OX (zgony).
+
+
+
+### Przygotowanie animacji - liczba urodzeń i zgonów na 1000 ludności
+
+W poprzednim rozdziale przedstawiono zasady konstrukcji animacji.
+Poniżej przedstawiono przykład animacji dla liczby urodzeń żywych na 1000 ludności, liczby zgonów na 1000 ludności według województw w latach 2002 - 2023.
+
+Statystyczny wykres dla roku 2023 przedstawia @fig-01.
+
+```{r }
+#| echo: true
+#| label: fig-01
+#| fig-cap: Urodzenia żywe na 1000 ludności i zgony na 1000 ludności według województw w roku 2023
+#| fig-width: 12
+#| fig-height: 8
+woj %>% filter(rok==2023) %>%
+ggplot(
+  aes(x = urodzenia_1000, y=zgony_1000, size = populacja/1000000, colour = województwo)  ) +
+  geom_point(show.legend = TRUE, alpha = 0.6) +
+  scale_color_viridis_d() +
+  scale_size(range = c(2, 10)) +
+  labs(x = "Urodzenia żywe na 1000 ludności", y = "Zgony  na 1000 ludności")+
+  labs(color="Województwo",size="Ludność w mln.")
+```
+
+Na @fig-01 przedstawiono badane zmienne według województw. Dodatkowo rozmiar punktów na wykresie odpowiada liczbie ludności województwa.
+
+Poniższy kod wprowadza animację dla tych zmiennych dla lat 2002 - 2023.
+
+```{r}
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+#| fig-width: 14
+#| fig-height: 8
+
+library(ggplot2)
+library(dplyr)
+library(gganimate)
+library(gifski)    
+
+animacja <- woj %>%
+  ggplot(
+    aes(x = urodzenia_1000, y = zgony_1000, size = populacja / 10^6, colour = województwo)) +
+  geom_point(show.legend = TRUE, alpha = 0.6) +
+  scale_color_viridis_d() +
+  scale_size(range = c(2, 10)) +
+  labs(x = "Urodzenia żywe na 1000 ludności", y = "Zgony na 1000 ludności", color = "Województwo", size = "Ludność w mln.") +
+  transition_time(rok) + 
+  labs(title = 'Rok: {round(frame_time)}') + 
+  theme_minimal() +
+  theme(legend.position='bottom')
+```
+
+Uruchomienie przygotowanej animacji z dodatkowymi parametrami realizuje poniższy kod.
+
+```{r}
+# animate(animacja, nframes=100, fps=10, height = 20, width = 30, units = "cm",res=150)
+```
+
+
+
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Znajdź wszystkie zmienne związane z bezrobociem.
+
+2. Pobierz dane o liczbie ludności ogółem w województwach za rok 2023.
+
+3. Pobierz dane o liczbie urodzeń w powiatach od 2015 do 2022 roku.
+
+4. Stwórz ranking powiatów według liczby studentów w roku 2022.
+
+5. Porównaj PKB per capita w województwach w roku 2023.
+
+
+:::
+

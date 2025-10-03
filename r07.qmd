@@ -1,0 +1,390 @@
+# Kombinacje wykresów. Pakiet **patchwork**
+
+::: {.callout-note icon="false" appearance="simple"}
+**patchwork** to pakiet w języku **R**, który wspomaga łączenie wielu wykresów w jedną spójną wizualizację. Jest szczególnie przydatny w przypadku wykresów tworzonych za pomocą pakietu **ggplot2**. Pakiet umożliwia użytkownikowi szybkie organizowanie i układanie różnych wizualizacji w jednym obszarze wykresu. Pozwala także na dołączanie tekstów i tabel z danymi w obszarach okna wykresu.
+:::
+
+Pakiet **patchwork** do łączenia wykresów w jedną wizualizację wykorzystuje operatory matematyczne +, / , \| oraz nawiasy '(' i ')'. Działa bezpośrednio na obiektach (wykresach) wykonanych w **ggplot2**, ale można także wykorzystać wykresy oraz tabele pochodzące spoza tego systemu.
+
+Znak '+' pomiędzy obiektami (wykresami) **p1** i **p2** oznacza, że wykresy będą umieszczone obok siebie. Jeśli jednak tych wykresów będzie więcej, to system będzie rozmieszczał je w kolejnych wierszach. W przypadku zapisu **p1+p2+p3+p4** Wykresy **p1** i **p2** zostaną umieszczone obok siebie w pierwszym wierszu, a wykresy **p3** i **p4** pod nimi, w wierszu drugim. Dla wymuszenia układu wykresów w jednym wierszu zamiast znaku '+' należy zastosować znak '\|'. W przypadku zapisu **p1\|p2\|p3\|p4** wszystkie wykresy zostaną umieszone w jednym wierszu. Dla umieszczenia dwóch wykresów **p1** i **p2** w układzie pionowym (**p1** ponad **p2**) należy użyć symbolu '/' i zapisu: **p1/p2**. Do tworzenia kombinacji wykresów mogą być też wykorzysystywane znaki "(" i ")". Przy zapisie **p1/(p2+p3)/(p4+p5+p6)** wykresy zostaną umieszczone w trzech wierszach. W wierszu pierwszym będzie wykres **p1**, w wierszu środkowym dwa wykresy **p2** i **p3**, a na samym dole trzy wykresy **p4**, **p5** i **p6**.
+
+Jeżeli pakiety **ggplot2** i **patchwork** zostały wcześniej zainstalowane, to załadowanie ich oraz pozostałych pakietów wykorzystywanych w tym rozdziale realizowane jest następująco:
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+library(ggplot2)
+library(patchwork)
+library(grid)
+library(gridExtra)
+library(gridGraphics)
+library(ggthemes)
+```
+
+Dla konstrukcji wykresów w tej części wykorzystano dostępny w **R** zbiór **iris**.
+
+🔗 [Opis zbioru `iris`](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/iris)
+
+::: callout-important
+## **iris**
+
+Zbiór danych **iris** (znany także jako Iris Fishera) jest jednym z najbardziej klasycznych i najczęściej wykorzystywanych zbiorów danych w statystyce, uczeniu maszynowym i eksploracji danych. Został zebrany przez Edgara Andersona, a spopularyzowany przez Ronalda Fishera w 1936 roku. Zbiór ten jest dostępny bezpośrednio w środowisku **R**.
+
+Liczba obserwacji: 150
+
+Liczba zmiennych: 5
+
+-   *Sepal.Length* - długość działki kielicha (w centymetrach)
+-   *Sepal.Width* - szerokość działki kielicha (w centymetrach)
+-   *Petal.Length* - długość płatka korony (w centymetrach)
+-   *Petal.Width* - szerokość płatka korony (w centymetrach)
+-   *Species* - gatunek irysa - zmienna czynnikowa (factor) z trzema poziomami odpowiadającymi nazwom gatunków (setosa, versicolor, virginica)
+:::
+
+Zbiór **iris** liczy 150 obserwacji, a pierwsze 5 Przedstawiono poniżej:
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+head(iris,5)
+```
+
+Podstawowe informacje o zmiennych ze zbioru **iris**.
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+summary(iris)
+```
+
+## Konstrukcja kompozycji wykresów
+
+Przygotowane w programie **R** wykresy nie muszą być bezpośrednio wyświetlane, a mogą być zapamiętane jako obiekty. W pierwszej kolejności określone zostaną trzy obiekty graficzne **p1**, **p2** i **p3**. Poniżej przedstawiony jest kod zachowujący podstawowy wykres w obiekcie o nazwie **p1** i następnie wyświetlający go (por. @fig-iris1). Jest to wykres rozrzutu dla długości i szerokości płatków.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| label: fig-iris1
+#| fig-cap: Długość i szerokość płatka według gatunku
+
+p1 <- ggplot(iris, aes(Petal.Length, Petal.Width, color = Species)) + 
+  geom_point(size = 3) + 
+  labs(color="Gatunek",
+       x = "Długość płatka", 
+       y = "Szerokość płatka") +
+  theme_minimal()
+p1
+```
+
+W kolejnym kroku konstruowane sa obiekty **p2** i **p3**. Histogram długości płatków jest zachowany jako **p2** (@fig-iris2), a histogram szerokości płatków jest zachowany jako **p3** (@fig-iris3).
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| label: fig-iris2
+#| fig-cap: Długość płatka według gatunku
+
+p2 <- ggplot(iris, aes(Petal.Length, fill = Species)) + 
+  geom_histogram(binwidth = 0.2, alpha = 0.7, color='black') + 
+  labs(x = "Długość płatka", 
+       y = "Liczba obserwacji") +
+  theme_minimal()
+p2
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| label: fig-iris3
+#| fig-cap: Szerokość płatka według gatunku
+p3 <- ggplot(iris, aes(Petal.Width, fill = Species)) + 
+  geom_histogram(binwidth = 0.1, alpha = 0.7, color='black') + 
+  labs( x = "Szerokość płatka", 
+       y = "Liczba obserwacji") +
+  theme_minimal()
+p3
+```
+
+Dla wyświetlenia dwóch wykresów **p2** i **p3** obok siebie nalezy wykonać poniższą komendę, a efekt jest widoczny na @fig-iris4. W poleceniu dodatkowo wykorzystano funkcję `plot_layout`, dzieki której zamieszczono tylko jedną legendę łącznie dla obu wykresów.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| label: fig-iris4
+#| fig-cap: Kompozycja wykresów. Długość (po lewej) i szerokość (po prawej) płatka według gatunku
+(p2 + p3) + 
+  plot_layout(guides = "collect") & 
+  theme(legend.position = "bottom")
+
+```
+
+Kolejne konstruowane obiekty **p4** - **p9** są określone pniżej, ale nie są bezpośrednio wyświetlane.
+
+Jako obiekt **p4** wprowadzony jest wykres wiolinowy długości płatków, a jako obiekt **p5** wykres wiolinowy dla szerokości płatków.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+p4 <- ggplot(iris, aes(Species, Petal.Length, fill = Species)) + 
+  geom_violin(trim = FALSE, alpha = 0.7) + 
+  labs(x = "Gatunek", 
+       y = "Długość płatka",
+       fill='Gatunek') +
+  theme_minimal()
+p5 <- ggplot(iris, aes(Species, Petal.Width, fill = Species)) + 
+  geom_violin(trim = FALSE, alpha = 0.7) + 
+  labs(x = "Gatunek", 
+       y = "Szerokość płatka",
+       fill='Gatunek') +
+  theme_minimal()
+```
+
+Kolejne dwa wykresy **p6** i **p7** to gęstości odpowiednio dla długości i szerokości płatków.
+
+```{r}
+p6 <- ggplot(iris, aes(Petal.Length, fill = Species)) + 
+  geom_density(alpha = 0.6) + 
+  labs(x = "Gatunek", 
+       y = "Długość płatka",
+       fill='Gatunek') +
+  theme_minimal()
+p7 <- ggplot(iris, aes(Petal.Width, fill = Species)) + 
+  geom_density(alpha=0.6) + 
+  labs(x = "Gatunek", 
+       y = "Szerokość płatka",
+       fill='Gatunek') +
+  theme_minimal()
+```
+
+Ostatnie dwa wykresy wykorzystywane w tym rozdziale to **p8** i **p9** wykresy pudełkowe dla odpowiednio długosci i szerokości płatków.
+
+```{r}
+
+p8 <- ggplot(iris, aes(Species, Petal.Length, fill = Species)) + 
+  geom_boxplot() + 
+  labs(x = "Gatunek", 
+       y = "Długość płatka",
+       fill='Gatunek') +
+  theme_minimal()
+
+p9 <- ggplot(iris, aes(Species, Petal.Width, fill = Species)) + 
+  geom_boxplot() + 
+  labs(x = "Gatunek", 
+       y = "Szerokość płatka",
+       fill='Gatunek') +
+  theme_minimal()
+```
+
+Dla wyświetlenia czterech obiektów (**p2** i **p3** w górnym wierszu oraz **p4** i **p5** w dolnym wierszu należy wykonć poniższą komendę, a jej rezultat przedstawia @fig-iris5.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| label: fig-iris5
+#| fig-cap: Kompozycja 4 wykresów. Długość i szerokość płatka według gatunku
+(p2+p3)/(p4+p5)
+```
+
+W obszarze wykresu można dodać tytuł i podtytuł wykorzystując `plot_annotation()`. Wynik poniższego kodu przedstawia @fig-usun1.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| label: fig-usun1
+#| fig-cap: Kompozycja wykresów z tytułem i podtytułem. Długość i szerokość płatka według gatunku
+(p1+p2) / (p3 + p4) + plot_annotation(
+  title = "Długość i szerokość płatka według gatunków",
+  subtitle = "Rozkład cech płatków w podziale na gatunki"
+)
+```
+
+Wykresy nie muszą być umieszczane w kratkach o takim samym rozmiarze. Poniższy kod przedstawia kostrukcję, gdzie w pierwszel linii jest jeden duży wykres, a w drugiej linii dwa mniejsze (@fig-usun3).
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| label: fig-usun3
+#| fig-cap: Kompozycja wykresów z zadaną wysokością obszarów. Długość i szerokość płatka według gatunku
+p5/(p6+p7) + plot_layout(heights = c(2, 1)) +
+  plot_annotation(
+    title = "Długość i szerokość płatków kwiatu iris",
+    subtitle = "Porównanie długości i szerokości płatków dla gatunków"
+  )
+```
+
+Interesujące może być przedstawienie wielu wykresów jednocześnie. Poniżej przedstawiono modyfikację wykresów **p1** - **p9**, aby później wszystkie te wykresy umieścić w jednym obszrze wykresu.
+
+```{r}
+p1 <- p1 + theme(legend.position='bottom')
+p2 <- p2 + theme(legend.position='none')
+p3 <- p3 + theme(legend.position='none')+labs(title="")
+p4 <- p4 + theme(legend.position='none')+labs(title="")
+p5 <- p5 + theme(legend.position='none')+labs(title="")
+p6 <- p6 + theme(legend.position='none')+labs(title="")
+p7 <- p7 + theme(legend.position='none')+labs(title="")
+p8 <- p8 + theme(legend.position='none')+labs(title="")
+p9 <- p9 + theme(legend.position='none')+labs(title="")
+```
+
+Ponizej przedstawiono kod z konstrukcją 7 wykresów (@fig-7wyk) rozmieszczonych w 4 wierszach.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| fig-width: 12
+#| fig-height: 12
+#| fig-cap: Kompozycja 7 wykresów. Długość i szerkość płatka według gatunku
+#| label: fig-7wyk
+p <- (p2 + p3) /(p4+p5) / (p6+p7) / p1 + plot_layout(heights = c(1, 1,1, 2)) +
+  plot_annotation(
+    title = "Długość i szerokość płatków kwiatu iris",
+    subtitle = "Porównanie długości i szerokości płatków dla gatunków"
+  )
+p
+```
+
+Ponizej przedstawiono kod konstrukcji prezentacji z 9 wykresami (@fig-9wyk). W takim przypadku niezbędna jest duża powierzchnia dla dobrej czytelności przekazu.
+
+```{r}
+#| fig-width: 16
+#| fig-height: 16
+#| fig-cap: Kompozycja 9 wykresów. Długość i szerkość płatka według gatunku
+#| label: fig-9wyk
+(p4+p2+p5)/(p6+p3+p7)/(p8+p1+p9)
+```
+
+Rysunek można konstruować stopniowo. W poniższym przykładzie w pierwszej kolejności zbudowano obiekt **rys**, a następnie wyświetlono go po lewej stronie okna wykresu (por. @fig-rys1).
+
+```{r }
+#| fig-cap: Konstrukja kompozycji wykresów. Długość i szerokość płatka według gatunku
+#| label: fig-rys1
+rys <- p2 / p3
+ rys|p1
+```
+
+Przy rozmieszczaniu wykresów możliwe jest pozostawienie wolnego (pustego) obszaru pomiędzy nimi. Można w tym celu wykorzystać funkcję `plot_spacer()`. Poniższy kod przedstawia przykład pozostawienia wolnego obszaru w drugim wierszu po lewej stronie (@fig-rys2).
+
+```{r }
+#| fig-cap: Zastosowanie funkcji plot_spacer(). Długość i szerokość płatka według gatunku
+#| label: fig-rys2
+p1 +  p2 + plot_spacer() +p3 
+```
+
+Podobną konstrukcję przedstawia też kolejny przykład (por. @fig-spacer).
+
+```{r }
+#| fig-cap: Pole z wolnym obszarem w kompozycji wykresów. Długość i szerokość płatka według gatunku
+#| label: fig-spacer
+p8 +  p1 / plot_spacer() +p9 
+```
+
+Wprowadzenie wolnych obszarów pomiędzy wykresami (`plot_spacer()`)
+
+```{r }
+#| fig-cap: Wprowadzenie wolnych obszarów w polu ryzunku. Długość i szerokość płatka według gatunku
+#| label: fig-spacer2
+p6 + plot_spacer() + p7 + plot_spacer() + p1 + plot_spacer()
+```
+
+Wskazując kolejne wykresy do kompozycji możliwe jest zadanie liczby kolumn, w których będą one wyświetlone. Jest to realizowane poprzez odwołanie sie do funkcji `plot_layout()`.
+
+```{r }
+#| fig-cap: Ustalenie liczby kolum kompozycji. Długość i szerokość płatka według gatunku
+#| label: fig-spacer3
+p6 + plot_spacer() +p7 + p2 +p1 +  p3 + 
+  plot_layout(ncol = 3)
+```
+
+Funkcja `plot_layout()` pozwala także na określenie szerokoscvi lub wysokości poszczególnych pól wykresu. Przykład z ustaleniem dwukrotnie większej szerokości środkowego pola przedstawia ponizszy kod, którego rezultat jest na @fig-lay.
+
+```{r}
+#| fig-cap: Deklaracja szerokości obszarów. Długość i szerokość płatka według gatunku
+#| label: fig-lay
+(p6/p2) | p1 | (p7/p3)+
+    plot_layout(widths = c(1,2, 1))
+```
+
+## Układ wykresów według wzorca użytkownika
+
+Pakiet **patchwork** umożliwia deklarowanie układu użytkownika, zgodnie z którym następnie będą rozmieszcane kolejne wykresy. W pierwszym kroku należy określić odpowiedni wzorzec, jak np.:
+
+```{r }
+layout <- '
+A#B
+#C#
+D#E'
+```
+
+W powyżej wskazanym wzorcu litery oznaczają pola, którym zostaną przypisane odpowiednie wykresy, a znak "\#" wolne obszary (puste pola) pomiędzy wykresami. Przykład konstrukcji kompozycji w oparciu o określony powyżej wzorzec realizuje poniższy kod, którego wynik przedstawia @fig-wrap.
+
+```{r }
+#| fig-cap: Kompozycja układu wykresów z wykorzystaniem wzorca układu. Długość i szerokość płatka według gatunku
+#| label: fig-wrap
+wrap_plots(D = p2, C = p1, B = p5, A=p4,E=p3,design = layout)
+```
+
+Konstrując kompozycje wykresów możliwe jest umieszczanie wykresów w obszarze innego wykresu. Odpowiednią możliwość przedstawia poniższy kod, a rezultat prezentuje @fig-inset.
+
+```{r }
+#| fig-cap: Wprowadzenie wykresów w obszar pola innego wykresu. Długość i szerokość płatka według gatunku
+#| label: fig-inset
+p1 + 
+  inset_element(p2, left = 0.0, bottom = 0.5, right = 0.4, top = 1)+
+  inset_element(p3, left = 0.6, bottom = 0.0, right = 1, top = 0.50)
+```
+
+## Wprowadzenie do kompozycji tekstu, tabeli lub klasycznego wykresu
+
+Pakiet **patchwork** jako elementy składowe kompozycji dopuszcza także wprowadzenie tekstu (np. opis) oraz tradycyjnych wykresów. Przykład wprowadzenia tekstu do okna rysunku przedstawia poniższy kod, którego rezultat jest przedstawiony na @fig-grob
+
+```{r }
+#| fig-cap: Wprowadzenie tekstu w obszarze wykresu. Długość i szerokość płatka według gatunku wraz z opisem
+#| label: fig-grob
+p1 + grid::textGrob('Na wykresie przedstawiono  \n długość i szerokość płatka kwiatu iris. \n Kolorem wyróżniono \n trzy gatunki.')
+```
+
+W obszarze okna wykresu możliwe jest także umieszczenie tabel. Przykład taki pokazuje poniższy kod, którego rezultat przedstawia @fig-tabela. Na tym rysunku po lewej stronie przedstawiono tabelę z wybranymi wierszami zbioru **iris**, a po prawej stronie wykres rozrzutu dla zmiennych długość płataka i szerokość płatka, a poniżej tego wykresu jest histogram długości płatka.
+
+```{r}
+#| fig-cap: Kompozycja tabeli i wykresów. Tabela z danymi i dwa wykresy
+#| label: fig-tabela
+#| fig-width: 10
+#| fig-height: 10
+tbl <- tableGrob(iris[c(1:8, 51:58, 101:108), 3:5])
+wrap_elements(tbl) + ((p1+theme(legend.position='none'))/p2+theme(legend.position='bottom'))+
+  plot_layout(ncol = 2) 
+```
+
+W tym rozdziale wszystkie wykresy były konstruowane z wykorzystaniem pakietu **ggplot** z wykorzystaniem **patchwork**. Możliwe jest dołączenie do konstruowanych kompozycji tradycyjnych wykresów wykonanych np. z wykorzystaniem funkcji `plot()`. Dodanie takiego wykresu do kompozycji prezentuje poniższy kod, a rezultat przedstawia @fig-plot.
+
+```{r }
+#| fig-cap: Kompozycja wykresu z ggplot oraz z funkcji plot. Długość i szerokość płatka według gatunku
+#| label: fig-plot
+p5 + ~plot(iris$Petal.Length, iris$Petal.Width, col=iris[,5],main = 'Wykres 2')
+```
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1.  Skonstruuj wykres punktowy i słupkowy dla zbioru **mtcars**, a następnie umieść je w jednym wierszu.
+
+2.  Skonstruuj układ 2×2 z czterech wykresów dla zbioru **mtcars**, a następnie umieść je w jednym wierszu.
+
+3.  Dodaj wspólny tytuł do całego układu wykresów.
+
+4.  Dodaj tło lub motyw wspólny dla wszystkich wykresów.
+
+5.  Ułóż dwa wykresy obok siebie, ale pierwszy ma być 2× szerszy niż drugi.
+:::

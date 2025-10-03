@@ -1,0 +1,71 @@
+# References {.unnumbered}
+
+::: {#refs}
+
+Aczel, A. D. (2000). Statystyka w zarządzaniu. Wydawnictwo Naukowe PWN.
+
+Albert, J., & Rizzo, M. (2012). R by example: Concepts to code. Springer New York. https://doi.org/10.1007/978-1-4614-1365-3
+
+Bąk, A., Dehnel, G., Dudek, A., Gatnar, E., Kania, K., Walesiak, M., Wawrowski, Ł., & Zaborski, A. (2024). Analiza danych z Banku Danych Lokalnych z wykorzystaniem programu R (1st ed.). Wroclaw University of Economics and Business. https://doi.org/10.15611/2024.45.1
+
+Bernstein, P. L. (1997). Przeciw bogom: Niezwykłe dzieje ryzyka. WIG-Press.
+
+Cotton, R. (2013). Learning R (1st ed.). O'Reilly.
+
+Crawley, M. J. (2007). The R book. Wiley.
+
+Dalgaard, P. (2008). Introductory statistics with R (2nd ed.). Springer.
+
+Dayal, V. (2015). An introduction to R for quantitative economics. Springer India. https://doi.org/10.1007/978-81-322-2340-5
+
+Field, A. P., Miles, J., & Field, Z. (2012). Discovering statistics using R. Sage.
+
+Gardener, M. (2012). Beginning R: The statistical programming language. John Wiley & Sons.
+
+Gillespie, C., & Lovelace, R. (2017). Efficient R programming: A practical guide to smarter programming. O’Reilly Media, Inc.
+
+Grolemund, G. (2014). Hands-on programming with R (1st ed.). O'Reilly.
+
+Heumann, C., Schomaker, M., & Shalabh. (2016). Introduction to statistics and data analysis. Springer International Publishing. https://doi.org/10.1007/978-3-319-46162-5
+
+Hui, E. G. M. (2019). Learn R for applied statistics: With data visualizations, regressions, and statistics. Apress. https://doi.org/10.1007/978-1-4842-4200-1
+
+Husson, F., Lê, S., & Pagès, J. (2017). Exploratory multivariate analysis by example using R (2nd ed.). CRC Press.
+
+Kończak, G. (2012). Wstęp do symulacji komputerowych. Wydawnictwo Uniwersytetu Ekonomicznego w Katowicach.
+
+Kończak, G. (2014). Rola graficznych prezentacji danych w popularyzacji statystyki. Wiadomości Statystyczne, LIX(7), 49–61.
+
+Kończak, G. (2024). Wizualizacja   wyników badań naukowych.  Zasady, metody i narzędzia. Wydawnictwo Uniwersytetu Ekonomicznego w Katowicach.
+
+
+Lander, J. P. (2017). R for everyone: Advanced analytics and graphics (2nd ed.). Addison-Wesley.
+
+Long, J. D., & Teetor, P. (2019). R cookbook: Proven recipes for data analysis, statistics, and graphics (2nd ed.). O'Reilly.
+
+Matloff, N. (2011). The art of R programming. William Pollock.
+
+Sadowski, W. (1987). Statystyka na co dzień. Polskie Wydawnictwo Ekonomiczne.
+
+Schmuller, J. (2017). Statistical analysis with R for dummies. John Wiley & Sons, Inc.
+
+Schumacker, R. E. (2016). Using R with multivariate statistics. Sage.
+
+Silge, J., & Robinson, D. (2017). Text mining with R: A tidy approach (1st ed.). O'Reilly.
+
+Stowell, S. (2014). Using R for statistics. Apress.
+
+Tattar, P., Ramaiah, S., & Manjunath, B. G. (2016). A course in statistics with R. John Wiley & Sons, Inc.
+
+Tattar, P. N. (2017). Statistical application development with R and Python: Power of statistics using R and Python (2nd ed.). Packt Publishing.
+
+Verzani, J. (2002). simpleR – Using R for introductory statistics.
+
+Wickham, H. (2015). R packages (1st ed.). O'Reilly Media.
+
+Wickham, H. (2019). Advanced R (2nd ed.). CRC Press, Taylor & Francis Group.
+
+Zelterman, D. (2015). Applied multivariate statistics with R. Springer International Publishing. https://doi.org/10.1007/978-3-319-14093-3
+
+
+:::

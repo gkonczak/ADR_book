@@ -1,0 +1,7 @@
+# Zakończenie {.unnumbered}
+
+W podręczniku przedstawiono....
+
+```{r}
+1 + 1
+```

@@ -1,0 +1,527 @@
+# Struktury danych w **R**
+
+::: {.callout-note icon="false" appearance="simple"}
+
+Język programowania **R** oferuje kilka podstawowych struktur danych. Każda z nich ma swoje unikalne zastosowania w analizie danych. Te struktury to:
+
+-   wektory (vectors) jednorodne typy danych, np. liczbowe, znakowe lub logiczne,
+
+-   macierze (matrix) dwuwymiarowa tablica danych określonego typu (np. tablica liczbowa),
+
+-   tablice (array) wielowymiarowa tablica danych określonego typu (np. tablica liczbowa),
+
+-   ramki danych (data frame) tablica z kolumnami tego samego lub różnych typów,
+
+-   listy (lists) zbiór dowolnych obiektów, w szczególnosco różnego typu.
+:::
+
+## Wektory (vectors)
+
+Wektory są podstawowym typem danych w języku **R** i stanowią uporządkowane zbiory elementów tego samego typu, takich jak liczby, tekst czy wartości logiczne. Pozwalają na przechowywanie i przetwarzanie wielu wartości jednocześnie, co jest niezwykle przydatne w analizie danych. Wektory można tworzyć za pomocą funkcji `c()`, np. `c(1, 2, 3, 4)`, a następnie wykonywać na nich różnorodne operacje arytmetyczne i logiczne. Dzięki wektorom **R** umożliwia efektywne i szybkie przetwarzanie dużych zbiorów danych.
+
+```{r}
+w1=c(10,9,8,7,6,5)
+w1
+
+w2=c(T,T,F,F)
+w2
+
+w3=c("Dawid","Wojtek","Robert","Kuba","Klaudia","Luiza")
+w3
+
+1:10
+10:1
+
+1.2:20.2
+1.2:20.3
+1.2:20.1
+
+# ?seq
+seq(16,30,3)
+seq(to=30,by=3,from=16)
+
+w4=seq(to=30,from=16,3)
+w4
+w5=c(23,23,1,2,3,1)
+
+ls()
+# w1 + w3
+w1;w3
+
+w1+w5
+w1*w5
+
+w6=seq(7,10,length=10)
+w6
+length(w6)
+
+any(w6<0)
+any(w6>0)
+w6>0
+
+all(w1==w3)
+```
+
+### Funkcja rep()
+
+::: callout-tip
+### Wywołanie help
+
+?rep Informacja 'help' o funkcji *rep*
+:::
+
+```{r}
+
+
+rep(1,100)  #Powielenie 1-ki sto razy.
+
+rep(c(1,2,3),3)
+rep("pies",2)
+
+rep(c(1,2,3),each=3)
+
+
+# Jak uzyskać wektor liczb 9 8 7 9 8 7 2 2 2 1 1 1?
+
+# 1 sposób
+x1=rep(c(9,8,7),2)
+x1
+x2=rep(c(2,1),each=3)
+x2
+c(x1,x2)
+
+# 2 sposób - kod w jednej linijce
+c(rep(c(9,8,7),2),rep(c(2,1),each=3))
+```
+
+### Sampling - pobieranie próbek
+
+```{r}
+# ?sample
+s1=sample(1:7,10,replace=T)
+s1
+# sample(1:7,10)	
+# Wykonując kod pojawi się błąd, ponieważ zbiór, z którego pobieramy liczby jest za mały.
+
+# Wektor s2 będzie pobierał 5 liczb z wektora liczb pierwszych z przedziału od 1 do 20.
+s2<-sample(c(2,3,5,7,11,13,17,19),5)
+s2
+
+s3<-sample(1:4,15,prob=c(0.4,0.1,0.3,0.2),replace=T)
+s3  
+
+```
+
+### Maskowanie dla wektorów
+
+```{r}
+x=c(19,23,27,15,43)
+x
+M=c(T,F,F,T,T)
+M
+x[M]
+```
+
+### Indeksy dla wektorów
+
+```{r}
+x[2]
+x[2:5]
+x[c(1,5)]
+
+x[length(x)]
+x[c(1,length(x))]
+
+x[-2]
+x[-c(1,3)]
+x[-(1:3)]
+
+x[4]=-1
+
+x[-4]=0
+x
+
+x=c(19,23,27,15,43)
+x
+
+x>20
+x[x>20]
+```
+
+### Typ czynnikowy (factor)
+
+```{r}
+x=c("pop","rock","rap","rap")
+class(x)
+f<-factor(x)
+f
+
+factor(x,exclude="pop")
+
+f=factor(x,label=c("1 gatunek","2 gatunek","3 gatunek"))
+f
+
+f1=factor(c(1,2,1,3,1,2),levels=1:4)
+f1
+
+levels(f1)=c("nie podoba mi się","średnie","okej","super")
+f1
+
+summary(f1)
+
+f1[length(f1)]="super"
+f1
+summary(f1)
+
+as.numeric(f1)
+```
+
+## Macierze (matrix)
+
+Macierze w R to dwuwymiarowe struktury danych, w których wszystkie elementy muszą być tego samego typu (np. liczby, tekst lub wartości logiczne). Są one szczególnie przydatne do przechowywania i przetwarzania danych tabelarycznych oraz wykonywania operacji matematycznych, takich jak mnożenie czy transpozycja. Macierze można tworzyć za pomocą funkcji matrix(), określając liczbę wierszy i kolumn, a także wypełniając je odpowiednimi wartościami. R oferuje wiele wbudowanych funkcji do pracy z macierzami.
+
+
+
+```{r}
+a=1:5
+b=5:1
+c=c(1,2,34,5,0)
+a;b;c
+
+m1=cbind(a,c,b)
+m2=rbind(c,b,a)
+m3=cbind(m1,c)
+
+# cbind(m1,m2) 
+# Niewykonalne ze względu na różne wymiary obiektów.
+
+# ?matrix
+
+m4=matrix(0,ncol=4,nrow=3)
+m4
+
+m5=matrix(1:12,nrow=3,ncol=4)
+m5
+
+matrix(1:12,nrow=3,ncol=4,byrow=T)
+
+diag(4)
+diag(c(4,3,2,3))
+
+```
+
+### Maskowanie dla macierzy i ramek danych
+
+```{r}
+k=c(F,F,F,T)
+w=c(F,F,T)
+
+m5[w,k]
+```
+
+### Indeksy dla macierzy i ramek danych
+
+```{r}
+
+m5[3,2] #Wybór elementu z 3 wiersza i 2 kolumny.
+
+m5[,2]
+
+m5[1,]
+
+m5[1:2,c(1,4)]
+
+m5[,-3]
+m5
+
+m5[2,4]=0
+m5
+
+m5>6
+
+m5[m5>6]
+
+m5[m5>6]=-1
+m5
+```
+
+### Obliczenia na macierzach
+
+```{r}
+length(m5)
+nrow(m5)
+ncol(m5)
+
+# Mnożenie macierzy
+m=matrix(1:4,2,2)
+mm=matrix(4:1,2,2)
+
+m;mm
+m*mm
+m%*%mm
+
+det(m)
+t(m)
+solve(m)
+
+sum(m)
+mean(m)
+
+
+apply(m,1,sum)
+apply(m,2,sum)
+apply(m,1,mean)
+
+```
+
+### Przykłady
+
+```{r}
+plec=c("M","K","M","M","K")
+zakupy=c(2,0.5,3.2,1.25,3) #Waga kupionych jabłek (w kg)
+
+# Ile jabłek w gramach kupili mężczyźni?
+# 1kg=1000g
+
+# 1 sposób
+sum(zakupy[plec=="M"]*1000)
+
+# 2 sposób
+plec=c(1,0,1,1,0)
+plec*(zakupy*1000)
+sum(plec*(zakupy*1000))
+
+# 3 sposób
+sum(zakupy[c(1,3,4)])*1000
+
+# 4 sposób
+sum(zakupy[-c(2,5)])*1000
+
+```
+
+## Tablice (array)
+
+Tablice to wielowymiarowe struktury danych, które pozwalają na przechowywanie elementów tego samego typu w więcej niż dwóch wymiarach. W przeciwieństwie do macierzy, które są ograniczone do dwóch wymiarów (wiersze i kolumny), tablice mogą mieć dowolną liczbę wymiarów, co czyni je bardzo elastycznym narzędziem do pracy z bardziej złożonymi danymi. Tablice tworzy się za pomocą funkcji `array()`, podając wektor wartości oraz wektor określający rozmiary poszczególnych wymiarów. Dostęp do elementów tablicy uzyskuje się poprzez podanie indeksów dla każdego wymiaru. 
+
+
+```{r}
+t=array(sample(1:100,replace=T),c(3,2,3))
+t
+
+array(sample(1:100,replace=T),c(3,2))
+
+t[1,2,3]
+t[,,3]	#Wyświetlenie 3 warstwy z tablicy t.
+
+t[c(1,2),,2]
+
+dim(t)
+
+dim(t)[2]
+ncol(t)
+
+dim(t)=c(3,6)
+t
+
+t=array(sample(1:100,replace=T),c(3,2,3))
+t
+
+apply(t,2,sd) #2 - oznacza kolumny
+apply(t,3,sd)[2]  #3 - oznacza warstwy, co oznacza, że obliczane są odchylenia standardowe dla warstw. [2] pozwala na wybranie 2 elementu z uzyskanego wektora, czyli odchylenia standardowego dla elementów z 2-giej warstwy.
+```
+
+## Ramki danych (data.frame)
+
+Ramki danych (data frames) w R należą do najważniejszych i najczęściej używanych struktur danych, szczególnie w analizie danych statystycznych. Pozwalają na przechowywanie danych w postaci tabeli, gdzie każda kolumna może zawierać dane innego typu (np. liczby, tekst, wartości logiczne), a każdy wiersz odpowiada pojedynczej obserwacji. Ramki danych można tworzyć za pomocą funkcji `data.frame()`, a następnie wygodnie przeglądać, filtrować, sortować i modyfikować. 
+
+
+```{r}
+# Ramka posiada dane o pracownikach: imię, wiek, fakt czy ktoś złożył wypowiedzenie, staż pracy (w latach).
+
+ramka=data.frame(c("Ola","Kamil","Maciek","Asia"),c(21,32,38,40),c(T,F,F,F),seq(2,12,3))
+ramka
+
+names(ramka)
+colnames(ramka)
+
+colnames(ramka)=c("imię","wiek","wypowiedzenie","staż pracy")
+ramka
+
+rownames(ramka)
+
+# Zmiana nazw wierszy na obserwacja 1, obserwacja 2, ... .
+
+# 1 sposób
+t1="Obserwacja"
+t1
+rownames(ramka)=paste(t1,rownames(ramka))
+ramka
+
+# 2 sposób
+rownames(ramka)= paste('obserwacja',1:length(ramka))
+ramka
+
+rownames(ramka)=paste("obs",1:length(ramka),sep="")
+ramka
+
+dimnames(ramka)
+
+ramka[3]
+ramka[[3]]
+
+mean(ramka[[4]])
+
+mean(ramka[4])	#Błąd, ponieważ z takiego typu nie można policzyć średniej - natomiast z wektorów można .
+
+class(ramka[[4]])==class(ramka[4])
+
+ramka["wiek"]
+ramka[["wiek"]]
+
+ramka$wiek
+mean(ramka$wiek)
+
+ramka[2,4]
+ramka
+
+names(ramka)[4]
+names(ramka)[4]="staż"
+ramka
+
+ramka['obs2',]
+
+# Jak wyświetlić dane o osobie, która złożyła wypowiedzenie?
+ramka[,3]==T
+ramka[,"wypowiedzenie"]==T
+
+ramka[ramka[,3]==T,]
+ramka[ramka[,"wypowiedzenie"]==T,]
+
+sapply(ramka,class)
+lapply(ramka,class)
+```
+
+::: callout-tip
+### Zbiór danych: iris
+data(iris)
+iris
+:::
+
+```{r}
+# View(iris)
+
+head(iris)
+head(iris,2)
+tail(iris)
+
+dim(ramka)
+```
+
+::: callout-tip
+### Przyłączenie odłączenie zbioru
+attach(iris)
+Species
+
+detach(iris)
+### Species - Jeśli ponownie wpisze się kod: Species, wówczas wystąpi błąd.
+:::
+
+### Funkcja subset
+
+```{r}
+
+#Funkcja subset pozwala wybrać wiersze ze  zbioru danych.
+subset(iris,Species=="virginica")
+```
+
+### Edytowanie danych
+
+::: callout-tip
+## Edycja obiektu
+
+edit(ramka)
+ramka=edit(ramka)
+fix(ramka)
+
+:::
+
+## Listy (list)
+
+Listy w języku **R** to bardzo elastyczne struktury danych, które pozwalają na przechowywanie elementów o różnych typach, takich jak liczby, teksty, wektory, ramki danych czy nawet inne listy. Dzięki temu listy są często wykorzystywane do organizowania złożonych danych, na przykład wyników analiz statystycznych. Listę tworzy się za pomocą funkcji `list()`. Do elementów listy można odwoływać się zarówno za pomocą indeksów, jak i nazw.
+
+```{r}
+x=list(c("Halina","Jan"),c("siatkówka","śpiew"),
+c("k","m"),c(34,40))
+x
+
+x=list(imię=c("Halina","Jan"),hobby=c("siatkówka","śpiew"),
+płeć=c("k","m"),wiek=c(45,30))
+x
+
+names(x)
+str(x)
+
+x$wiek
+x[4]
+x[[4]]
+x[["wiek"]]
+
+
+x[[3]][2] #Wyświetlona zostanie płeć 2 osoby.
+
+
+x$hobby[1]='czytanie' #Zamiana hobby z siatkówka na czytanie.
+x
+
+x[[1]][3]="Ania"
+x
+
+x=c(x,list(konta.w.b=c(1,2)))
+x
+x=x[-5]
+x
+
+x[[1]][c(1,2)]
+
+
+
+lapply(x[1],sort)
+lapply(x,sort)
+
+x=lapply(x,sort)
+x
+```
+
+::: callout-tip
+### Edycja obiektu
+
+edit(x)
+
+Można edytować - dodawać, usuwać elementy zamieszczone na liście.
+:::
+
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Utwórz wektor liczb całkowitych od 1 do 20. Wyświetl tylko te elementy, które są podzielne przez 4.
+
+2. Utwórz macierz o wymiarach $4 \times 3$ z liczb od 1 do 12 (wierszami). Wyświetl drugi wiersz tej macierzy.
+
+3. Stwórz ramkę danych z trzema kolumnami: imię (znakowa), wiek (liczbowa), student (logic).  Wprowadź do ramki dane dla 4 osób. Wyświetl dane tylko tych osób, które są studentami.
+
+4. Utwórz tablicę 3x2x2 z losowych liczb całkowitych z przedziału 1–50. Oblicz średnią wszystkich elementów z drugiej warstwy.
+
+5. Stwórz listę o nazwie moje_dane zawierającą trzy elementy: 
+wektor liczb od 1 do 5,
+macierz 2x2 wypełnioną liczbami od 1 do 4,
+wektor znakowy c("R", "jest", "super").
+
+Użyj funkcji `lapply()` oraz `length()`, aby dowiedzieć się, ile elementów znajduje się w każdym obiekcie na liście (ile liczb w wektorze, ile elementów w macierzy, ile słów w drugim wektorze). 
+
+
+:::
+
+
+
+

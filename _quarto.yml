@@ -1,0 +1,75 @@
+project:
+  type: book
+
+book:
+  title: "Wprowadzenie do analizy danych w środowisku R"
+  author: Grzegorz Kończak, Martyna Kosińska
+  date: today
+  chapters:
+    - index.qmd
+    - wprowadzenie.qmd  
+    - r01.qmd # MK Podstawy pracy z programem R 
+    - r02.qmd # MK Struktury danych
+    - r03.qmd # MK Instrukcje warunkowe oraz pętle
+    - r04.qmd # MK Funkcje i operacje matematyczne oraz statystyczne
+    - r05.qmd # MK Wizualizacja z pakietem lattice
+    
+    - r06.qmd # GK Pakiet ggplot2. Podstawy konstrukcji wykresów 
+    - r07.qmd # GK Pakiet patchwork 
+    - r08.qmd # MK Model liniowy
+    - r09.qmd # MK Elementy rachunku prawdopodobieństwa. Zmienne losowe   
+    - r10.qmd # MK Weryfikacja hipotez /// NIE i pakiet dplyr
+    
+    - r11.qmd # GK tidyverse // operator pipe
+    - r12.qmd # GK Podstawy animacji    - r13.qmd # GK Rzeczywiste dane z BDL, animacje
+    - r13.qmd # BDL
+    - r14.qmd # GK Shiny
+    - r15.qmd # GK Quarto
+    
+    - r16.qmd # GK Ciekawostki // Anscombe (59 Dayal) , Datasaur, De Mere, symulacja inflacji
+    - references.qmd
+
+bibliography: references.bib
+link-citations: true
+csl: apa.csl
+
+
+format:
+  html:
+    prefer-html: true
+  #  reference-doc: ue20.docx
+    lot: true  # Dodaje wykaz rysunków
+    lof: true  # Dodaje wykaz tabel
+    number-equations: true
+    title-block-banner: '#99FF00'
+    toc: true
+    toc-title: "Spis treści"
+    toc-depth: 3
+    number-sections: true
+ #   embed-resources: true
+
+    theme: simple # morph - było spacelab superhero yeti solarized simplex cosmo darkly simplex  ## beige blood dark default league moon night serif simple sky
+    highlight-style: tango # tango kate pygments espresso zenburn (czarne) kate monochrome breezedark haddock
+    fig-width: 8
+    fig-height: 6
+    fig-cap-location: bottom
+    tbl-cap-location: top
+    execute:
+      echo: true
+      warning: false
+    crossref:
+      fig-title: "Rysunek"
+      title-delim: ". " # Opcjonalnie, aby zmienić separator między numerem a podpisem
+      tbl-title: "Tabela"
+      fig-prefix: "rys."
+      tbl-prefix: "tabela"
+      eq-prefix: ""
+
+#  pdf:
+#    documentclass: scrreprt
+knitr:
+  opts_chunk:
+    comment: "#"
+prefer-html: true
+editor: visual
+

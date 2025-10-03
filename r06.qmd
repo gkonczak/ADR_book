@@ -1,0 +1,572 @@
+# Pakiet **ggplot2**. Podstawy gramatyki wykresów (grammar of graphics)
+
+::: {.callout-note icon="false" appearance="simple"}
+
+
+Pakiet **ggplot2** to jedno z najpopularniejszych i najbardziej zaawansowanych narzędzi do tworzenia wykresów statystycznych w języku **R**. Został zbudowany przez Hadleya Wickhama i jest implementacją tzw. Gramatyki Grafiki (Grammar of Graphics), co oznacza, że wykresy buduje się poprzez łączenie niezależnych komponentów, takich jak warstwy, geometrie, skale, układy współrzędnych i motywy. Dzięki temu użytkownik może elastycznie i intuicyjnie tworzyć zarówno proste, jak i bardzo złożone wizualizacje danych.
+
+W rozdziale przedstawiono konstrukcję wykresów jak:
+
+- wykres rozrzutu,
+- histogram,
+- wykres słupkowy,
+- wykres pudełkowy,
+- wykres wilonowy,
+- wykres regresji.
+
+Dodatkowo przedstawiono ideę konstrukcji wykresów panelowych i wykorzystanie motywów dostępnych w pakiecie **ggthemes**.
+
+
+:::
+
+Przed przystąpieniem do konstrukcji wykresów niezbędna jest instalacja pakietu **ggplot2**, o ile wcześniej nie został zainstalowany, a następnie załadowanie pakietu. Poniższe komendy pozwalają załadować wymagane w tym ropzdziale pakiety:
+
+```{r}
+#| echo: true
+#| warning: false
+library(ggplot2)
+library(ggthemes)
+```
+
+Dla konstrukcji wykresów w tym rozdziale wykorzystano dostępny w **R** zbiór **mtcars**.
+
+::: callout-important
+## **mtcars**
+
+Zbiór **mtcars** składa się z 11 zmiennych i zawiera 32 obserwacje (modele samochodów). 
+Jest to zestaw danych używany często do nauki analizy danych, modelowania statystycznego i uczenia maszynowego.
+
+W zbiorze wyróżniono 11 następujacych zmiennych:
+
+- *mpg*	- liczba mil przejechanych na galonie paliwa	(mile/galon)
+- *cyl*	- liczba cylindrów	
+- *disp*	- pojemność silnika	(cale sześcienne)
+- *hp*	- moc silnika	(konie mechaniczne )
+- *drat*	- stosunek przełożeń osi 
+- *wt*	- masa samochodu	(tysiące funtów)
+- *qsec*	- czas przejazdu (1/4 mili	sekundy)
+- *vs*	- typ silnika	(0 = V-kształtny, 1 = rzędowy)
+- *am*	- rodzaj skrzyni biegów	(0 = automatyczna, 1 = manualna)
+- *gear*	- liczba biegów	
+- *carb*	- liczba gaźników	
+
+
+:::
+
+Dla wyświetlenia początkowych rekordów zbioru **mtcars** można posłużyć się komendą `head`
+
+```{r}
+#| echo: true
+#| warning: false
+data(mtcars)
+head(mtcars)
+```
+
+Podstawową charakterystykę pięciu wybranych zmiennych analizowanego zbioru można uzyskać następująco:
+
+```{r}
+#| echo: true
+#| warning: false
+summary(mtcars[, c(1,2,6,9,10)])
+```
+
+Zmienne *cyl, gear* i *am* są zmiennymi numerycznymi. Ze względu na charakter zmiennych, które formalnie pozwalają na wyróżnienie grup samochodów, warto je przekonwertować na czynniki. Realizują to następujace komendy:
+
+
+```{r}
+#| echo: true
+#| warning: false
+mtcars$gear <- factor(mtcars$gear, levels=c(3,4,5), labels=c('3 biegi','4 biegi','5 biegów'))
+mtcars$am <- factor(mtcars$am, levels=c(0,1), labels=c('automatyczna','ręczna'))
+mtcars$cyl <- factor(mtcars$cyl, levels=c(4,6,8), labels=c('4 cylindry','6 cylindrów','8 cylindrów'))
+```
+
+Po wykonanej konwersji podsumowanie danych jest już prezentowane inaczej. Dla trzech zmodyfikowanych zmiennych nie są już prezentowane wartości minimalna, maksymalna, średnia, ale liczebność poszczególnych wariantów czynników.
+
+```{r}
+#| echo: true
+#| warning: false
+summary(mtcars[, c(1,2,6,9,10)])
+```
+
+
+
+Wykorzystując funkcję `plot` z pakietu **graphics** można skonstruować wykres rozrzutu jak poniżej.
+
+
+```{r}
+#| echo: true
+#| fig-width: 10
+#| fig-height: 4
+#| label: fig-plot1
+#| fig-cap: Waga samochodu i liczba mil przejechanych na galonie paliwa 
+plot(mpg ~ wt, data = mtcars, pch = 19, xlab='Waga', ylab='Liczba mil')
+```
+
+Na podstawie  zbioru **mtcars** w dalszej części zostaną przedstawione podstawowe zasady konstrukcji wykresów  zgodnie z zasadami gramatyki grafiki (*grammar of graphics*) realizowanej w **ggplot2**.
+
+
+
+## Konstrukcja wykresów w **ggplot2**
+
+Pakiet **ggplot2** daje znacznie szersze możliwości konstrukcji efektownie wyglądających prezentacji graficznych niż podstawowa grafika dostępna w pakiecie **graphics**.
+Dla efektywnej pracy z **ggplot2** niezbędne jest poznanie zasad konstrukcji wykresów zgodnych z "Gramatyką Grafiki". Schematycznie tę zasadę przedstawiono poniżej.
+
+
+
+W @tbl-gg przedstawiono wykaz składników, z których buduje się wykres:
+
+: Przykłady zapisu wzorów w Quarto {#tbl-gg}
+
+| Składnik            | Opis                                                                 |
+|---------------------|----------------------------------------------------------------------|
+| Dane (`data`)        | Zbiór danych do wizualizacji.                             |
+| Mapowanie (`aesthetics`, `aes()`) | Powiązanie zmiennych z właściwościami wizualnymi (np. osie, kolor). |
+| Geometria (`geom_`)  | Rodzaj reprezentacji graficznej, np. punkty, linie, słupki, boxploty. |
+| Skale (`scales`)     | Określają sposób odwzorowania danych na przestrzeń wizualną (np. kolory, osie). |
+| Statystyki (`stat_`) | Transformacje danych wykonywane przed rysowaniem (np. regresja, sumy). |
+| Układ (`facets`)     | Podział wykresu na podgrupy (np. osobne panele wg kategorii).        |
+| Układ osi i wygląd (`coordinates`) | Projekcja przestrzeni (np. `coord_flip`, `coord_polar`).        |
+| Motyw (`theme`)      | Styl graficzny: czcionki, kolory, siatki, obramowania. 
+
+
+
+Jako pierwszy zostanie skonstruowany wykres rozrzutu dla wagi samochodu (*wt*) oraz liczby mil przejechanych na jednym galonie paliwa (*mpg*).
+Zgodnie z *gramatyką grafiki* należy wskazać zbiór danych, na podstawie którego ma zostać wykonany wykres. Na osi OX umieszcza się *wt*, na OY zmienną *mpg* i dodatkowo należy zadać geometrię, w tym przypadku `geom_point()` - wykres rozrzutu.
+Komenda dla wykreślenia wykresu rozrzutu dla zmiennych *wt* i *mpg* jest przedstawiona w poniższym kodzie, a rezultat prezentuje @fig-rozrz1.
+
+
+```{r }
+#| echo: true
+#| label: fig-rozrz1
+#| fig-cap: Podstawowa konstrukcja wykresu w **ggplot2**. Waga samochodu i liczba mil przejechanych na galonie paliwa
+
+ggplot(data=mtcars,aes(x=wt,y=mpg)) + geom_point()
+```
+
+Taki sam rezultat uzyskuje się bez podawania nazw parametrów 'data=', 'x=' i 'y=', czyli wykonując poniższy kod.
+
+```{r }
+#| echo: true
+#| eval: false
+#| fig-cap: Waga samochodu i liczba mil przejechanych na galonie paliwa
+ggplot(mtcars,aes(wt,mpg))+geom_point()
+```
+
+Dla danych zamieszczonych na @fig-rozrz1 można wyróżnić grupy np. ze względu na liczbę cylindrów (zmienna *cyl*). Do poprzedniego kodu zostało dodane oznaczenie dla 'color' (por. @fig-rozrz2).
+
+```{r }
+#| echo: true
+#| label: fig-rozrz2
+#| fig-cap: Rozróżnienie kolorem punktów samochodów ze względu na liczbę cylindrów. Waga samochodu i liczba mil przejechanych na galonie paliwa względem liczby cylindrów
+ggplot(mtcars,aes(wt,mpg,color=cyl))+geom_point()
+```
+
+Na wykresach powinny być umieszczone dobrze dobrane etykiety. Uzyskuje się to poprzez podanie wartości odpowiednich parametrów w warstwie `labs`. Poniższy kod pokazuje wprowadzenie etykiet osi OX i OY, a także etykiety legendy, a wynik przedstawiono na @fig-rozrz3.
+
+```{r }
+#| echo: true
+#| eval: true
+#| label: fig-rozrz3
+#| fig-cap: Dodanie etykiet osi na wykresie. Waga samochodu i liczba mil przejechanych na galonie paliwa względem liczby cylindrów 
+ggplot(mtcars,aes(wt,mpg,color=cyl))+geom_point()+labs(x='Waga samochodu',y='Liczba przejechanych mil na galonie paliwa',color='Liczba cylindrów')
+```
+
+Dla zwiększenia czytelnosci zapisu powyższą komendę warto zapisać ujmując każdą warstwę w nowej linii. Odpowiedni zapis będzie następujący:
+
+
+```{r }
+#| echo: true
+#| label: fig-rozrz4
+#| fig-cap: Dodanie etykiet osi na wykresie. Waga samochodu i liczba mil przejechanych na galonie paliwa względem liczby cylindrów 
+ggplot(mtcars,aes(wt,mpg,color=cyl))+
+  geom_point()+
+  labs(x='Waga samochodu',y='Liczba przejechanych mil na galonie paliwa',color='Liczba cylindrów')
+```
+
+Użytkownik może zdecydować o miejscu umieszczenia legendy. Poniższy kod powoduje umieszczenie legendy pod wykresem, a efekt realizacji przedstawia @fig-rozrz5.
+
+
+```{r }
+#| echo: true
+#| label: fig-rozrz5
+#| fig-cap: Umieszczenie legendy pod wykresem. Waga samochodu i liczba mil przejechanych na galonie paliwa względem liczby cylindrów 
+ggplot(mtcars,aes(wt,mpg,color=cyl))+
+  geom_point()+
+  labs(x='Waga samochodu',y='Liczba przejechanych mil na galonie paliwa',color='Liczba cylindrów')+
+  theme(legend.position='bottom')
+```
+
+Poprzednio wyróżniono grupy ze względu na liczbę cylindrów. Możliwe jest wyróżnienie grup także ze względu na inne charakterystyki. Na przykład liczbę biegów (*gear*) można związać z kształtem graficznie reprezentowanych punktów. W poniższym kodzie wskazano zmienną *gear* dla parametru 'shape', a rezultat przedstawia @fig-rozrz6.
+
+```{r }
+#| echo: true
+#| eval: true
+#| label: fig-rozrz6
+#| fig-cap: Powiązanie kształtu punktów na wykresie z liczbą biegów. Waga samochodu i liczba mil przejechanych na galonie paliwa względem liczby cylindrów i liczby biegów
+ggplot(mtcars,aes(wt,mpg,color=cyl,shape=gear))+
+  geom_point()+
+  labs(x='Waga samochodu',y='Liczba przejechanych mil na galonie paliwa',color='Liczba cylindrów',shape='Liczba biegów')+
+  theme(legend.position='bottom')
+```
+
+Dodatkowo można np. z masą samochodu (*wt*) związać wielkość reprezentacji graficznej punktów. W kodzie parametr 'size' powiązano ze zmienną *wt*. Wynik przedstawia @fig-rozrz7.
+
+```{r }
+#| echo: true
+#| eval: true
+#| label: fig-rozrz7
+#| fig-cap: Powiązanie wielkosci punktów na wykresie z masą samochodu. Waga samochodu i liczba mil przejechanych na galonie paliwa względem liczby cylindrów, liczby biegów i wagi samochodu
+ggplot(mtcars,aes(wt,mpg,color=cyl,shape=gear,size=wt))+
+  geom_point()+
+  labs(x='Waga samochodu',y='Liczba przejechanych mil na galonie paliwa',color='Liczba cylindrów',shape='Liczba biegów',size='Waga')+
+  theme(legend.position='bottom')
+```
+
+
+Wszystkie dotychczas przedstawione wykresy wykonane w **ggplot2** jako reprezentację geometryczną miały  `geom_point()`.
+Pakiet **ggplot2** zapewnia możliwości wielu różnych reprezentacji geometrycznych. Dla konstrukcji określonego typu wykresu należy dobrać właściwą reprezentację geometryczną. 
+Histogram jest wykreślany dla jednej zmiennej ilościowej. Jako parametr `aes` należy wskazać tylko jedną zmienną liczbową (x) i zmienić reprezentację geometryczną na `geom_histogram()`. Dla zmiennej *mpg* realizuje to poniższy kod, a wynik przedstawia @fig-hist1.
+
+```{r}
+#| echo: true
+#| label: fig-hist1
+#| fig-cap: Konstrukcja histogramu.  Liczba mil przejechanych na galonie paliwa 
+ggplot(mtcars,aes(mpg))+
+  geom_histogram()
+```
+
+Podobnie jak poprzednio można dodać kolory. W przypadku histogramu kolorem można wypełnić powierzchnię słupków (fill) a także ustalić obramowanie słupków (color). Zmiana koloru słupków i obramowania została przedstawiona na @fig-hist2.
+
+```{r }
+#| echo: true
+#| label: fig-hist2
+#| fig-cap: Konstrukcja histogramu z dodaniem kolorów słupków.  Liczba mil przejechanych na galonie paliwa
+ggplot(mtcars,aes(mpg))+
+  geom_histogram(binwidth=2,fill='yellow',color='blue')
+```
+
+Wprowadzając kolor ze względu na wybraną zmienną uzuskuje się możliwość przekazania na wykresie dodatkowych informacji. Takie rozwiązanie przedstawia poniższy kod, a wynik jest przedstawiony na @fig-hist3.
+
+```{r }
+#| echo: true
+#| label: fig-hist3
+#| fig-cap: Konstrukcja histogramu z powiązaniem koloru z liczbą cylindrów.  Liczba mil przejechanych na galonie paliwa według liczby cylindrów 
+ggplot(mtcars,aes(mpg,fill=cyl))+
+  geom_histogram(binwidth=.8,)
+```
+
+Do najczęściej wykorzystywanych w prezentacjach graficznych należą wykresy słupkowe. Dla konstrukcji takiego wykresu można  wykorzystać reprezentację geometryczną `geom_bar()`.
+Przykład takiej konstrukcji dla liczby samochodów względem liczby cylindrów uzyskuje się następująco (por. także @fig-bar1):
+
+```{r }
+#| echo: true
+#| label: fig-bar1
+#| fig-cap: Konstrukcja wykresu słupkowego. Samochody według liczby cylindrów
+ggplot(mtcars,aes(cyl))+
+  geom_bar()
+```
+
+
+
+Często wygodniej jest przedstawiać wartości zmiennych na słupkach zorientowanych poziomo. Można to uzyskać wprowadzając do poprzedniego kodu warstwę obrócenia osi - `coord_flip()`. Możliwa jest także zmiana układu współrzędnych na biegunowe (`coord_polar()`). Wyniki takich modyfikacji przedstawiaja @fig-bar2 i @fig-bar3.
+
+```{r }
+#| echo: true
+#| label: fig-bar2
+#| fig-cap: Konstrukcja wykresu słupkowego w orientacji poziomej. Samochody według liczby cylindrów
+ggplot(mtcars,aes(cyl))+
+  geom_bar()+
+  coord_flip()
+```
+
+
+
+```{r }
+#| echo: true
+#| label: fig-bar3
+#| fig-cap: Konstrukcja wykresu słupkowego w układzie współrzędnych biegunowych. Samochody według liczby cylindrów
+ggplot(mtcars,aes(cyl))+
+  geom_bar()+
+  coord_polar()
+```
+
+W analizach statystycznych bardzo pomocne są wykresy pudełkowe. Wykres pudełkowy pozwala na przedstawienie wartości najmniejszej, największej, kwartyli, wartości odstających i ekstremalnych. Wykres taki uzyskuje się po wprowadzeniu reprezentacji graficznej `geom_boxplot()`.
+Poniższy kod prowadzi do konstrukcji trzech "pudełek" według liczby cylindrów, a rezultat przedstawia @fig-box1.
+
+```{r }
+#| echo: true
+#| label: fig-box1
+#| fig-cap: Konstrukcja wykresu pudełkowego. Liczba mil przejechanych na galonie paliwa według liczby cylindrów
+ggplot(mtcars,aes(cyl,mpg))+
+  geom_boxplot()
+```
+
+Reprezentacje geometryczne często można stosować łącznie. Jeśli do poprzedniego kodu dodana zostanie reprezentacja geometryczna `geom_point()`, to na wykresie poza "pudełkami" zostaną przedstawione również punkty reprezentujace pojedyncze obserwacje (por. @fig-box2).
+
+```{r }
+#| echo: true
+#| label: fig-box2
+#| fig-cap: Konstrukcja wykresu pudełkowego z dodanymi punktami. Liczba mil przejechanych na galonie paliwa według liczby cylindrów
+ggplot(mtcars,aes(cyl,mpg))+
+  geom_boxplot()+
+  geom_point()
+```
+
+Przy znacznej liczbie obserwacji wiele punktów może się nakładać. Może to znacznie utrudnić odbiór przekazywanych informacji. Dla pominięcia tego problemu zamiast reprezentacji `geom_point()` można zastosowac reprezentację `geom_jitter()`. Zastosowanie tego rozwiązania prowadzi do "rozrzucenia" punktów (zob. @fig-box3).
+
+```{r }
+#| echo: true
+#| label: fig-box3
+#| fig-cap: Konstrukcja wykresu pudełkowego z dodanymi rozrzuconymi punktami. Liczba mil przejechanych na galonie paliwa według liczby cylindrów
+ggplot(mtcars,aes(cyl,mpg))+
+  geom_boxplot()+
+  geom_jitter()
+```
+
+Nieco zbliżona do reprezentacji geometrycznej `geom_boxplot()` jest reprezentacja `geom_violin()`, która prowadzi do uzyskania wykresów wiolinowych. Wykresy wiolinowe wykorzystują oceny funkcji gęstości do przedstawienia rozkładu zmiennej. Taki wykres dla zmiennej *mpg* według liczby cylindrów (*cyl*) został przedstawiony na @fig-viol1.
+
+
+```{r }
+#| echo: true
+#| label: fig-viol1
+#| fig-cap: Konstrukcja wykresu wiolinowego. Liczba mil przejechanych na galonie paliwa według liczby cylindrów
+ggplot(mtcars,aes(factor(cyl),mpg))+
+  geom_violin()
+```
+
+Podobnie jak w poprzednim przypadku można dodać "rozrzucone" punkty wykorzystując warstwę `geom_jitter()` (por. @fig-viol2).
+
+
+```{r }
+#| echo: true
+#| label: fig-viol2
+#| fig-cap: Konstrukcja wykresu wiolinowego z rozrzuconymi punktami. Liczba mil przejechanych na galonie paliwa względem liczby cylindrów
+ggplot(mtcars,aes(factor(cyl),mpg))+
+  geom_violin()+
+  geom_jitter()
+```
+
+
+Niekiedy pomocne jest wprowadzenie etykiet obserwacji. Uzyskuje się to poprzez zastosowanie reprezentacji geometrycznej `geom_text()`. Zamiast punktów jak na wykresie rozrzutu @fig-rozrz1 w oknie wykresu są umieszczone etykiety (@fig-text1).
+
+```{r }
+#| echo: true
+#| label: fig-text1
+#| fig-cap: Konstrukcja wykresu z etykietami teksowymi. Liczba mil przejechanych na galonie paliwa według liczby cylindrów
+ggplot(mtcars,aes(wt,mpg,label=row.names(mtcars)))+
+  geom_text()
+```
+
+Możliwe jest oczywiście połączenie reprezentacji geometrycznych `geom_point()` i `geom_text()`. W rezultacie uzyskuje sie wykres (@fig-text2), na którym obok punktów są widoczne odpowiednie etykiety.
+
+
+```{r }
+#| echo: true
+#| label: fig-text2
+#| fig-cap: Konstrukcja wykresu z etykietami teksowymi i punktami. Liczba mil przejechanych na galonie paliwa względem liczby cylindrów
+ggplot(mtcars,aes(wt,mpg,label=row.names(mtcars)))+
+  geom_text()+
+  geom_point()
+```
+
+Jedną z najważniejszych metod statystycznych jest model regresji. Dla przedstawienia na wykresie funkcji regresji można skorzystać z reprezentacji geometrycznej `geom_smooth()` (por. @fig-reg1).
+
+
+
+```{r}
+#| echo: true
+#| label: fig-reg1
+#| fig-cap: Konstrukcja wykresu z regresją. Waga samochodu i liczba mil przejechanych na galonie paliwa 
+
+ggplot(mtcars,aes(wt,mpg))+
+  geom_smooth()
+```
+
+W przypadku regresji bardzo pomocne jest jednoczesne zamieszczenie na wykresie punktów obok samej funkcji. Uzyskuje sie to poprzez dodanie do poprzedniego kodu warstwy `geom_point()`. Wynik realizacji poniższego kodu przedstawia @fig-reg2.
+
+```{r}
+#| echo: true
+#| label: fig-reg2
+#| fig-cap: Konstrukcja wykresu z regresją i punktami. Waga samochodu i liczba mil przejechanych na galonie paliwa 
+
+ggplot(mtcars,aes(wt,mpg))+
+  geom_smooth()+
+  geom_point()
+```
+
+Program **R** umozliwia wykreślenie funkcji regresji różnego typu. Dla wprowadzenia funkcji liniowej wystarczy wskazać metodę "lm" (linear model) jako parametr w warstwie `geom_smooth()` (zob. @fig-reg3).
+
+
+```{r}
+#| echo: true
+#| label: fig-reg3
+#| fig-cap: Konstrukcja wykresu regresji liniowej. Waga samochodu i liczba mil przejechanych na galonie paliwa 
+
+ggplot(mtcars,aes(wt,mpg))+
+  geom_smooth(method='lm')+
+  geom_point()
+```
+
+Funkcje regresji mogą być wykreślone niezależnie dla grup samochodów wyróżnionych ze względu na liczbę cylindrów (por. @fig-reg4).
+
+
+```{r}
+#| echo: true
+#| label: fig-reg4
+#| fig-cap: Konstrukcja wykresu regresji liniowej. Waga samochodu i liczba mil przejechanych na galonie paliwa względem liczby cylindrów
+ggplot(mtcars,aes(wt,mpg,color=cyl))+
+  geom_smooth(method='lm')+
+  geom_point()
+```
+
+Dla uzyskania regresji kwadratowej wystarczy wprowadzić nastepujący kod, a odpowiedni efekt widoczny jest na @fig-reg5.
+
+```{r}
+#| echo: true
+#| label: fig-reg5
+#| fig-cap: Konstrukcja wykresu regresji kwadratowej. Waga samochodu i liczba mil przejechanych na galonie paliwa 
+ggplot(mtcars,aes(wt,mpg))+
+  geom_smooth(method='lm',formula=y~poly(x,2))+
+  geom_point()
+```
+
+
+
+
+## Panele
+
+Panele to sposób organizowania wielu wykresów w jednej przestrzeni roboczej, który pozwala na efektywne porównanie różnych zestawów danych lub różnych podzbiorów tych samych danych. Są to kolekcje wykresów, które są uporządkowane w siatkę (np. 2x2, 3x2), z każdą komórką tej siatki zawierającą odrębny wykres.
+W kontekście **ggplot2** w programie **R**, panele wykresów są wykorzystywane do prezentacji różnych wykresów w jednej, zorganizowanej siatce. Dzięki temu można łatwo porównać różne zmienne, grupy lub kategorie.
+ W **ggplot2** panele można tworzyć za pomocą dwóch głównych warstw: `facet_wrap()` i `facet_grid()`. Umożliwiają one podzielenie jednego wykresu na mniejsze wykresy, które przedstawiają różne podzbiory danych w bardziej przejrzysty sposób.
+ 
+ Przykład konstrukcji paneli z wykorzystaniem warstwy `facet_wrap()` przedstawia kod, którego rezultat jest na @fig-pan1
+
+
+
+```{r}
+#| echo: true
+#| label: fig-pan1
+#| fig-cap: Konstrukcja wykresu rozrzutu w ujęciu panelowym. Waga samochodu i liczba mil przejechanych na galonie paliwa według liczby cylindrów
+ggplot(mtcars, aes(x=wt, y=mpg)) +
+  geom_point() +
+  facet_wrap(~cyl) 
+```
+Wykorzystanie warstwy `facet_grid()` pozwala na uwzględnienie dwóch zmiennych przy konstrukcji paneli. Poniższy kod prowadzi do konstrukcji wykresów rozrzutu, gdzie panele są ze względu na liczbę cylindrów (*cyl*) i liczbę biegów (*gear*). Rezulta przedstawia  @fig-pan2.
+
+
+```{r}
+#| echo: true
+#| label: fig-pan2
+#| fig-cap: Konstrukcja wykresu rozrzutu w ujęciu panelowym. Waga samochodu i liczba mil przejechanych na galonie paliwa według liczby cylindrów i liczby biegów
+ggplot(mtcars, aes(x=wt, y=mpg)) +
+  geom_point() +
+  facet_grid(cyl ~ gear) 
+```
+
+Przykład umieszczenia histogramu w ujeciu w panelach przedstawiono na @fig-pan3.
+
+
+```{r}
+#| echo: true
+#| label: fig-pan3
+#| fig-cap: Konstrukcja histogramu w ujęciu panelowym. Liczba mil przejechanych na galonie paliwa według liczby cylindrów
+ggplot(mtcars, aes(x=mpg)) +
+  geom_histogram(binwidth=1, fill="skyblue", color="black", alpha=0.7) +
+  facet_wrap(~cyl) 
+```
+
+Liczę przejechanych mil na galonie paliwa względfem typu skrzyni biegów w ujęciu paneli ze wzgledu na liczbę cylindrów i biegów przedstawia @fig-pan4.
+Wykres pozwala określić wpływ typu skrzyni biegów na spalanie w zależności od konfiguracji silnika (liczba cylindrów i biegów). Wykres uwidacznia interakcje między zmiennymi, które nie byłyby widoczne w uśrednionych statystykach.
+
+```{r}
+#| echo: true
+#| label: fig-pan4
+#| fig-cap: Konstrukcja wykresu pudełkowego w ujęciu panelowym. Liczba mil przejechanych na galonie paliwa według liczby cylindrów i liczby biegów
+ggplot(mtcars, aes(x=factor(am), y=mpg)) +
+  geom_boxplot(fill="salmon", color="black") +
+  labs(x='Skrzynia biegów: 0 - automatyczna, 1 - ręczna')+
+  facet_grid(cyl ~ gear) 
+
+```
+
+
+
+## Motywy (themes)
+
+Przy użyciu pakietu **ggplot2** można wykorzystać motywy (themes). Są to zestawy ustawień kontrolujących niewizualizujące danych elementy wyglądu wykresu. Motywy określają "styl" wykresu, a nie to, jak dane są mapowane na pozycje, kolory czy kształty.
+
+
+Po załadowaniu pakietu **ggthemes** użytkownik uzyskuje dostęp do wielu dodatkowych stylów.
+Wybrane style dostępne w tym pakiecie przedstawia @tbl-ggthemes.
+
+
+
+
+: Motywy dostępne w pakiecie `ggthemes` {#tbl-ggthemes}
+
+| Motyw                 | Opis                                                                 |
+|:----------------------|:---------------------------------------------------------------------|
+| `theme_economist()`   | Styl wykresów z magazynu *The Economist*                            |
+| `theme_fivethirtyeight()` | Styl z *FiveThirtyEight.com*           |
+| `theme_wsj()`         | Styl *Wall Street Journal*  |
+| `theme_tufte()`       | Styl minimalistyczny Edwarda Tuftego                                |
+| `theme_hc()`          | Styl wykresów z *Highcharts*                                        |
+| `theme_stata()`       | Styl jak w *Stata*                                                  |
+| `theme_excel()`       | Styl wykresów z *Microsoft Excel*                                   |
+| `theme_calc()`        | Styl wykresów jak w arkuszu kalkulacyjnym                                      |
+| `theme_base()`        | Podobny do domyślnego stylu **R**                                     |
+| `theme_solarized()`   | Styl z użyciem palety Solarized (jasny/ciemny)                      |
+
+
+
+W pierwszym kroku zostanie skonstruowany obiekt graficzny **p**.
+
+```{r}
+p <- ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(cyl))) +
+  geom_boxplot() +
+  labs(x = "Liczba cylindrów",
+       y = "Liczba mil przejechanych na galonie paliwa",
+       fill='Liczba cylindrów') 
+```
+
+
+Po utworzeniu obiektu graficznego **p** można go przedstawić wykorzystując rózne style. Przykłady wykorzystania wybranych motywów `theme_classic()`,`theme_economist()`,  `theme_solarized()` przedstawiono na @fig-th1, @fig-th2 i @fig-th3. 
+
+```{r}
+#| echo: true
+#| label: fig-th1
+#| fig-cap: Motyw 'theme_classic'. Liczba mil przejechanych na galonie paliwa według liczby cylindrów 
+p+theme_classic()
+```
+```{r}
+#| echo: true
+#| label: fig-th2
+#| fig-cap: Motyw 'theme_economist'. Liczba mil przejechanych na galonie paliwa według liczby cylindrów 
+p+theme_economist()
+```
+```{r}
+#| echo: true
+#| label: fig-th3
+#| fig-cap: Motyw 'theme_solarized'. Liczba mil przejechanych na galonie paliwa według liczby cylindrów 
+p+theme_solarized()
+```
+
+
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Wykonaj histogram dla zmiennej *hp*.
+
+2. Wykonaj histogram dla zmiennej *hp*, dodaj wypełnienie kolorem ze względu na liczbę cylindrów *cyl*.
+
+3. Skonstruuj wykres pudelkowy *mpg* według liczby cylindrów (*cyl*).
+
+4. Wykonaj wykres panelowy według liczby biegów (*gear*).
+
+5. Dodaj etykiety do punktów (np. nazwy modeli aut).
+
+
+:::
+

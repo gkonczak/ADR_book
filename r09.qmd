@@ -1,0 +1,260 @@
+# Elementy rachunku prawdopodobieństwa. Zmienne losowe
+
+
+::: {.callout-note icon="false" appearance="simple"}
+
+
+Program **R** ma wbudowaną obsługę wielu rodzajów zmiennych losowych wykorzystywanych w analizach statystycznych.
+W niniejszym rozdziale zostaną przedstawione przykłady związane z rozkładami:
+
+- normalnym,
+- t-Studenta,
+- chi-kwadrat,
+- jednostajnym,
+- F.
+
+Będą przedstawione funkcje pozwalające generować wartości losowe z tych rozkładów, wyznaczyć wartości funkcji gęstości lub dystrybuanty i wykreślić ich wykresy.
+
+:::
+
+Szczegółowe informacje dotyczące parametrów omawianych w tym rozdziale funkcji można uzyskać wywołując odpowiednią pomoc.
+Pomoc na temat funkcji *rnorm* można uzyskać wprowadzając komendę:
+
+
+
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+
+# Wynik realizacji poniższego kodu nie są wyświetlane
+? rnorm
+```
+
+
+
+## Generowanie wartości z wybranych rozkładów
+
+Możliwość generowania wartości losowych z zadanych rozkładów jest niezbędna dla przeprowadzenia różnych analiz symulacyjnych. W programie **R** dostępne są różne funkcje zapewniające możliwość generowania takich liczb losowych.
+
+Dla wygenerowania 10 obserwacji z rozkładu normalnego standardowego należy wykonać polecenie:
+
+```{r}
+rnorm(10)
+```
+
+Dl;a wygenerowania 10 wartości z rozkładu normalnego z zadanymi wartościami paramerów $\mu$ oraz $\sigma$ należy wykonać komendę:
+
+```{r}
+#| echo: true
+#| eval: true
+rnorm(10,mean=20,sd=13)
+```
+
+Powyższą komendę można zapisać także następująco:
+
+```{r}
+#| echo: true
+#| eval: false
+rnorm(10,20,13)
+```
+
+Przykłady generowania 10 wartości losowych z rozkładów jednostajnego, t-Studenta, chi-kwadrat oraz rozkładu F przedstawiają poniższe komendy:
+
+```{r}
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+runif(10)
+rt(10,df=3)
+rchisq(10,3)
+rf(10,df1=4,df2=5)
+```
+
+
+To samo jak w., ale dla 1000 obserwacji i przedstawieniem ich w postaci fistogramów
+
+```{r}
+#| echo: true
+#| eval: true
+#| label: fig-r01
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: Empiryczne rozkłady wartości losowych 4 zmiennych
+par(mfrow=c(2,2))
+hist(runif(1000), main="Rozkład jednostajny")
+hist(rt(1000,df=3), main="Rozkład t-Studenta")
+hist(rchisq(1000,3), main="Rozkład chi-kwadrat")
+hist(rf(1000,df1=4,df2=5), main="Rozkład F")
+```
+
+
+
+## Gęstość wybranych zmiennych losowych
+
+Poniższe przykłady ilustrują podstawowe operacje związane z rozkładem normalnym w języku **R**. Wskazują jak obliczać wartości funkcji gęstości rozkładu normalnego (`dnorm`), jak generować losowe dane z tego rozkładu (`rnorm`), a także jak wizualizować rozkład danych za pomocą histogramu oraz jak nałożyć na niego teoretyczną krzywą gęstości. Przykłady te są często wykorzystywane do analizy i wizualizacji danych, które zakładają normalność rozkładu.
+
+```{r}
+dnorm(0)
+dnorm(0,mean=3,sd=1)
+dnorm(seq(-3,3,0.1))
+```
+
+```{r}
+#| echo: false
+#| eval: true
+x<-rnorm(100,3,1)
+```
+
+```{r}
+#| echo: true
+#| eval: false
+x<-rnorm(100,3,1)
+```
+
+
+Wykreślenie histogramu i dodanie oceny funkcji gęstości zmiennej losowej $X \sim N (3,1)$
+
+```{r}
+#| label: fig-r02
+#| fig-cap: Histogram i ocena gęstości dla losowych wartości z rozkładu normalnego
+hist(x,prob=T)
+
+lx=seq(-3,9,length=120)
+lx
+lines(lx,dnorm(lx,3,1),col='red')
+```
+
+
+## Kwantyle
+
+Wyznaczanie kwantyli (np. za pomocą funkcji `qnorm` w programie **R**) jest bardzo ważne w statystyce i analizie danych, ponieważ pozwala określić, jakie wartości zmiennej odpowiadają określonym poziomom prawdopodobieństwa w rozkładzie normalnym. 
+
+
+```{r}
+qnorm(0.5)
+qnorm(c(0.95,0.975,0.995))
+qnorm(0.9, 10, 2)
+```
+
+## Dystrybuanta
+
+Wartość dystrybuanty zmiennych losowych:
+
+- o rozkładzie normalnym standardowym w punkcie 0
+
+- o rozkładzie normalnym z parametrami $\mu=3$ oraz $\sigma=1$
+
+można uzyskać następująco.
+
+```{r}
+pnorm(0)
+
+pnorm(0.9,3,1)
+
+```
+Wykorzystując funkcję `pnorm` można sporządzić wykres dystrybuanty zmiennej losowej $X \sim N (3,1)$
+
+```{r}
+#| label: fig-r03
+#| fig-cap: Dystrybuanta rozkładu normalnego standardowego
+plot(lx, pnorm(lx,3,1), ,col='blue', type='l')
+```
+
+## Przedstawienie kilku funkcji gęstości na jednym wykresie
+
+```{r}
+#| label: fig-r04
+#| fig-cap: Gęstości trzech zmiennych o rozkładzie normalnym
+z=seq(-5,5,length=120)
+z
+
+plot(z,dnorm(z),type="l")
+lines(z,dnorm(z,0,3),type="l",lty="dotted")
+lines(z,dnorm(z,0,0.5),type="l",lty="dashed")	
+```
+
+Ostatnia linia wychodzi poza obszar wykresu, ponieważ te linie dorysowywane zostały do wcześniej utworzonego wykresu. W takim przypadku nie sa zmieniane graniczne wartości osi OX i OY wyświetlane na wykresie. 
+
+Wykres uzyskany za pomocą funkcji `plot()` determinuje rozmiar wykresu na stałe. Dla zapewnienia umieszczenia linii w obrębie okna wykresu można określić paramery obu osi.
+
+
+```{r}
+#| label: fig-r05
+#| fig-cap: Gęstości trzech zmiennych o rozkładzie normalnym
+z=seq(-10,10,length=120)
+plot(z,dnorm(z,0,1),type="l", xlim=c(-5,4),ylim = c(0,.8))
+lines(z,dnorm(z,1,3),type="l",lty="dotted")
+lines(z,dnorm(z,-2,0.5),type="l",lty="dashed")	
+```
+
+## Dodawanie legendy do wykresu
+
+Jeżeli na wykresie umieszczono kilka linii, to powinny być one wyróżnione kolorem, grubością lub np. przerywaniem linii. Niezbędne jest w takich przypadkach wprowadzenie legendy objaśniającej znaczenie poszczególnych linii.
+
+```{r}
+#| label: fig-r06
+#| fig-cap: Wprowadzenie legendy na wykresie. Gęstość trzech zmiennych losowych o rozkładzie normalnym
+plot(z,dnorm(z),type="l")
+lines(z,dnorm(z,0,3),type="l",lty="dotted")
+legend("topright",inset =0.01,lty=c("solid","dotted"),
+       c(expression(N(mu==0,sigma==1)),expression(N(mu==0,sigma==3))) )
+```
+
+W powyższej funkcji użyto parametru położenia legendy "topright", w związku z czym legenda została umieszczona w prawym górnym rogu obszaru wykresu.
+
+Wartosci parametru dla różnych wariantów umieszczenia legendy wskazuje @tbl-legenda.
+
+::: {#tbl-legenda tbl-cap="Możliwe umiejscowienia legendy"}
+
+|              |              |              |
+|--------------|--------------|--------------|
+| topleft      | top          | topright     |
+| left         | center       | right        |
+| bottomleft   | bottom       | bottomright  |
+
+:::
+
+
+
+
+
+
+
+
+## Przykład
+```{r}
+# Wygeneruj 100 wartości z rozkładu normalnego o średniej równej -3 i odchyleniu standardowym równym 1.
+# Wygeneruj 100 wartości z rozkładu t-Studenta o 8 stopniach swobody.
+# Wygeneruj 100 wartości z rozkładu Chikwadrat o 2 stopniach swobody.
+# Przedstaw histogramy dla wygenerowanych wartości na 1 wykresie jeden obok drugiego.
+
+x=rnorm(100,-3,1)
+y=rt(100,8)
+z=rchisq(100,2)
+par(mfrow=c(1,3))
+hist(x)
+hist(y)
+hist(z)
+```
+
+
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Wygeneruj po 500 wartości z rozkładu normalnego o średniej 5 i odchyleniu standardowym 2 oraz
+ z rozkładu jednostajnego na przedziale [0, 10]. W jednym oknie wykresu przedstaw histogramy obu rozkładów.
+
+2. Na wykresie wykreśl gęstości rozkładu normalnego standardowego i t-Studenta o 12 stopniach swobody.
+
+3. Wyznacz 0,5% 2,5%, 5%, 50%, 95%, 97,5%  i 99,5% kwantyl rozkładu normalnego standardowego.
+
+4. Oblicz prawdopodobieństwo, że zmienna losowa o rozkładzie normalnym (średnia 2, odchylenie 1.5) przyjmie wartość mniejszą niż 4.
+
+5. Narysuj na jednym wykresie funkcje gęstości rozkładu $F$ dla trzech różnych par stopni swobody: (2, 5), (5, 2), (8, 8).
+
+
+:::
+

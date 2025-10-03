@@ -1,0 +1,275 @@
+# Prezentacje w **Shiny**
+
+::: {.callout-note icon="false" appearance="simple"}
+
+
+**shiny** to biblioteka w języku **R** pozwalająca na tworzenie interaktywnych aplikacji internetowych bez potrzeby znajomości języków programowania, takich jak HTML, CSS czy JavaScript. Biblioteka **shiny**  znajduje szczególne miejsce w w analizie danych i wizualizacji, ponieważ umożliwia łatwe prezentowanie wyników w przystępnej, interaktywnej formie.
+:::
+
+Przed rozpoczęciem pracy niezbędne jest załadowanie wykorzystywanych w tym rozdziale pakietów
+
+```{r}
+library(shiny)
+library(ggplot2)
+```
+
+
+## Elementy strujące
+
+W aplikacjach opracowanych w **shiny** kluczową rolę odgrywają komponenty interface użytkownia (UI) pozwalające na wprowadzanie danych:
+
+-   textInput() – pole tekstowe
+-   numericInput() – pole do wprowadzania liczb.
+-   sliderInput() – suwak do wyboru wartości liczbowych.
+-   selectInput() – lista rozwijalna.
+-   checkboxInput() – pole wyboru.
+-   checkboxGroupInput() – grupa pól wyboru.
+-   radioButtons() – zestaw przycisków radiowych.
+-   dateInput() – pole daty.
+-   dateRangeInput() – wybór zakresu dat.
+-   fileInput() – wybór i przesyłanie plików.
+-   actionButton() – przycisk akcji.
+-   submitButton() – przycisk do potwierdzania danych wejściowych.
+
+Poza wymienionymi komponentami wejściowymi do utworzenia aplikacji **shiny** niezbędne są elementy wyjściowe pozwlające na wyświetlanie wyników i prezentację wykresów.
+
+Wyświetlanie wyników:
+
+-   textOutput() – wyświetlanie tekstu.
+-   verbatimTextOutput() – wyświetlanie tekstu w formacie kodu.
+-   tableOutput() – wyświetlanie tabeli.
+-   dataTableOutput() – interaktywna tabela z sortowaniem i filtrowaniem.
+
+Prezentacja wykresów:
+
+-   plotOutput() – wyświetlanie statycznych wykresów generowanych przez ggplot2 lub base R.
+-   imageOutput() – wyświetlanie obrazów.
+-   htmlOutput() – wyświetlanie zawartości HTML.
+
+Interaktywność i reakcje:
+
+-   reactive() – tworzenie reaktywnych obiektów.
+-   observe() – monitorowanie i reagowanie na zmiany w danych.
+-   eventReactive() – reagowanie na zdarzenia (np. kliknięcia przycisków).
+-   isolate() – tworzenie izolacji reaktywności.
+-   observeEvent() – reagowanie na określone zdarzenia wejściowe.
+
+
+## Konstrukcja aplikacji
+
+Poniżej przedstawiony przykład to bardzo prosta konstrukacja bez wprowadzania elementów interface wejściowego: 
+
+```{r}
+#| echo: true
+#| eval: false
+ui <- fluidPage(
+  titlePanel("Rzeki Ameryki Północnej"),
+  plotOutput("riversPlot")
+)
+
+server <- function(input, output, session) {
+  output$riversPlot <- renderPlot({
+    hist(rivers, main = "Długość rzek Ameryki Północnej", xlab = "Długość (mile)", col = "lightblue", ylab="Gęstość", border = "white")
+  })
+}
+
+shinyApp(ui, server)
+```
+
+Wyniki realizacji powyższego kodu został przedstawiony na @fig-riv1
+
+![Długość największych rzek Ameryki Północnej](pic/riv1.png){#fig-riv1 fig-cap="Długość największych rzek Ameryki Północnej"}
+
+## Wprowadzenie elementu interface wejściowego
+
+Zalety aplikacji **shiny**  są widoczne dopiero po włączeniu do aplikacji elementów interface wejściowego. Poniżej przedstawiono przykład z jednym takim elementem - suwak do wyboru wartości liczbowych (sliderInput). 
+
+
+```{r}
+#| echo: true
+#| eval: false
+# Interface użytkownika (UI)
+ui <- fluidPage(
+  titlePanel("Długość największych rzek Ameryki Płn."),
+  
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput(
+        inputId = "bins", 
+        label = "Liczba przedziałów:", 
+        min = 5, 
+        max = 50, 
+        value = 20
+      )
+    ),
+    
+    mainPanel(
+      plotOutput(outputId = "histogram")
+    )
+  )
+)
+
+# Serwer aplikacji (Server)
+server <- function(input, output) {
+  output$histogram <- renderPlot({
+    ggplot(data = data.frame(rivers = rivers), aes(x = rivers)) +
+      geom_histogram(
+        bins = input$bins, 
+        fill = "blue", 
+        color = "black", 
+        alpha = 0.7
+      ) +
+      labs(
+        title = "Długość największych rzek Ameryki Płn.",
+        x = "Długość rzeki (w milach)",
+        y = "Częstość"
+      ) +
+      theme_minimal()
+  })
+}
+
+# Uruchomienie aplikacji
+shinyApp(ui = ui, server = server)
+```
+Wyniki realizacji powyższego kodu został przedstawiony na @fig-riv2. Po zmianie położenia suwaka widocznego w lewej części okna aplikacji zmienia się liczba przedziałów histogramu, a rezultat jest automatycznie aktualizowany na wykresie.
+
+![Długość największych rzek Ameryki Północnej - prezentacja dynamiczna](pic/riv2.png){#fig-riv2 fig-cap="Długość największych rzek Ameryki Północnej - prezentacja dynamiczna"}
+
+
+## przykład zastosowania różnych elementów interface wejściowego
+
+
+Poniższy kod prezentuje możliwości wykorzystania  najczęściej stosowanych elementów wejściowych i sposób wyświetlania związanych z nimi informacji.
+
+
+```{r}
+#| echo: true
+#| eval: false
+# Interfejs użytkownika (UI)
+ui <- fluidPage(
+  titlePanel("Aplikacja Shiny z różnymi elementami wejściowymi"),
+  # Układ strony podzielony na panel boczny (sidebar) i panel główny (main)
+  sidebarLayout(
+    # Panel boczny - tutaj umieszczamy elementy wejściowe
+    sidebarPanel(
+      h3("Wejście (Input)"), # Nagłówek dla sekcji inputów
+
+      # 1. Przycisk (ActionButton) inputId: identyfikator, label: tekst wyświetlany
+      actionButton(
+        inputId = "przycisk_klik",
+        label = "Kliknij tutaj!"
+      ),
+      br(), # Dodanie przerwy (nowa linia) 
+      br(), 
+      
+      # 2. Lista rozwijalna (selectInput) inputId: identyfikator, label: etykieta, choices: opcje do wyboru (nazwa = wartość), selected: domyślny wybór
+      selectInput(
+        inputId = "lista_wybor",
+        label = "Wybierz opcję z listy:",
+        choices = c(
+          "Pierwsza opcja" = "opcja1", 
+          "Druga opcja" = "opcja2",
+          "Trzecia opcja" = "opcja3"
+        ),
+        selected = "opcja1" 
+      ),
+      
+      # 3. Przyciski opcji (radioButtons) inputId: identyfikator, label: etykieta, choices: opcje do wyboru (nazwa = wartość), selected: domyślny wybór
+      radioButtons(
+        inputId = "radio_wybor",
+        label = "Wybierz jedną opcję radio:",
+        choices = c(
+          "Wybór A" = "wyborA",
+          "Wybór B" = "wyborB",
+          "Wybór C" = "wyborC"
+        ),
+        selected = "wyborB" # Domyślnie wybrany "Wybór B" (jego wartość to "wyborB")
+      ),
+      
+      # 4. Pole wyboru (checkboxInput) inputId: identyfikator, label: etykieta, value: domyślny stan (TRUE = zaznaczone, FALSE = odznaczone)
+      checkboxInput(
+        inputId = "checkbox_status",
+        label = "Zaznacz/Odznacz",
+        value = TRUE 
+      ),
+      
+      # 5. Pole wprowadzania liczby (numericInput) inputId: identyfikator, label: etykieta, value: domyślna wartość, min/max/step: opcjonalne ograniczenia i krok
+      numericInput(
+        inputId = "liczba_input",
+        label = "Wpisz liczbę:",
+        value = 5, 
+        min = 0,   
+        max = 10,  
+        step = 1   
+      ),
+      
+      # 6. Pole wprowadzania tekstu (textInput) inputId: identyfikator, label: etykieta, value: domyślny tekst w polu
+      textInput(
+        inputId = "tekst_input",
+        label = "Wpisz dowolny tekst:",
+        value = "Przykładowy tekst" 
+      )
+    ),
+    
+    # Panel główny 
+    mainPanel(
+      h3("Stan elementów Wejściowych (Output)"), 
+      # Wyjście dla przycisku: wyświetla liczbę kliknięć
+      h4("Stan przycisku (liczba kliknięć):"), 
+      verbatimTextOutput("przycisk_output"), 
+      # Wyjście dla listy rozwijalnej: wyświetla wybraną wartość
+      h4("Wybrana opcja z listy:"),
+      verbatimTextOutput("lista_output"),
+      # Wyjście dla przycisków radio: wyświetla wybraną wartość
+      h4("Wybrana opcja radio:"),
+      verbatimTextOutput("radio_output"),
+      # Wyjście dla pola wyboru: wyświetla stan (TRUE/FALSE)
+      h4("Status pola wyboru:"),
+      verbatimTextOutput("checkbox_output"),
+      # Wyjście dla pola liczbowego: wyświetla wpisaną liczbę
+      h4("Wpisana liczba:"),
+      verbatimTextOutput("liczba_output"),
+      # Wyjście dla pola tekstowego: wyświetla wpisany tekst
+      h4("Wpisany tekst:"),
+      verbatimTextOutput("tekst_output")
+    )
+  )
+)
+
+# Serwer aplikacji (Server)
+server <- function(input, output) {
+  # Renderowanie wyjścia dla przycisku
+  output$przycisk_output <- renderPrint({
+    input$przycisk_klik # Zwraca liczbę kliknięć przycisku
+  })
+  # Renderowanie wyjścia dla listy rozwijalnej
+  output$lista_output <- renderPrint({
+    input$lista_wybor
+  })
+  # Renderowanie wyjścia dla przycisków radio
+  output$radio_output <- renderPrint({
+    input$radio_wybor
+  })
+  # Renderowanie wyjścia dla pola wyboru
+  output$checkbox_output <- renderPrint({
+    input$checkbox_status
+  })
+  # Renderowanie wyjścia dla pola liczbowego
+  output$liczba_output <- renderPrint({
+    input$liczba_input
+  })
+  # Renderowanie wyjścia dla pola tekstowego
+  output$tekst_output <- renderPrint({
+    input$tekst_input
+  })
+}
+
+# Uruchomienie aplikacji
+shinyApp(ui = ui, server = server)
+```
+
+
+![Okno aplikacji shiny](pic/shiny.png){#fig-riv1 fig-cap="Okno aplikacji shiny"}
+
+
+

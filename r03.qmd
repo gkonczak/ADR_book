@@ -1,0 +1,313 @@
+# Instrukcje warunkowe oraz iteracyjne
+
+::: {.callout-note icon="false" appearance="simple"}
+
+
+Program **R** jest wyposażony w różne funkcje i zbiory danych. W programie są dostępne różne instrukcje warunkowe i instrukcje petli, które sa bardzo pomocne przy opracowywaniu kodów programów.
+
+Instrukcje warunkowe służą do podejmowania decyzji podczas wykonywania kodu: jeśli jakiś warunek jest spełniony, wykonywane jest określony zestaw poleceń; jeśli nie – wykonuje się inny zestaw poleceń.
+
+W programie **R** udostępnione są następujące instrukcje warunkowe:
+
+-   `if`
+-   `if...else`
+-   `ifelse`
+-   `switch`
+
+Instrukcje iteracyjne (inaczej pętle) służą do wielokrotnego wykonywania danego fragmentu kodu, zwykle aż do spełnienia określonego warunku lub dla każdego elementu zbioru danych.
+
+Najważniejsze instrukcje iteracyjne dostępne w programie **R**:
+
+-   `for`
+-   `while`
+-   `repeat`
+-   `apply`, `lapply`, `sapply`, `map`
+:::
+
+## Instrukcje warunkowe
+
+Instrukcje warunkowe w **R** pozwalają na podejmowanie decyzji podczas wykonywania kodu, umożliwiając wykonywanie różnych działań w zależności od spełnienia określonych warunków. Najczęściej używaną konstrukcją jest `if`, która sprawdza, czy dany warunek logiczny jest prawdziwy, a jeśli tak, wykonuje określony blok kodu. Instrukcje warunkowe są niezbędne do tworzenia bardziej złożonych i elastycznych programów w R.
+
+
+### Instrukcja `if`
+
+```{r}
+x=12
+if(x>10)
+{print("nierówność jest prawdziwa",quote=F)}
+
+if(x>10) print("nierówność jest prawdziwa")
+```
+
+### Instrukcja `if... else...`
+
+```{r}
+x=7
+if(x>10){
+print("nierówność jest prawdziwa")
+}else {
+print("nierówność jest fałszywa")
+}
+
+liczba=sample(1:100,1)
+liczba
+x=34
+
+if(x==liczba) {
+print(paste("wybrana liczba x jest równa",liczba))
+}else{
+	if(x>liczba){
+	print(paste("wybrana liczba x jest większa od",liczba))
+	}else{
+	print(paste("wybrana liczba x jest mniejsza od", liczba))
+}}
+```
+
+### Instrukcja `ifelse`
+
+```{r}
+x=8:12
+
+nierówność=ifelse(x>10,"nierówność jest prawdziwa","nierówność jest fałszywa")
+nierówność
+data.frame(nierówność)
+```
+
+
+## Instrukcje w pętli
+
+
+Instrukcje w pętli pozwalają na wielokrotne wykonywanie tego samego fragmentu kodu, aż do spełnienia określonego warunku. W języku **R** najczęściej używa się pętli `for`, `while` oraz `repeat`. Wewnątrz pętli można umieszczać różne instrukcje, takie jak przypisania, wywołania funkcji, instrukcje warunkowe czy operacje na danych. Dzięki temu możliwe jest automatyczne przetwarzanie dużych zbiorów danych lub wykonywanie powtarzalnych obliczeń. 
+
+
+### Pętla `for`
+
+```{r}
+for(i in 1:5) print(i)
+
+for(i in 1:5) 
+{
+print(i)
+}
+
+
+z=5:8
+for(i in z) 
+{
+print(i*10)
+}
+
+# Wyznaczenie sumy pierwszych 20 liczb naturalnych (bez zera).
+suma=0
+liczby=1:20
+for(i in liczby)
+{
+suma=suma+i
+}
+suma
+
+# Wyznaczenie sumy elementów wektora x.
+x=c(23,45,13,22,11,-54)
+suma=0
+for(i in 1:length(x))
+{
+suma=suma+x[i]
+}
+suma
+
+# Wyznaczenie sumy różnic elementów wektora x.
+x=c(12,34,4,-15,4,0)
+suma=0
+for(i in 2:length(x))
+{
+suma=suma+(x[i]-x[i-1])	#Nawias tutaj jest niepotrzebny, ale podkreśla czynność odejmowania.
+}
+suma
+
+# Wyświetlenie kolejnych różnic elementów wektora x.
+x=c(12,34,4,-15,4,0)
+for(i in 2:length(x))
+{
+print(x[i]-x[i-1])
+}
+```
+
+### Pętla `while`
+
+```{r}
+# Wyświetlenie pierwszych 9 liczb naturalnych (bez 0).
+i=1
+while(i<10)
+{
+print(i)
+i=i+1
+}
+
+# Wyznaczenie sumy elementów wektora x.
+x=c(12,-30,4,2,67,-18)
+i=1
+suma=0
+while(i<=length(x))
+{
+suma=suma+x[i]
+i=i+1
+}
+suma
+
+sum(x)	#Sprawdzenie poprawności uzyskanych wyników.
+```
+
+### Pętla `repeat`
+
+```{r}
+i=1
+repeat
+{
+print(paste("powtórzenie nr.",i))
+i=i+1
+if(i>5) break     
+}
+
+```
+
+#### Przykład 1
+
+```{r}
+# Wyświetlić kolejne 10 potęg liczby 2 za pomocą:
+
+#Pętli for
+
+#1 sposób
+for(i in 1:10)
+{
+print(2^i)
+}
+
+#2 sposób
+x=1:10
+x
+y=c()
+
+for(i in 1:length(x))
+{
+y[i]=2^x[i]
+}
+y
+
+
+#Pętli while
+
+#1 sposób
+i=1
+while(i<=5)
+{
+print(2^i)
+i=i+1
+}
+
+#2 sposób
+i=1
+y=c()
+while(i<=length(x))
+{
+y[i]=2^x[i]
+i=i+1
+}
+y
+
+
+#Pętli repeat
+
+#1 sposób
+i=1
+repeat
+{
+print(2^i)
+i=i+1
+if(i>10) break
+}
+
+#2 sposób
+i=1
+y=c()
+repeat
+{
+y[i]=2^x[i]
+i=i+1
+if(i>length(x))break
+}
+y
+```
+
+#### Przykład 2
+
+```{r}
+# Napisać pętlę, która będzie wyświetlała kolejne 10 potęg liczby 3 
+# i będzie pokazywała komunikat: 3 do potęgi… wynosi….
+
+x=1:10
+x
+y=c()
+for(i in 1:length(x))
+{
+y[i]=2^x[i]
+print(paste("2 do potęgi",i,"wynosi",y[i]))
+}
+```
+
+### Inne przykłady
+
+#### Pętla `for` i instrukcja `if`
+
+```{r}
+# Pętla wyświetlająca komentarz: "liczba ... jest parzysta" 
+# lub "liczba ... jest nieparzysta", w zależności od elementów wektora x.
+x=c(21,52,35,12,25)
+
+for(i in 1:length(x))
+{
+if(x[i]%%2==0){
+print(paste("Liczba",x[i],"jest parzysta"))
+}else{
+print(paste("Liczba",x[i],"jest nieparzysta"))
+}
+}
+```
+
+#### Zagnieżdżona pętla `for`
+
+```{r}
+# Napisać kod wyświetlający najpierw sumę pierwszego elementu z wektora x 
+# z kolejnymi elementami wektora y, 
+# a później sumę drugiego elementu wektora x z kolejnymi elementami wektora y itd. 
+
+x=c(12,2,3,4)
+y=c(5,4,8,7)
+
+for(i in 1:length(x))
+{
+for(j in 1:length(y))
+{
+print(x[i]+y[j])
+}
+}
+```
+
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Napisz pętlę `for`, która z wykorzystaniem funkcji `if` dla liczb od 1 do 20 wyświetli informację, czy liczba jest parzysta, czy nieparzysta
+
+2. Wygeneruj wektor liczb od 1 do 50. Za pomocą pętli `while` oblicz sumę wszystkich liczb podzielnych przez 7.
+
+3. Dla wektora x = c(15, 19, 7, 20, 3, 5), użyj funkcji `ifelse`, aby utworzyć nowy wektor tekstowy, w którym dla każdej liczby pojawi się napis "duża" (jeśli liczba > 10) lub "mała" (jeśli liczba ≤ 10)
+
+4. Za pomocą pętli `repeat` wypisz potęgi liczby 4 (od 4¹ do 4¹⁰) w formacie: "4 do potęgi ... wynosi ...".
+
+5. Dla wektora x = c(3, 5, 8, 3, 12, 7), napisz pętlę `for`, która obliczy sumę różnic między kolejnymi elementami, czyli: x[2]-x[1], x[3]-x[2], ....
+
+
+:::
+
+

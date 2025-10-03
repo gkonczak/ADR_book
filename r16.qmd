@@ -1,0 +1,791 @@
+# Dodatek - wybrane zagadnienia z rozwiązaniami w **R**
+
+::: {.callout-note icon="false" appearance="simple"}
+Niniejszy rozdział ma nieco inny charakter niż wszystkie poprzednie. 
+Przedstawiono w nim wybrane przykłady o charakterze ciekawostek lub paradoksów związanych z analizą danych. Do wszystkich tych zagadnień podano kody w języku **R** pozwalające na zrozumienie lub rozwiązanie przedstawionych problemów. W rozdziale zaprezentowano następujące przykłady:
+
+-   Quartet Anscombe - zbiór **anscombe**
+-   Wizualizacja podzbiorów zbioru **datasaurus_dozen**
+-   Śmiertelność kelnerów i duchownych anglikańskich w Anglii w latach 1930 - 1932
+-   Przygody kawalera de Méré z hazardem i ...rachunkiem prawdopodobieństwa
+-   Orzeł czy reszka? Rzut monetą 10, 100, 1000 razy
+-   Symulacyjne szacowanie liczby $\pi$
+-   Paradoks urodzin, czyli urodziny tego samego dnia
+
+
+:::
+
+Przed przedstawieniem wskazanych przykładów niezbędne jest załadowanie wymaganych w tym rozdziale bibliotek. Realizuje to następujący kod
+
+
+```{r}
+library(ggplot2)
+library(datasauRus)
+library(dplyr)
+library(tidyr)
+library(kableExtra)
+library(knitr)
+library(gridExtra)
+library(patchwork)
+```
+
+## Quartet Anscombe - zbiór **anscombe**
+
+::: callout-important
+## **anscombe**
+
+Zbiór **anscombe** to klasyczny przykład danych w statystyce, przedstawiony przez statystyka Francisa Anscombe'a w 1973 roku, aby podkreślić znaczenie wizualizacji danych. Zbiór składa się z czterech zestawów danych (stąd też określenie "*Anscombe's Quartet*") o identycznych podstawowych statystykach, ale zupełnie różnych rozkładach, co prowadzi do odmiennych wniosków wizualnych.
+:::
+
+Dla pełnego przedstawienia zbioru można wykonać komendy:
+
+```{r}
+#| label: tbl-ansc1
+#| tbl-cap: "Zbiór Anscombe'a"
+data(anscombe)
+kable(anscombe)
+```
+
+Dla podanych w @tbl-ansc1 zmiennych $(y_i, x_i, \text{ dla } i = 1, 2, 3, 4)$ zostały wyznaczone liniowe funkcje regresji postaci:
+
+$$y=a_0+a_1x$$
+
+Podstawowe charakterystyki (średnia i odchylenie standardowe) zbioru danych **anscombe** wyznaczono jak poniżej, a wyniki przedstawiono w  @tbl-ansc2. 
+
+```{r}
+#| label: tbl-ansc2
+#| tbl-cap: "Średnia i odchylenie standardowe dla zmiennych ze zbioru Anscombe'a"
+sr <- apply(anscombe, 2, mean)
+odch <- apply(anscombe, 2, sd)
+kable(
+  rbind(
+    Średnie = round(sr, 2),
+    Odchylenie_std = round(odch, 2)
+))
+
+```
+
+Można zauważyć, że nie tylko średnie i odchylenia standardowe, ale także wspólczynniki liniowej funkcji regresji.
+Podstawowe charakterystyki dla $x_1, x_2, x_3, x_4$ oraz $y_1, y_2, y_3, y_4$ są takie same.
+
+Parametry liniowej funkcji regresji wyzanczane sa następująco:
+
+```{r}
+wsp_regresji <- list(
+  "y1~x1" = round(lm(y1 ~ x1, data = anscombe)$coefficients, 2),
+  "y2~x2" = round(lm(y2 ~ x2, data = anscombe)$coefficients, 2),
+  "y3~x3" = round(lm(y3 ~ x3, data = anscombe)$coefficients, 2),
+  "y4~x4" = round(lm(y4 ~ x4, data = anscombe)$coefficients, 2)
+)
+macierz <- rbind(
+  a0 = sapply(wsp_regresji, "[", 1),
+  a1 = sapply(wsp_regresji, "[", 2)
+)
+```
+
+W @tbl-ansc3 przedstawiono współczynniki $a_0$ i $a_1$ liniowej funkcji regresji wyznaczone na podstawie  danych ze zbioru **anscombe**. Wyniki te zamieszczono w @tbl-ansc3.
+
+```{r}
+#| label: tbl-ansc3
+#| tbl-cap: "Współczynniki regresji liniowych dla czterech modeli Anscombe'a"
+colnames(macierz) <- paste0("Model ", 1:4)
+kable(macierz)
+```
+
+Zmienne mają identyczne charakterystyki, ale graficzna wizualizacja tych czterech zbiorów jest zupełnie inna. Dobrze to zostało pokazane na @fig-anscombe.
+
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| label: fig-anscombe
+#| fig-cap: Quartet Anscombe'a - dane i funkcje regresji
+
+# Przygotowanie danych
+data("anscombe")
+anscombe_tidy <- anscombe %>%
+  pivot_longer(cols = everything(), 
+               names_to = c(".value", "set"),
+               names_pattern = "(.)(.)")
+
+# Wykres
+ggplot(anscombe_tidy, aes(x = x, y = y)) +
+  geom_point(color = "blue", size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "red", linetype = "dashed") +
+  facet_wrap(~set, ncol = 2) +
+  theme_minimal() +
+  labs(x = "x", y = "y")
+
+```
+
+
+Uważna analiza otrzymanych wyników i zaprezentowanej wizualizaci pozwala stwierdzić, że same statystyki opisowe mogą być mylące i nie wystarczą do pełnego zrozumienia charakteru zbioru danych oraz relacji między zmiennymi. Wizualizacja danych często jest absolutnie niezbędna do odkrycia wzorców, wartości odstających (outlierów) i nietypowych rozkładów.
+
+
+## Wizualizacje podzbiorów zbioru **datasaurus_dozen**
+
+::: callout-important
+## **datasaurus_dozen**
+
+Zbiór **datasaurus_dozen** to zestaw danych w środowisku **R**, dostępny w pakiecie  **datasauRus**. Został zaproponowany w celu zilustrowania, jak bardzo różne rozkłady danych mogą mieć identyczne podstawowe statystyki opisowe (średnia, wariancja, korelacja), a jednocześnie znacząco różnić się wizualnie. Inspiracją dla powstania zbioru **datasaurus_dozen** był słynny „*Anscombe's quartet*” (zbiór **anscombe**), lecz **datasaurus_dozen** rozszerza tę koncepcję, oferując kilkanaście różnych, nietrywialnych rozkładów punktów, w tym m.in. kształt dinozaura, gwiazdy czy elipsy.
+
+Każdy z wyróznionych podzbiorów danych w **datasaurus_dozen** ma te same wartości średniej, wariancji, współczynnika korelacji i tę samą postać regresji liniowej, lecz wizualizacja tych danych pokazuje zupełnie różne układy punktów.
+:::
+
+```{r}
+dane <- datasaurus_dozen
+head(dane)
+```
+
+
+Na @fig-datasauRus przedstawiono kompletne dane ze zbioru **datasaurus_dozen**. Kolorami na tym rysunku wyróżniono 13 podzbiorów. 
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| label: fig-datasauRus
+#| fig-cap: Dane ze zbioru datasaurus_dozen z wyróznionymi podzbiorami
+ggplot(dane, aes(x=x, y=y, color=dataset)) +
+  geom_point() +
+  theme_minimal() +
+  labs( x="X", y="Y", color="datasaurus_dozen")
+```
+
+
+
+Choć wszystkie wyróżnione podzbiory zbioru danych **datasaurus_dozen** mają identyczne średnie, odchylenia standardowe oraz współczynniki korelacji, to ich graficzna prezentacja jest zupełnie inna.  Pokazuje to jak istotne jest spojrzenie na dane w kontekście wizualizacji danych, a nie tylko na podstawie samej analizy statystycznej. Podstawowe charakterystyki dla podzbiorów zbioru **datasaurus_dozen** przedstawiono w @tbl-datasauRus.
+
+```{r}
+#| label: tbl-datasauRus
+#| tbl-cap: "Charakterystyka zmiennych zbioru datasaurus_dozen"
+wyniki <- dane %>%
+  group_by(dataset) %>%
+  summarise(
+    mean_x = mean(x),
+    mean_y = mean(y),
+    sd_x = sd(x),
+    sd_y = sd(y),
+    correlation = cor(x, y)
+  )
+kable(wyniki)
+```
+
+Graficzną prezentację wybranych 6 spośród 13 podzbiorów zbioru **dasaurus_dozen** przedstawiono na @fig-datasauRus6.
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| fig-height: 12
+#| fig-width: 8
+#| label: fig-datasauRus6
+#| fig-cap: Wybrane podzbiory zbioru danych datasaurus_dozen
+
+selected_data <- subset(dane, dataset %in% c("slant_up","slant_down", "wide_lines", "star", "bullseye", "dino"))
+
+plot_slant_up <- ggplot(subset(selected_data, dataset == "slant_up"), aes(x=x, y=y)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("slant_up")
+
+plot_slant_down <- ggplot(subset(selected_data, dataset == "slant_down"), aes(x=x, y=y)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("slant_down")
+
+plot_wide_lines <- ggplot(subset(selected_data, dataset == "wide_lines"), aes(x=x, y=y)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("circle")
+
+plot_star <- ggplot(subset(selected_data, dataset == "star"), aes(x=x, y=y)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("star")
+
+plot_bullseye <- ggplot(subset(selected_data, dataset == "bullseye"), aes(x=x, y=y)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("bullseye")
+
+plot_dino <- ggplot(subset(selected_data, dataset == "dino"), aes(x=x, y=y)) +
+  geom_point() +
+  theme_minimal() +
+  ggtitle("dino")
+
+grid.arrange(plot_slant_up, plot_slant_down, plot_wide_lines, plot_star, plot_bullseye, plot_dino, ncol = 2)
+```
+Pomimo bardzo różnorodnych zestawów danych (@fig-datasauRus6), o bardzo zróznicowanych rozkładach punktów na wykresie średnie odchylenia standardowe i współczynniki korelacji liniowej we wszystkich przypadkach sa takie same.
+
+
+
+## Śmiertelność duchownych anglikańskich i kelnerów w Anglii w latach 1930-1932
+
+Poniżej prezentowany przykład został zaczerpnięty z @sadowski1987[91]. Dane dotyczą liczby żyjących oraz liczby zgonów duchownych anglikańskich i kelnerów w Anglii w latach 1930-1932. Wprowadzenie danych realizuje następujący kod:
+
+```{r}
+duch_żyj <- c(236, 2318, 3620, 4906, 5303, 2486, 1875, 1999,22743)
+duch_zg <- c(1, 19, 48, 83, 283, 304, 356, 804, 1898)
+kel_żyj <- c(5022, 7066, 4375, 2902, 1803, 552, 300, 193, 22213)
+kel_zg <- c(70, 96, 109, 123, 167, 86, 87, 109,847)
+wsp_duch <- (duch_zg / duch_żyj) * 10000 / 3 # okres 3 lat
+wsp_kel <- (kel_zg / kel_żyj) * 10000 / 3 # okres 3 lat
+data <- data.frame(
+  Wiek = c("20 - 24", "25 - 34", "35 - 44", "45 - 54", "55 - 64", "65 - 69", "70 - 74", "75 i więcej", "Razem"),
+  "liczba żyjących" = duch_żyj,
+  "liczba zgonów" = duch_zg,
+  "wsp. duch" = round(wsp_duch, 2),
+  "liczba żyjących" = kel_żyj,
+  "liczba zgonów" = kel_zg,
+  "wsp. kel" = round(wsp_kel, 2)
+)
+```
+
+
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-kel
+#| tab-cap: Śmiertelność duchownych anglikańskich i kelnerów w Anglii w latach 1930-32
+
+# Tworzenie tabeli w kable z dodatkowymi wierszami dla tytułów
+knitr::kable(data, col.names = c("Wiek", "liczba żyjących", "liczba zgonów", "zgony na 10 000 żyjących", "liczba żyjących", "liczba zgonów", "zgony na 10 000 żyjących")) %>%
+  kable_styling("striped", full_width = F) %>%
+  add_header_above(c(" " = 1, "Duchowni anglikańscy" = 3, "Kelnerzy" = 3)) %>%
+  column_spec(2, bold = F) %>%
+  column_spec(3, bold = F) %>%
+  column_spec(4, bold = T) %>%
+  column_spec(5, bold = F) %>%
+  column_spec(6, bold = F) %>%
+  column_spec(7, bold = T)
+
+```
+
+Wprowadzone dane zostały przedstawionw w @tbl-kel. W tabeli wyróżniono  8  grup wiekowych, a w ostatnim wierszu tabeli przedstawiono sumy dla kolumn liczby żyjących i liczby zgonów.
+Dodatkowo obliczono liczbę zgonów na 10 000 żyjących rocznie dla obu grup. 
+Ogólnie śmiertelność na 10 000 żyjących wśród duchownych anglikańskich (278,18) jest ponad dwa razy większa niż wśród kelnerów (127,10). Jednak współczynniki zgonów dla wszystkich grup wiekowych są mniejsze u duchownych anglikańskich, co oznacza, że w kazdej grupie wiekowej śmiertelność duchownych anglikańskich była mniejsza niż śmiertelność kelnerów.
+
+
+
+## Przygody kawalera de Méré z hazardem i ...rachunkiem prawdopodobieństwa
+
+Żyjacy w  XVII wieku, francuski szlachcic i kawaler, Chevalier de Méré (Jean le Rond d'Alembert), był namiętnym hazardzistą. Nie potrafiąc rozwiązać problemu podziału wygranej w niedokończonej grze w kości zwrócił się do Blaise Pascala o pomoc w rozwiązaniu tego zagadnienia (@bernstein1997). Zdarzenie to  zaowocowało korespondencją Pascala z Pierrem de Fermat i miało znaczny wpływ na rozwój teorii prawdopodobieństwa.
+Kawaler de Méré grając w kości obstawiał otrzymanie co najmniej jednej  "6" w czterech rzutach kostką. Ówczesna wiedza nie pozwalała na obliczenie prawdopodobieństwa takiego zdarzenia. 
+
+Prawdopodobieństwo uzyskania przynajmniej jednej "6" w 4 rzutach sześcienną kostką do gry (zdarzenie **A**) można wyznaczyć wykorzystując prawdopodobieństwo zdarzenia przeciwnego. Obliczenie będzie następujące:
+
+$P(A) =1 - \left( \frac{5}{6} \right)^4 = 1 - \frac{625}{1296} \approx 0.5185$
+
+Oznacza to, że w 4 rzutach kostką szansa na co najmniej jedną "6" wynosi około 0,5185. Oznacza to, że wielokrotnie przyjmując zakład, że w rzucie czterema kostkami przynamniej raz wypadnie "6" Chavalier de Méré nieco częściej wygrywał niż przegrywał.
+
+
+Poniższy kod przedstawia symulację 100 000 rzutów czterema sześciennymi kostkami. W wyniku podana jest ocena prawdopodobieństwa zdarzenia $A$.
+
+
+```{r}
+#| echo: false
+#| eval: true
+set.seed(123)
+```
+
+
+
+```{r}
+n_sim <- 100000  # liczba symulacji
+wynik_1 <- replicate(n_sim, {
+  rzut <- sample(1:6, 4, replace = TRUE)
+  any(rzut == 6)
+})
+prob_1 <- mean(wynik_1)
+round(prob_1, 4)
+```
+
+
+
+De Méré obstawiał także wariant uzyskania w 24 rzutach dwiema kostkami uzyskanie przynajmniej raz dwóch "6" (zdarzenie $B$). Dla obliczenia prawdopodobieństwa tego zdarzenia można skorzystać ze wzoru na prawdopodobieństwa w rozkładzie dwumianowym:
+
+$P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}$
+
+gdzie: 
+
+$n$ - liczba identycznych doświadczeń, z których każde kończy się sukcesem z prawdopodobieństwm $p$ lub porażką z prawdopodobieństwm $1-p$,
+
+$k$ - liczba sukcesów.
+
+W przypadku zdarzenia $B$ są to:
+
+- n = 24 (liczba rzutów), 
+
+- $p = \frac{1}{36}$ (prawdopodobieństwo wyrzucenia dwóch "6" w rzucie dwiema kostkami), 
+
+- $\binom{n}{k}$ to symbol Newtona (liczba kombinacji).
+
+Prawdopodobieństwo zdarzenia $B$ można obliczyć następująco:
+
+$P(B) =1 - \left( \frac{35}{36} \right)^{24}  \approx 0.4914$
+
+Wynik obliczeń wskazuje, że de Méré obstawiając zdarzenie polegające na uzyskaniu przynajmmniej raz dwóch "szóstek" cześciej przegrywał niż wygrywał.
+
+
+Poniższy kod przedstawia symulację 100 000 rzutów 24 razy fdwiema kostkami. W wyniku podana jest ocena prawdopodobieństwa zdarzenia $B$.
+
+
+```{r}
+#| echo: false
+#| eval: true
+set.seed(123)
+```
+
+
+```{r}
+n_sim <- 100000  # liczba symulacji
+wynik_2 <- replicate(n_sim, {
+  rzut1 <- sample(1:6, 24, replace = TRUE)
+  rzut2 <- sample(1:6, 24, replace = TRUE)
+  any(rzut1 == 6 & rzut2 == 6)
+})
+prob_2 <- mean(wynik_2)
+round(prob_2, 4)
+```
+
+
+Na @fig-DeMere przedstawiono symulację częstości wygranych przy obstawianiu zdarzenia $A$ przy rzucie czterema kostkami (górna część wykresu) i zdarzenia $B$ przy 24 krotnym rzucie dwiema kostkami (dolna część wykresu). Obliczenia i wykres zrealizowano za pomocą kodu:
+
+```{r}
+#| echo: false
+#| eval: true
+set.seed(12)
+```
+
+```{r}
+#| label: fig-DeMere
+#| fig-cap: Częstość uzyskania "6" w 4 rzutach kostką (a) oraz czestość uzyskania  dwóch "szóstek"6" w 24 rzutach dwiema kostkami (b)
+#| fig-width: 8
+#| fig-height: 6
+n_sim <- 1000  
+
+# Cztery rzuty jedną kostką
+wynik_1 <- replicate(n_sim, {
+  rzut <- sample(1:6, 4, replace = TRUE)
+  any(rzut == 6)
+})
+cum_prob_1 <- cumsum(wynik_1) / seq_along(wynik_1)
+df1 <- data.frame(
+  symulacja = 1:n_sim,
+  prob = cum_prob_1
+)
+# 24 rzuty dwiema kostkami
+wynik_2 <- replicate(n_sim, {
+  rzut1 <- sample(1:6, 24, replace = TRUE)
+  rzut2 <- sample(1:6, 24, replace = TRUE)
+  any(rzut1 == 6 & rzut2 == 6)
+})
+cum_prob_2 <- cumsum(wynik_2) / seq_along(wynik_2)
+df2 <- data.frame(
+  symulacja = 1:n_sim,
+  prob = cum_prob_2
+)
+g1 <- ggplot(df1, aes(x = symulacja, y = prob)) +
+  geom_line(color = "blue") +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "darkgreen") +
+  theme_minimal() +
+  labs(title="a)", x = "Liczba doświadczeń", y = "Częstość")
+g2 <- ggplot(df2, aes(x = symulacja, y = prob)) +
+  geom_line(color = "red") +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "darkgreen") +
+  theme_minimal() +
+  labs(title="b)", x = "Liczba doświadczeń", y = "Częstość")
+g1 / g2
+```
+
+Obserwując obie linie na @fig-DeMere można dostrzec, że w miarę wzrostu liczby gier częstość  na górnym wykresie stabilizuje się na poziomie nieco powyżej 0,5, a na dolnym wykresie nieco poniżej poziomu 0,5.
+
+
+
+
+## Orzeł czy reszka? Rzut monetą 10, 100, 1000 razy
+
+Rzuty symetryczną monetą należą do najczęściej omawianych zagadnień przy wprowadzeniu do rachunku prawdopodobieństwa.
+W takich doświadczeniach prawdopodobieństwa otrzymania "orzełka" oraz "reszki" są jednakowe i wynoszą 0,5.
+Już jednak przy tak prostym doświadczeniu często pojawiają się trudności w zrozumieniu reguł w przypadku wielokrotnego powtarzania doświadczenia (rzutu monetą).
+Przy 10 rzutach symetryczną monetą rozkład prawdopodobieństwa liczby wyrzuconych "orzełków" można uzyskać wykonując poniższe polecenia, a ich rezultat przedstawia @tbl-mon10.
+
+
+```{r}
+#| echo: false
+#| eval: true
+set.seed(12)
+```
+
+
+```{r}
+#| tbl-cap: Rozkład prawdopodobieństwa liczby wyrzuconych "orzełków" w 10 rzutach symetryczną monetą
+#| label: tbl-mon10
+n <- 10
+p <- 0.5
+x <- 0:n
+prob <- dbinom(x, size = n, prob = p)
+df <- data.frame(sukcesy = x, prawdopodobienstwo = prob)
+kable (t(df))
+```
+
+
+Rozkład prawdopodobieństwa wygodnie przedstawić graficznie. Dla omawianego przypadku rozkład przedstawia @fig-mon10.
+
+
+```{r}
+#| fig-cap: Rozkład liczby wyrzuconych orzełków w 10 rzutach monetą
+#| label: fig-mon10
+#| fig-width: 10
+#| fig-height: 4
+
+ggplot(df, aes(x = sukcesy, y = prawdopodobienstwo)) +
+  geom_col(fill = "steelblue") +
+  scale_x_continuous(breaks = 0:n) +
+  labs(x = "Liczba orzełków",
+    y = "Prawdopodobieństwo"
+  ) +
+  theme_minimal()
+
+```
+
+Rozkład prawdopodobieństwa (@tbl-mon10) i @fig-mon10 wskazują, że realne jest uzyskanie np. 3 orzełków w 10 rzutach monetą.
+Prawdopodobieństwo takiego zdareznia wynosi ok. 0,1172.
+Natomiast prawdopodobieństwo uzyskania 3 lub mniej orzełków w 10 rzutach monetą wynosi ok. 0,1719.
+Oznacza to, że średnio w co szóstym doświadczeniu polegającym na dziesięciokrotnym rzucie monetą uzyska się 3 lub mniej orzełków.
+Często jednak intuicja jesty zawodna, jeśli znacznie zwiększa się liczba doświadczeń.
+Przy 100 rzutach monetą prawdopodobieństwa uzyskania 30 lub mniej orzełków oraz 40 lub mniej orzełków wynoszą odpowiednio:
+
+```{r}
+#| tbl-cap: Rozkład prawdopodobieństwa liczby wyrzuconych "orzełków" w 100 rzutach symetryczną monetą
+#| label: tbl-mon100
+n <- 100
+p <- 0.5
+x <- 0:n
+prob <- dbinom(x, size = n, prob = p)
+df <- data.frame(sukcesy = x, prawdopodobienstwo = prob)
+sum(df[,2][1:31])
+sum(df[,2][1:41])
+```
+
+Otrzymane wyniki informują, że prawdopodobieństwo uzyskania 30 lub mniej orzełków w 100 rzutach monetą wynosi ok. 0,0000393, a 400 lub mniej wynosi około 0,0284.
+
+Rozkład prawdopodobieństwa liczby uzyskanych orzełków w 1000 rzutach symetryczną monetą został przedstawiony na @fig-mon1000. W górnej części rozkład przedstawiono w całym zakresie zmienności liczby sukcesów, od 0 do 1000. Pozostałe dwa wykresy przedstawiają ten sam rozkład, ale dla zakresu liczby sukcesów od 300-700 (środkowy) oraz od 400-600 (dolny).
+
+
+
+
+```{r}
+#| fig-cap: Rozkład liczby orzełków w 1000 rzutach monetą
+#| label: fig-mon1000
+n <- 1000
+p <- 0.5
+sukces <- 0:n
+prob <- dbinom(sukces, size = n, prob = p)
+dane <- tibble(sukces = sukces, prob = prob)
+dane_f <- dane %>%
+  mutate(range = "Zakres: 0–1000")
+dane_300_700 <- dane %>%
+  filter(sukces >= 300, sukces <= 700) %>%
+  mutate(range = "Zakres: 300–700")
+dane_400_600 <- dane %>%
+  filter(sukces >= 400, sukces <= 600) %>%
+  mutate(range = "Zakres: 400–600")
+dane_razem <- bind_rows(dane_f, dane_300_700, dane_400_600)
+# Konstrukcja wykresu
+ggplot(dane_razem, aes(x = sukces, y = prob)) +
+  geom_col(fill = "steelblue") +
+  facet_wrap(~range, ncol = 1, scales = "free_x") +
+  labs( x = "Liczba orzełków",
+    y = "Prawdopodobieństwo"
+  ) +
+  theme_minimal()
+```
+
+Ta wizualizacja pozwala dostrzec jak małe jest prawdopodobieństwo uzyskania np. 300 lub mniej orzełków w 1000 rzutach monetą. Ponizszy kod przedstawia prawdopodobieństwa uzyskania 0, 1, 2, ..., k orzełków w 1000 rzutach symetryczną monetą, dla $k$ = 300, 400, 420, 430, 440, 450 i 460.
+
+```{r}
+#| tbl-cap: Rozkład prawdopodobieństwa liczby wyrzuconych "orzełków" od 0 do k w 1000 rzutach symetryczną monetą
+#| label: tbl-mon1000
+options(digits = 16)
+n <- 1000
+p <- 0.5
+x <- 0:n
+prob <- dbinom(x, size = n, prob = p)
+df <- data.frame(sukcesy = x, prawdopodobienstwo = prob)
+# Wartości k, dla których obliczane jest prawdopodobieństwo skumulowane
+k <- c(300, 400, 420, 430, 440, 450, 460)
+cum_p <- pbinom(k, size = n, prob = p)
+# Wyświetlenie tabeli
+tabela_p <- data.frame(
+  `Liczba orzełków (k)` = k,
+  `P(X <= k) w 1000 rzutach` = cum_p
+)
+kable(tabela_p)
+```
+Powyższy wynik informuje, że prawdopodobieństwo uzyskania 400 lub mniej orzełków w 1000 rzutach monetą jest bardzo małe i wynosi ok. 0,000000000136.
+Przedstawione rozważania dotyczące prostego doświadczenia rzutu monetą przedstawiają ważną ideę związaną z twierdzeniami granicznymi. W miarę wzrostu liczby identycznych doświadczeń Bernoullego częstość sukcesów zbliża się do prawdopodobieństwa, zwykle nieznanego, sukcesu $p$. Ideę tę przedstawia poniższy kod i @fig-moneta.
+
+
+```{r}
+#| fig-cap: Częstość względna uzyskania orzełka w serii $n$ rzutów
+#| label: fig-moneta
+# Symulacja: 1000 rzutów monetą (1 = orzeł, 0 = reszka)
+n <- 1000
+moneta <- sample(c(0, 1), size = n, replace = TRUE)
+cum_orz <- cumsum(moneta)
+# Ramka data.frame do wykresu
+df <- data.frame(
+  rzut = 1:n,
+  orz = cum_orz,
+  prop = cum_orz / (1:n)
+)
+# Wykres: proporcja orłów w serii rzutów monetą
+ggplot(df, aes(x = rzut, y = prop)) +
+  geom_line(color = "blue", size = 1) +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "darkgreen") +
+  theme_minimal() +
+  labs(x = "Numer rzutu",
+       y = "Proporcja orłów")
+```
+
+
+## Symulacyjne szacowanie liczby $\pi$
+
+
+Obecnie komputery pozwalają uzyskać przeciętnemu użytkownikowi wartość liczby $\pi$ z dokładnością do milionów miejsc po przecinku.
+Jednak setki lat trwała walka naukowców o poznanie kolejnych cyfr rozwinięcia dzisiętnego tej liczby.
+
+Wykonując bardzo proste symulacje można obecnie oszacować $\pi$ z dokładnością, która jeszcze 200-300 lat temu nie była dostępna naukowcom. Poniżej opisano dwa proste doświadczenia oraz przedstawiono ich symulacje komputerowe pozwalające uzyskać oszacowania liczby $\pi$.
+
+
+**Strzały do tarczy**
+
+W kwadratową tarczę wpisano koło. Strzelec strzela do tarczy. Zakładając równomierny rozkład strzałów w danym kwadracie można stosunkowo prosto szacować wartość $\pi$.
+W nieskończonej liczbie doświadczeń proporcja $p$ punktów w kole do wszystkich strzałów wynosi:
+
+$p=\frac{\pi}{4}$
+
+Na tej podstawie:
+
+$\pi=4p$
+
+W związku z powyższym $\pi$ można oszacować następująco:
+
+$\pi \approx 4 \frac{k}{n}$
+
+gdzie:
+
+$n$ - liczba strzałów do tarczy
+
+$k$ - liczba strzałów znajdujacych się w kole
+
+Schematyczny wynik serii 1000 strzałów przedstawia @fig-pi1
+
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| label: fig-pi1
+#| fig-cap: Ilustracja symulacyjnego szacowania liczby $\pi$ poprzez strzelanie do kwadratowej tarczy
+
+set.seed(123)
+n <- 1000
+
+x <- runif(n, -1, 1)
+y <- runif(n, -1, 1)
+inside_circle <- (x^2 + y^2) <= 1
+
+points_df <- data.frame(x = x, y = y, hit = inside_circle)
+
+# Ramka dla koła
+theta <- seq(0, 2*pi, length.out = 500)
+circle_df <- data.frame(x = cos(theta), y = sin(theta))
+
+# Wykres
+ggplot(points_df, aes(x, y)) +
+  geom_point(aes(color = hit), size = 0.8, alpha = 0.6) +
+  scale_color_manual(values = c("FALSE" = "red", "TRUE" = "blue")) +
+  geom_path(data = circle_df, aes(x, y), color = "black", size = 1) +
+  coord_fixed() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(x = "x", y = "y")
+
+```
+
+Ocenę wartości $\pi$ na podstawie symulacji $n=10000$ strzałów do tarczy realizuje kod:
+
+```{r}
+n <- 10000     # liczba strzałow do tarczy
+x <- runif(n, -1, 1)
+y <- runif(n, -1, 1)
+trafione <- (x^2 + y^2) <= 1
+pi_est <- 4 * mean(trafione)
+cat("Oszacowana wartość pi:", pi_est, "\n")
+```
+
+
+
+**Doświadczenie z igłą Buffona**
+
+
+W 1733 roku Georges-Louis Leclerc, hrabia Buffon, przedstawił następujące zadanie. Na płaszczyznę z równoległymi liniami umieszczonymi w odległości d rzucana jest igła o długosci L (L < d). Jakie jest prawdopodobieństwo, że igła przetnie linie?
+Zadanie schematycznie zostało przedstawione na @fig-pi2. Kolorem czerwonym oznaczono igły, które nie upadły na linię, a kolorem niebieskim igły przecinajace linię.
+
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| label: fig-pi2
+#| fig-cap: Ilustracja symulacyjnego szacowania liczby $\pi$ w doświadczeniu z igłą Buffona
+
+set.seed(123)
+n <- 100  # mniejsza liczba żeby było czytelnie
+d <- 1
+l <- 0.9  # długość igły, musi być <= d
+
+# Losowanie środków igieł i kątów
+x_center <- runif(n, 0, 10)
+y_center <- runif(n, 0, 10)
+theta <- runif(n, 0, pi)
+
+# Obliczanie końców igieł
+x_start <- x_center - (l/2) * cos(theta)
+x_end   <- x_center + (l/2) * cos(theta)
+y_start <- y_center - (l/2) * sin(theta)
+y_end   <- y_center + (l/2) * sin(theta)
+
+# Czy igła przecina którąś z linii?
+hit <- (floor(y_start / d) != floor(y_end / d))
+
+# Dane
+needles <- data.frame(
+  x_start, y_start, x_end, y_end, hit
+)
+
+# Linie poziome (co d jednostek)
+lines_y <- seq(0, 10, by = d)
+lines_df <- data.frame(y = lines_y)
+
+# Wykres
+ggplot() +
+  geom_segment(data = needles, 
+               aes(x = x_start, y = y_start, xend = x_end, yend = y_end, color = hit),
+               size = 0.8, alpha = 0.7) +
+  geom_hline(data = lines_df, aes(yintercept = y), color = "black", linetype = "dashed") +
+  scale_color_manual(values = c("FALSE" = "red", "TRUE" = "blue")) +
+  coord_fixed() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs( x = "x", y = "y")
+
+```
+
+Zadanie przez wiele lat pozostawało nierozwiązane. Dopiero w roku 1777 rozwiązanie przedstawił sam autor - hrabia Buffon. Podał następujący wzór określajacy prawdopodobieństwo $p$ przecięcia igły i narysowanej linii:
+
+$p = \frac{2L}{\pi d}$
+
+Po prostym przekształceniu wzoru uzyskuje się:
+
+$\pi= \frac{2L}{pd}$
+
+Takie przedstawienie wzoru pozwala na uzyskanie eksperymentalnej oceny wartosci liczby $\pi$ w następujący sposób:
+
+$\pi \approx \frac{2nL}{kd}$
+
+gdzie:
+
+n - liczba rzutów
+
+k - liczba rzutów, dla których igła spadła na linię
+
+
+Kod realizujący symulację rzutu igłą i pozwalający oszacować liczbę $\pi$ jest następujący:
+
+
+```{r}
+n <- 10000     # Liczba rzutów
+L <- 1         # Długość igły
+d <- 2         # Odległość między liniami (musi być większa niż L!)
+x_center <- runif(n, 0, d/2)  # Środek igły w zakresie [0, d/2]
+theta <- runif(n, 0, pi/2)    # Kąt w zakresie [0, pi/2] (symetria)
+przec <- x_center <= (L/2) * sin(theta)
+pi_est <- (2 * L * n) / (d * sum(przec))
+cat("Oszacowana wartość pi:", pi_est, "\n")
+```
+
+
+
+## Paradoks urodzin, czyli urodziny tego samego dnia
+
+Przedstawione poniżej zagadnienie w literaturze przedstawiane jest jako *paradoks urodzin*.
+
+Rok liczy 365 dni. Ile przynajmniej osób powinno się znajdować w sali, aby prawdopodobieństwo, że dwie osoby mają tego samego dnia urodziny przekroczyło 0,5?
+Skoro wszystkich dni w roku jest 365, zapytane osoby najczęściej wskazują jako odpowiedź 365/2, czyli ok. 183 osoby.
+Nie jest to jednak prawidłowa odpowiedź. Właściwa odpowiedź to (zaledwie!) 23 osoby.
+
+Proste potwierdzenie wskazanej odpowiedzi można uzyskać symulacyjnie w programie R. Poniższy kod symulacyjnie wyznacza ocenę prawdopodobieństwa, że wśród losowo wybranych 23 osób są przynajmniej dwie mające urodziny tego samego dnia.
+
+
+```{r}
+set.seed(123)
+n_sim <- 10000   # liczba symulacji
+liczba_os <- 23 # liczba osób w grupie
+
+symulacja <- function(liczba_os) {
+  urodziny <- sample(1:365, liczba_os, replace = TRUE)
+  any(duplicated(urodziny))
+}
+wynik <- replicate(n_sim, symulacja(liczba_os))
+pi_est <- mean(wynik)
+cat("Szacowane prawdopodobieństwo dla", liczba_os, "osób:", round(pi_est, 4), "\n")
+```
+Kolejny kod oblicza takie prawdopodobieństwa dla liczby osób: 5, 15, 25 oraz 35. Obliczane są dokładne prawdopodobieństwa, a nie jest to symulacyjne przybiżenie.
+Zauważalne jest, że już przy 35 osobach prawdopodobieństwo, że w grupie znajdują się osoby mające tego samego dnia urodziny przekracza 0,8. Wyniki przedstawiono w @tbl-urodz1.
+
+
+```{r}
+#| label: tbl-urodz1
+#| tbl-cap: Prawdopodobieństwo w problemie urodzin
+urodziny_p <- function(n) {
+  if (n > 365) return(1)  # przy >365 osobach pewność
+  prob_u <- prod((365:(365 - n + 1)) / 365)
+  1 - prob_u
+}
+n_vec <- c(5, 15, 25, 35)
+p_vec <- sapply(n_vec, urodziny_p)
+kable(
+  rbind(`n` = n_vec, `Prawdopodobieństwo` = round(p_vec, 4))
+ )
+
+```
+
+Kolejny kod przedstawia obliczenia dla zakresu liczby osób od 2 do 70. Dodatkowo wynik obliczeń został przedstawioony na @fig-urodz2.
+
+```{r}
+#| label: fig-urodz2
+#| fig-cap: Prawdopodobieństwo, że w grupie n osób dwie mają tego samego dnia urodziny
+
+liczba_os <- 2:70
+prob <- sapply(liczba_os, urodziny_p)
+df <- data.frame(liczba_os = liczba_os, probability = prob)
+ggplot(df, aes(x = liczba_os, y = prob)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "red", size = 2) +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "darkgreen") +
+  theme_minimal() +
+  labs( x = "Liczba osób w grupie (n)",
+       y = "Prawdopodobieństwo") +
+  annotate("text", x = 23, y = 0.52, label = "≈50% przy 23 osobach", color = "darkgreen")
+```
+
+<br>
+
+
+
+

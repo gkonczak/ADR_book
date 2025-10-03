@@ -1,0 +1,166 @@
+# Model regresji prostej i wielorakiej
+
+::: {.callout-note icon="false" appearance="simple"}
+
+
+Regresja liniowa to jedna z najważniejszych metod analizy statystycznej. Służy do modelowania zależności między zmienną objaśnianą ($Y$) a jedną lub wieloma zmiennymi objaśniającymi ($X$ lub $X_1, X_2, \ldots, X_n$). Model regresji wykorzystywany jest do: 
+
+- szacowania wpływu zmiennych niezależnych na zmienną zależną, (np. jak w jakim stopniu zmiana stopy procentowej wpływa na inwestycje),
+
+-   modelowania i przewidywania zjawisk (np. prognozowanie wzrostu PKB),
+
+-   kontrolowania zmiennych zakłócających (np. zmiennych, których nie zamierza się wykorzytać w modelowaniu),
+
+-   badania współzależności wielu zmiennych (np. wpływ różnych zmiennych na poziom bezrobocia).
+:::
+
+## Model liniowy z jedną zmienną objaśniającą
+
+### Zmienna objaśniana: spalanie paliwa, zmienna objaśniająca: waga samochodu.
+
+```{r}
+model1<-lm(mpg~wt,data=mtcars)
+
+#Podstawowe informacje.
+model1
+#Rozszerzony widok informacji o modelu.
+summary(model1)
+```
+
+### Wyświetlenie wyników
+
+#### Współczynniki
+
+```{r}
+model1$coefficients
+```
+
+#### Współczynniki i inne informacje (dotyczące testowania istotności parametrów)
+
+```{r}
+summary(model1)$coefficients
+```
+
+#### Wartość współczynnika kierunkowego
+
+```{r}
+summary(model1)$coefficients[2,1]
+summary(model1)$coef[2,1]
+```
+
+#### Wartość wyrazu wolnego
+
+```{r}
+summary(model1)$coefficients[1,1]
+```
+
+#### Współczynnik R-kwadrat
+
+```{r}
+summary(model1)$r.squared
+```
+
+##### Reszty
+
+```{r}
+model1$residuals
+summary(model1)$residuals
+```
+
+
+### Wizualizacja wyników
+
+Wykres punktowy z linią regresji
+```{r}
+#| label: fig-r01
+#| fig-cap: Waga samochodu i liczba mil przejechanych na galonie paliwa
+plot(mtcars$wt, mtcars$mpg, xlab="Waga", ylab="Spalanie (mpg)")
+abline(model1, col="red", lwd=2)
+```
+
+
+
+
+
+##### Wartości teoretyczne
+
+```{r}
+#| label: fig-r02
+#| fig-cap: Waga samochodu i liczba mil przejechanych na galonie paliwa
+model1$fitted.values
+plot(mtcars$mpg,mtcars$wt)
+```
+
+
+Sprawdzenie założeń modelu liniowego (normalność reszt, homoscedastyczność, obserwacje odstające)
+
+Wykresy diagnostyczne
+
+```{r}
+#| label: fig-r03
+#| fig-cap: Wykresy diagnostyczne
+par(mfrow=c(2,2))
+plot(model1)
+par(mfrow=c(1,1))
+```
+
+### Predykcja
+
+Przykład predykcji dla nowej wagi samochodu
+
+```{r}
+
+nowe_obs <- data.frame(wt = c(2.5, 3.0, 3.5))
+predict(model1, nowe_obs)
+```
+
+
+
+
+
+
+## Model liniowy z dwiema zmiennymi objaśniającymi
+
+### Zmienna zależna: spalanie, dwie zmienne niezależne: waga samochodu i przespieszenie
+
+```{r}
+model2<-lm(mpg~wt+qsec,data=mtcars)
+model2
+summary(model2)
+```
+
+
+"O ile zmieni się spalanie, jeśli waga wzrośnie o 1 jednostkę, przy założeniu stałego przyspieszenia?". OPISAĆ
+
+
+Porównanie modeli
+
+```{r}
+AIC(model1, model2)
+```
+
+
+
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Zbuduj model regresji prostej dla danych **mtcars**, gdzie zmienną zależną jest *hp* (moc), a niezależną *wt* (waga).
+
+2. Zbuduj model regresji wielorakiej dla mpg z trzema zmiennymi niezależnymi: *wt, qsec, hp*.
+
+3. Sprawdź, czy reszty modelu są normalnie rozłożone (np. wykres QQ).
+
+4. Wykonaj predykcję spalania dla samochodu o wadze 3,2 i przyspieszeniu 18.
+
+5. Porównaj modele pod względem $R^2$.
+
+
+
+
+
+
+
+:::
+
+

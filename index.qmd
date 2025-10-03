@@ -1,0 +1,233 @@
+## Tylko notatki {.unnumbered}
+
+Notacja:
+
+Pakiety: **ggplot2** - później zostanie zrobione consolas
+
+Zbiory **mtcars**
+
+Zmienne *cyl*
+
+Komendy i funkcje `plot`, `animate`
+
+W Quarto
+
+    theme: simple 
+    highlight-style: tango
+
+
+Tak przedstawiamy krótkie notki o zawartosci rozdziału
+
+::: {.callout-note icon="false" appearance="simple"}
+
+Zawartość rozdziału  
+
+callout-note
+
+W tym rozdziale przedstawiono ....
+:::
+
+::: callout-tip
+## **ggplot2** 
+
+callout-tip
+
+W tym rozdziale przedstawiono podstawowe informacje. Pakiet graficzny o bardzo szerokich możliwosciach. Oparty na gramatyce grafiki. 
+
+:::
+
+::: callout-important
+## **mtcars** 
+
+callout-important
+
+Opis zbioru mtcars
+- liczba cyl
+- liczba gear
+
+important
+:::
+
+::: callout-warning
+## Zadania do samodzielnego obliczenia 
+
+callout-warning
+
+Tu zamieszczono zadania do materiału z rozdziału
+:::
+
+::: callout-caution
+## Dodatkowe informacje / obliczenia przez Czytelnika 
+
+callout-caution
+:::
+
+
+::: callout-tip icon="false" appearance="simple"}
+## Zadanie // przykład 
+
+Treść przykładu
+
+:::
+
+Rozwiązanie
+
+
+
+WYŚWIETLANIE:
+
+Tylko wyniki:
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+```
+
+
+Kod wyświetlany, rezultat nie
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+? norm
+```
+
+
+Kody bez wyników
+```{r}
+#| warning: false
+#| echo: false
+#| eval: false
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### NIE DO TEJ KASIĄŻKI
+
+::: {.callout-warning icon="false" size="2"}
+## Zadania
+
+warning Tu zamieszczono zadania do materiału z rozdziału
+
+{.callout-warning icon="false" size="2"}
+:::
+
+::: {.callout-caution icon="false"}
+## Prawda czy fałsz?
+
+{.callout-caution icon="false"}
+caution
+
+Tu zamieszczono pytania typu "Tak / Nie" do materiału z rozdziału
+:::
+
+::: {.callout-important icon="false" simple="true"}
+## Pytania testowe
+
+Tu zamieszczono pytania testowe z jedną poprawną odpowiedzią do materiału z rozdziału
+:::
+
+-   index.qmd
+-   wprowadzenie.qmd\
+-   r01.qmd \# Podstawy pracy z programem R // instalacja, RStudio
+-   r02.qmd \# Struktury danych
+-   r03.qmd \# Instrukcje warunkowe oraz pętle
+-   r04.qmd \# Funkcje i operacje matematyczne oraz statystyczne // Podstawy analizy danych (struktura, korelacja, model liniowy)
+-   r05.qmd \# Import i eksport danych. Wykresy. Zmienne losowe
+-   r06.qmd \# Wizualizacja z pakietem lattice
+-   r07.qmd \# Model liniowy
+-   r08.qmd \# Weryfikacja hipotez i pakiet dplyr
+-   r09.qmd \# Pakiet ggplot2. Podstawy konstrukcji wykresów
+-   r10.qmd \# Pakiet patchwork
+-   r11.qmd \# Pakiety ggplot2 i gapminder. Podstawy animacji
+-   r12.qmd \# Animacje dla rzeczywistych danych z BDL
+-   r13.qmd \# Odpowiedzi
+-   r14.qmd \# Next
+-   references.qmd
+
+
+
+@konczak2014
+
+
+@rao1997
+
+
+@bernstein1997
+
+
+@aczel2000
+
+
+@konczak2012
+
+
+@albert_r_2012
+
+@hui_learn_2019
+
+@heumann_introduction_2016
+
+@grolemund_hands-programming_2014
+
+@dayal_introduction_2015
+
+@noauthor_r_nodate
+
+@verzani_simpler_2002
+
+@crawley_r_2007
+
+
+@stowell_using_2014
+
+@cotton_learning_2013
+
+@silge_text_2017
+
+
+@husson_exploratory_2017
+
+@wickham_r_2015
+@wickham_advanced_2019}
+
+@gardener_beginning_2012
+
+@tattar_statistical_2017
+
+@schumacker_using_2016
+
+@tattar_course_2016
+
+@lander_r_2017
+
+@schmuller_statistical_2017
+
+@long_r_2019
+
+@field_discovering_2012
+
+@dalgaard_introductory_2008
+
+@matloff_art_2011
+
+@gillespie_efficient_2017
+
+@zelterman_applied_2015
+
+
+

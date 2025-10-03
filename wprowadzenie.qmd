@@ -1,0 +1,280 @@
+# Wprowadzenie {.unnumbered}
+
+Opracowanie:
+
+Grzegorz Kończak roz. 6,7 oraz 11-16
+
+Martyna Kosińska roz. 1-5 oraz 8-10.
+
+
+
+To jest podręcznik wprowadzający do zagadnień analizy danych w środowisku **R**.
+W książce przyjęto pewne oznaczenia wybranych fragmentów, a schemat tych oznaczeń zamieszczono poniżej.
+
+
+
+Nazwy pakietów programu **R** zapisano pogrubioną czcionką consolas: **ggplot2** - później zostanie zrobione consolas
+
+Nazwy zbiorów wykorzystywanych w pracy zapisano czcionką pogrubioną np. **mtcars**.
+
+Zmienne zbiorów oznaczono kursywą np. *cyl*, *mpg*.
+
+
+Komendy i funkcje opisywane w tekście oznaczono następująco: `plot()`, `animate()`
+
+
+Na wstępie każdego rozdziału zamieszczono zwięzłą informację o jego zawartości.
+Te informacje zamieszczono w następujacej formie graficznej:
+
+
+::: {.callout-note icon="false" appearance="simple"}
+
+Krótka informacja o zawartości rozdziału
+
+:::
+
+
+W książce zamieszczono wiele kodów programów opracowanych w **R**.
+
+Kody prcedur w książce wyróżnione są w następujący sposób:
+
+```{r}
+#| eval: false
+#| echo: true
+#| label: fig-wprow
+#| fig-cap: Tu jest tytuł rysunku
+library(ggplot2)
+ggplot(mtcars, aes(wt,mpg))+
+  geom_point()
+```
+
+
+
+Zazwyczaj bezpośrednio pod kodem są zamieszczone wyniki jego realizacji.
+Wyniki obliczeń są prezentowane następująco:
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+summary(rivers)
+```
+
+Niekiedy, np. ze względu na obszerność wyników, nie są one zamieszczane, ale Czytelnik może samodzielnie taki kod uruchomić.
+W takich przypadkach jest to oznaczone następująco:
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+? iris
+```
+
+
+
+
+Dla efektywnej pracy w środowisku **R** niezbędne jest odwołanie sie do dodatkowych bibliotek (packages). 
+Przy pierwszym odwołaniu do najważniejszych pakietów wprowadzono informację o danym pakiecie w następującej formie:
+
+::: callout-tip
+## **ggplot2**
+
+Pakiet **ggplot2** to jedno z najpopularniejszych i najbardziej zaawansowanych narzędzi do tworzenia wykresów statystycznych w języku **R**. Został zbudowany przez Hadleya Wickhama i jest implementacją tzw. Gramatyki Grafiki (Grammar of Graphics), co oznacza, że wykresy buduje się poprzez łączenie niezależnych komponentów, takich jak warstwy, geometrie, skale, układy współrzędnych i motywy. Dzięki temu użytkownik może elastycznie i intuicyjnie tworzyć zarówno proste, jak i bardzo złożone wizualizacje danych.
+
+:::
+
+W książce wykorzystano wiele zbiorów danych, które są dostępne w środowisku **R**.
+Przy pierwszym odwołaniu do danego zbioru przedstawiono jego krótką charakterystykę w następującej formie:
+
+::: callout-important
+## **cars**
+
+Zbiór **cars** składa się z 2 zmiennych numerycznych i zawiera 150 obserwacji. 
+Przedstawia prędkość samochodu (*speed*) oraz odległość potrzebną do zatrzymania samochodu (*dist*).
+Jest to ramka danych (data.frame).
+
+:::
+
+
+::: callout-warning
+## Zbiory danych
+
+Środowisko **R** zapewnia dostęp do znacznej liczby zbiorów danych. Niektóre z nich są dostępne bezpośrednio po zainstalowaniu programu, a dla wykorzystania innych niezbędne jest załadowanie określonych bibliotek. 
+
+W książce będą wykorzystywane następujące zbiory danych: 
+
+- **rivers** - roz. 
+- **cars** - roz. 
+- **mtcars** - roz. 
+- **AirPassengers** - roz. 
+- **trees** - roz. 
+- **chickwts** - roz. 
+- **Titanic** - roz. 
+- **swiss** - roz. 
+- **iris** - roz. 
+
+:::
+
+
+Przykład informacji o zbiorze danych.
+
+::: callout-important
+## **cars**
+
+Zbiór **cars** składa się z 2 zmiennych i zawiera 150 obserwacji. 
+Przedstawia prędkość samochodu oraz odległość potrzebną do zatrzymania samochodu.
+:::
+
+W @tbl-dane przedstawiono wykaz zbiorów dostępnych w programie **R**, które zostały wykorzystane w niniejszej ksiązce. W tabeli wskazao, w których rozdziałach dany zbiór został wykorzystany.
+
+
+: Zbiory danych wykorzystane w książce {#tbl-dane}
+
+| Zbiór danych     | Rozdział   |
+|------------------|:----------:|
+| **AirPassengers**| 1          |
+| **cars**         | 1          |
+| **ChickWeight**  | X          |
+| **chickwts**     | X          |
+| **gapminder**    | 12         |
+| **iris**         | 2, 7, 11   |
+| **mtcars**       | 6, 8       |
+| **rivers**       | X          |
+| **swiss**        | X          |
+| **trees**        | X          |
+| **Titanic**      | X          |
+
+
+Zbiory w rozdziałach:
+
+1. cars, AirPassengers, trees, chickwts, swiss
+2. iris
+3. -
+4. -
+5. airquality, ChickWeight
+6. mtcars
+7. iris
+8. mtcars
+9. - 
+10. 
+11. iris
+12. gapminder #
+13. -
+14. rivers
+15. rivers
+16. anscombe, datasaurus_dozen, 
+
+
+
+
+
+Szczegółowe informacje o zbiorze danych można uzyskać poprzez odwołanie sie do systemu pomocy np:
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+? iris
+```
+
+
+Zawsze przed pierwszym odwołaniem do zbioru będzie zamieszczona krótka informacja o tym zbiorze.
+
+
+
+
+
+Niekiedy w książce zamieszczono dodatkowe informacje wyjaśniające.
+Wystąpienie takich informacji oznaczono następująco
+
+::: callout-warning
+## Doatkowe informacje
+
+:::
+
+
+Na zakończenie rozdziałów 1-13 zamieszczono po kilka przykładowych ćwiczeń do samodzielnego wykonania.
+Ćwiczenia oznaczono następująco:
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1. Wykonaj polecenia
+
+2. Opracuj kod
+
+3. Oblicz...
+
+4. Wykonaj wykres
+
+5. Zapisz dane
+:::
+
+
+
+Materiały pomocnicze do książki zamieszczono na stronie:
+
+http://stat.ue.katowice.pl/adr_book
+
+Zamieszczono tam prawie wszystkie kody z książki, a także dodatkowe kody i przykłady.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+::: {.callout-tip icon="false"}
+## Wykonaj to samodzielnie
+:::
+
+Wykonaj to samodzielnie - kod bez wyników.
+
+::: {.callout-tip icon="false"}
+## \*\*\*
+:::
+
+To jest informacja o końcu przykładu.
+
+Twierdzenia i wnioski
+
+::: callout-important
+## Twierdzenia i wnioski
+
+To jest twierdzenie lub wniosek
+:::
+
+Dla zadań i pytań zamieszczonych na zakończenie rozdziałów 2-7 przyjęto następujace oznaczenia.
+
+::: {.callout-warning icon="false" size="2"}
+## Zadania
+
+Tu zamieszczono zadania do materiału z rozdziału
+:::
+
+::: {.callout-tip icon="false"}
+## Pytania problemowe
+
+Tu zamieszczono pytania problemowe do materiału z rozdziału
+:::
+
+::: {.callout-caution icon="false"}
+## Prawda czy fałsz?
+
+Tu zamieszczono pytania typu "Tak / Nie " do materiału z rozdziału
+:::
+
+::: {.callout-important icon="false"}
+## Pytania testowe
+
+Tu zamieszczono pytania testowe z jedną poprawną odpowiedzią do materiału z rozdziału
+:::

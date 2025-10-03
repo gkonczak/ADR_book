@@ -1,0 +1,341 @@
+# Wizualizacja danych z pakietem **lattice**
+
+::: {.callout-note icon="false" appearance="simple"}
+
+
+Pakiet **lattice** dostępny w języku **R** to jeden z głównych systemów do tworzenia zaawansowanych wykresów opartych na tzw. "trellis graphics", czyli układzie wielu wykresów w siatce (grid), który pozwala na wygodne przedstawienie danych w podziale na grupy.
+
+:::
+
+
+
+ Wygląd wykresu jest determinowany przez:
+ 
+ 
+- szablon graficzny definiujący typ wykresu (17 rodzajów),
+- formułę określającą zmienne, ich role na wykresie oraz sposób grupowania obserwacji,
+- typ zmiennych wykorzystanych w formule.
+
+
+## Rodzaje wykresów - szablony graficzne
+W @tbl-p przedstawiono funkcje tworzace różne typy wykresów.
+
+:Szablony graficzne pakietu `lattice` {#tbl-p}
+
+| Funkcja        | Typ wykresu                                                |
+|----------------|------------------------------------------------------------|
+| barchart       | Wykres kolumnowy i słupkowy             |
+| bwplot         | Wykres pudełko-wąsy, skrzypcowy o pochodne |
+| densityplot    | Jądrowy estymator gęstości, czyli wykres gęstości rozkładu |
+| dotplot        | Wykres kropkowy |
+| histogram      | Histogram|
+| qqmath         | Wykres kwantylowy dla jednej próby|
+| stripplot      | Wykres paskowy |
+| qq             | Wykresy kwantylowe do porównywania dwóch rozkładów | 
+| xyplot         | Wykresy rozrzutu i wykresy szeregów czasowych (i potencjalnie więcej) |
+| levelplot      | Wykres typu mapa ciepła |
+| contourplot    | Wykres konturowy |
+| cloud          | Trójwymiarowy wykres rozrzutu |
+| wireframe      | Powierzchnia 2D |
+| splom          | Macierz wykresów kropkowych (rozrzutu) |
+| parallel       | Wykres przebiegu |
+| rfs            | Wykres reszt i ocen modelu  |
+| tmd            | Wykres różnicy średnich Tukeya |
+
+
+
+
+Na wstępie konieczne jest zainstalowanie i wczytanie pakietu **lattice**. Realizuje się to następująco:
+
+```{r}
+#| echo: false
+#| eval: true
+#install.packages("lattice")
+library(lattice) 
+```
+
+```{r}
+#| echo: true
+#| eval: false
+install.packages("lattice")
+library(lattice) 
+```
+
+
+
+Do wizualizacji wykorzystany zostanie wbudowany w **R** zbiór danych **airquality**, który zawiera pomiary jakości powietrza w Nowym Jorku. 
+
+::: callout-important
+## **airquality**
+
+Zbiór zawiera dane z codziennych pomiarów jakości powietrza w Nowym Jorku w okresie od maja do września 1973 roku. Składa się z 6 zmiennych i zawiera 153 obserwacje (dni). 
+W zbiorze wyróżniono 6 następujących zmiennych:
+
+- *Ozone* - Poziom ozonu (części na miliard, ppb)
+- *Solar.R* - Promieniowanie słoneczne (Langleye)
+- *Wind* - Prędkość wiatru (mile na godzinę, mph)
+- *Temp* - Maksymalna dzienna temperatura (stopnie Fahrenheita)
+- *Month* - Miesiąc (od 5 do 9)
+- *Day* - Dzień miesiąca (od 1 do 31)
+:::
+
+
+
+Kolumna *Month* zostanie przekształcona na typ factor, aby ułatwić grupowanie danych według miesięcy.
+
+```{r}
+aq_data = airquality
+aq_data$Month = factor(aq_data$Month,
+                     levels = c(5, 6, 7, 8, 9),
+                     labels = c("maj", "czerwiec", "lipiec", "sierpień", "wrzesień"))
+head(aq_data)
+```
+
+W dalszej części zostanie przedstawiona konstrukcja wybranych wykresów na przykładzie danych ze zbioru **airquality**.
+
+
+
+## Jądrowy estymator gęstości
+
+Funkcja `densityplot` z pakietu **lattice** pozwala na wizualizację gęstości rozkładu zmiennej. Oszacowanie otrzymywane jest za pomocą jądrowego estymatora gęstości. 
+
+```{r}
+#| label: fig-r01
+#| fig-cap: Jądrowy estymator gęstości zmiennej Temp (maksymalna temperatura)
+densityplot(~Temp, data = aq_data)
+```
+
+Powyższy kod generuje wykres gęstości dla zmiennej *Temp* (maksymalna temperatura). Pokazuje on, jak rozkładają się wartości zmiennej w całym zbiorze danych.
+Wynik został przedstawiony na @fig-r01.
+
+::: callout-warning
+## Formuły 
+Formuła podawana jako pierwszy argument funkcji pozwala na nadanie roli zmiennym. Określa, która zmienna będzie przedstawiana na osi OY, a która na OX. Oprócz tego dane mogą być prezentowane w podziale na grupy,za co odpowiada zmienna grupująca. Składnia formuł jest następująca:
+
+  $y \sim x \mid z * u$
+
+$y$ - zmienna objaśniana \
+$x$ - zmienne objaśniające \
+$z, u$ - zmienne grupujące (1, 2 lub więcej)
+:::
+
+
+Dla porównania rozkładów temperatury w poszczególnych miesiącach, utworzyć można osobne wykresy dla każdego miesiąca.
+
+```{r}
+#| label: fig-r02
+#| eval: true
+#| echo: false
+#| fig-cap: Jądrowy estymator gęstości zmiennej Temp osobno dla każdego z miesięcy
+densityplot(~Temp|Month, data = aq_data, layout = c(3, 2))
+```
+
+```{r}
+#| label: fig-r02b
+#| eval: false
+#| echo: true
+#| fig-cap: Jądrowy estymator gęstości zmiennej Temp osobno dla każdego z miesięcy
+densityplot(~Temp|Month, data = aq_data)
+```
+
+Wykres @fig-r02 przedstawia rozkład maksymalnej temperatury (*Temp*) dla każdego z miesięcy (od maja do września) na oddzielnych panelach. Dzięki temu można łatwo porównać kształt rozkładów między miesiącami.
+Układ wykresów można modyfikować a także dodawać opisy osi oraz tytuł.
+
+```{r}
+#| label: fig-r03
+#| fig-cap: Jądrowy estymator gęstości zmiennej Temp osobno dla każdego z miesięcy z tytułami
+densityplot(~Temp|Month, 
+            data = aq_data, 
+            layout = c(5, 1),
+            xlab = "maksymalna odnotowana temperatura",
+            main = "Estymacja gęstości rozkładu \n maksymalnych temperatur w wybranych miesiącach")
+```
+
+@fig-r03 pokazuje te same estymatory gęstości, ale panele są ułożone poziomo (5 kolumn, 1 wiersz), a sam wykres uzupełniono o tytuł oraz opis osi OX.
+
+::: callout-warning
+## Parametry graficzne 
+Parametry graficzne wykresu w pakiecie **lattice** w większości mają te same nazwy co w pakiecie **graphics** tj. np.: `xlab`, `ylab`, `main`, `pch`, `col` i inne.  
+
+:::
+
+::: callout-warning
+
+Wyrażenie `\n` wykorzystane jest do przerwania linii w nazwie wykresu lub opisie osi.
+
+:::
+
+
+## Wykres rozrzutu
+
+Funkcja `xyplot` z pakietu **lattice** służy do tworzenia wykresów rozrzutu, które pokazują zależność między dwiema zmiennymi ilościowymi.
+
+
+```{r}
+#| label: fig-r04
+#| fig-cap: Wykres rozrzutu. Prędkość wiatru i poziom ozonu
+xyplot(Ozone~Wind, data = aq_data)
+
+```
+
+@fig-r04 przedstawia zależność między prędkością wiatru (*Wind*) a poziomem ozonu (*Ozone*). Każdy punkt reprezentuje pojedynczą obserwację.
+
+Podobnie jak w przypadku wykresu densityplot, można konstruować wykresy warunkowe, aby wskazać zależności w podziale na grupy. Poniższy kod konstruuje wykresy rozrzutu Ozone vs Wind dla każdego miesiąca.
+
+```{r}
+#| label: fig-r05
+#| fig-cap: Wykres rozrzutu z wyróżnionymi grupami. Prędkość wiatru i poziom ozonu według miesiąca
+
+aq_data_new <- aq_data[aq_data[, "Month"] == "czerwiec" | aq_data[, "Month"] == "lipiec" | aq_data[, "Month"] == "sierpień", ]
+
+aq_data_new$Month <- factor(aq_data_new$Month, levels = c("czerwiec", "lipiec", "sierpień"))
+xyplot(Ozone~Wind, group = Month, col = c(2, 3, 4), data = aq_data_new,
+       pch = 19, key = list(space="right",
+       text = list(as.character(unique(aq_data_new$Month))),
+                       points = list(pch = 19, col = 2:4)))
+
+```
+@fig-r05 przedstawia zależność *Ozone* od *Wind* dla miesięcy letnich, z punktami pokolorowanymi według miesiąca i z dodaną legendą po prawej stronie.
+
+
+::: callout-warning
+
+Pakiet **lattice** umożliwia utworzenie spersonalizowanej legendy za pomocą argumentu `key`. Jest to obiekt typu _lista_. Za jego pomocą można zdefiniować m.in.:
+
+* `title` - tytuł legendy, 
+* `space` - położenie legendy ("top", "bottom", "left", "right"),
+* `text` - tekst etykiet w legendzie (obiekt typu _tekst_ lub _wektor_),
+* `points` - wygląd symboli punktowych w legendzie, w tym ich rodzaj, wielkość, kolor itp. (obiekt typu _lista_),
+* `lines` - wygląd linii w legendzie m.in. rodzaj linii, kolor, grubość itp. (obiekt typu _lista_),
+* `columns` - liczba kolumn, z których składać się będzie legenda.
+:::
+
+
+::: callout-warning
+Dla argumentu `key` komponenty `text`, `points`, `lines` i `rectangles` wykorzystują parametry takie jak m.in.:
+
+- `cex = 1` (text, lines, points) - liczba wskazująca wartość, o jaką tekst i symbole powinny być skalowane względem wartości domyślnej tj. 1,
+- `col = "black"` (text, rectangles, lines, points) - kolor linii, tekstu, punktów, wypełnienia prostokątów,
+- `alpha = 1` (text, rectangles, lines, points) - liczba określająca przezroczystość elementu (0 - całkowita przezroczystość, 1 - pełny kolor),
+- `fill = "red"` (lines, points) - kolor wypełnienia punków lub linii w legendzie,
+- `lty = 2` (lines) - liczba całkowita od 1 do 6 wskazująca typ linii,
+- `lwd = 1` (lines, points) - liczba określająca grubość linii lub punktów względem wartości domyślnej tj. 1,
+- `fontface = "italic"` (text, points) - styl czcionki ("plain", "bold", "italic"), 
+- `pch = 8` (lines, points) - liczba od 0 do 25 wskazująca na znak używany do kreślenia punktów,
+- `adj = 0` (text) - wyśrodkowanie tekstu (0 - do lewej, 0.5 - do środka, 1 - do prawej),
+- `type = "l"` (lines) - typ linii ("p", "l", "b", "o", "h", "s", "S", "c").
+:::
+
+## Macierzowy wykres rozrzutu
+
+Funkcja `splom` (scatterplot matrix) tworzy siatkę wykresów rozrzutu, pokazując zależności między wszystkimi parami wybranych zmiennych. Jest to przydatne do szybkiego przeglądu zależności w wielowymiarowym zbiorze danych.
+
+
+```{r}
+#| label: fig-r06
+#| fig-cap: Macierzowy wykres rozrzutu. Poziom ozonu , prędkość wiatru i temperatura. 
+splom(aq_data[, c("Ozone", "Wind", "Temp")])
+
+```
+
+Na @fig-r06 na przecięciu wiersza i kolumny znajduje się wykres zależności odpowiednich zmiennych (np. w pierwszym wierszu, drugiej kolumnie jest wykres dla zmiennych *Wind* i *Temp*). Na przekątnej domyślnie znajdują się etykiety zmiennych.
+
+## Wykres pudełkowy
+
+
+Wykresy pudełkowe (box plots) w pakiecie **lattice** konstruowane są  za pomocą funkcji `bwplot`. Pozwalają one na porównywanie rozkładów zmiennej ilościowej dla różnych kategorii. Pokazują medianę, kwartyle oraz potencjalne wartości odstające.
+
+
+```{r}
+#| label: fig-r07
+#| fig-cap: Wykres pudełkowy. Poziom ozonu według miesięcy 
+
+bwplot(Ozone~Month, data = aq_data,
+       xlab = "Miesiące",
+       ylab = "Poziom Ozonu",
+       scales = list(cex = 0.7), fill = rainbow(5))
+```
+
+
+@fig-r07 pokazuje rozkład poziomu ozonu (*Ozone*) w poszczególnych miesiącach (*Month*). Dodano niestandardowe etykiety osi oraz zmniejszono rozmiar czcionki na osiach (`scales = list(cex=0.7)`) dla lepszej czytelności, jeśli etykiety są długie lub jest ich wiele, wprowadzono także kolorowanie poszczególnych "pudełek".
+
+::: callout-warning
+Funkcja `scales` wykorzywstywana jest do kontrolowania wyglądu osi wykresu.
+:::
+
+
+W kolejnych przykładach wykorzystany zostanie zbiór **ChickWeight**
+
+::: callout-important
+## ChickWeight
+
+Zbiór zawiera dane dotyczące wagi piskląt karmionych różnymi dietami w czasie. Składa się z 4 zmiennych i zawiera 578 obserwacji.
+
+W zbiorze wyróżniono 4 następujące zmienne:
+
+- *weight* - Waga pisklęcia (g)
+
+- *Time* - Czas od urodzenia, w dniach
+
+- *Chick* - Unikalny identyfikator pisklęcia
+
+- *Diet* - Kod diety, której pisklę było poddawane (1, 2, 3 lub 4)
+:::
+
+
+
+## Wykres słupkowy
+
+
+Funkcja `barchart` pozwala na konstrukcję wykresów słupkowych. Wykresy te zazwyczaj pokazują liczebność lub podsumowane wartości dla poszczególnych kategorii. 
+
+Ten kod pokazuje liczbę obserwacji (piskląt) przypadającą na każdą z diet. Argument `horizontal = F` określa, że słupki mają być pionowe (jest to domyślne zachowanie dla barchart w lattice, ale można je jawnie określić). Wykres jest tworzony na podstawie samej kolumny *Diet*.
+
+
+
+```{r}
+#| label: fig-r08
+#| fig-cap: Wykres słupkowy. Liczba kurczaków według podawanej diety
+
+barchart(ChickWeight$Diet, horizontal = F, main = "Liczba kurczaków według diety", ylab = "liczba kurczaków")
+```
+
+Powyższy kod prowadzi do uzyskania @fig-r08, gdzie każda dieta jest reprezentowana przez słupek pokazujący liczbę piskląt, które ją otrzymywały. Na wykresie dodano również etykiety osi, tytuł osi i tytuł.
+
+
+## Histogram
+
+Podobnie jak densityplot, funkcja histogram wizualizuje rozkład zmiennej ilościowej, ale tym razem używa słupków reprezentujących liczebność obserwacji w określonych przedziałach.
+
+Poniższy kod konstruuje histogram dla zmiennej *weight* ze zbioru **ChickWeight**. Ustawienie `type = "count"` zapewnia, że na osi OY znajdzie się liczba obserwacji w każdym przedziale. Dodano także tytuł wykresu oraz ustalono kolor słupków na różowy (`col = "pink"`).
+
+```{r}
+#| label: fig-r09
+#| fig-cap: Histogram. Waga piskląt  
+
+histogram(~weight, data = ChickWeight,
+       type = "count",
+       xlab = "Waga",
+       main = "Waga piskląt",
+       col = "pink")
+```
+W wyniku realizacji kodu otrzymuje się histogram pokazujący, jak rozkłada się waga piskląt w całym zbiorze danych **ChickWeight.** Na wykresie opisane są osie, jest wprowadzony tytuł, a słupki są różowe.
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+Dla wykonania poniższych poleceń odwołaj się do danych ze zbioru **airquality**.
+
+1. Użyj `densityplot` do porównania rozkładu zmiennej *Wind* w zależności od *Month*. 
+
+2. Skonstruuj wykres rozrzutu pokazujący zależność *Ozone* od *Temp*. Dodaj grupowanie i kolorowanie według *Month*. 
+
+3. Zbuduj wykres pudełkowy dla zmiennej *Wind* w zależności od *Month*. 
+
+4. Wykorzystaj histogram do zbadania rozkładu zmiennej *SO2*. Użyj argumentu *breaks* do zmiany liczby przedziałów.
+
+5. Użyj `xyplot` do zbadania zależności *Ozone* od *Wind* dla wszystkich miesięcy.
+
+
+:::
+

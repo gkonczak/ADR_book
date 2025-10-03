@@ -1,0 +1,1165 @@
+# Podstawy pracy z programem **R**
+
+::: {.callout-note icon="false" appearance="simple"}
+**R** to darmowy, open-source'owy język programowania i środowisko obliczeniowe, które jest szczególnie popularne w statystyce, analizie i wizualizacji danych. **R** zostało skonstruowane przez Rossa Ihakę i Roberta Gentlemana na Uniwersytecie w Auckland w Nowej Zelandii. Prace nad **R** rozpoczęły się na początku lat 90. XX wieku, a pierwsza publiczna wersja została wydana w 1995 roku. Oficjalną wersję 1.0 udostępniono w 2000 roku. **R** jest powszechnie używany zarówno w badaniach akademickich, jak i w przemyśle, dzięki swojej wszechstronności oraz ogromnej społeczności dostarczającej pakiety rozszerzające jego możliwości. W kwietniu 2025 roku dostępnych jest ponad 20 tysięcy bibliotek rozszrzających możliwosci programu **R**.
+
+W niniejszym rozdziale przedstawiono podstawy pracy z programem **R**, w szczególności opisano następujące zagadnienia:
+
+-   Instalacja **R** i podstawowa obsługa,
+
+-   R jako kalkulator,
+
+-   typy danych,
+
+-   wybrane zbiory danych,
+
+-   R Studio.
+:::
+
+## Podstawowe informacje
+
+### Instalacja programu i podstawowe komendy w języku **R**
+
+W celu zainstalowania programu **R** należy odwiedzić stronę <https://cran.r-project.org/>, a następnie wybrać jedną z wersji **R**. Program jest dostępny dla trzech systemów operacyjnych:\
+
+1)  Linux,
+
+2)  macOS,
+
+3)  Windows.
+
+Przechodząc do kolejnego okna należy wybrać link **base**, a następnie pobrać (Download) aktualną wersję programu i zainstalować na własnym komputerze.
+
+
+Po uruchomieniu programu można przystapić do wprowadzania pierwszych poleceń.
+Wypisanie liczb od 1 do 10 z odstępem co 1 można uzyskać następująco:
+
+```{r}
+1:10 # Ctrl+R - wykonanie kodu z edytora R
+```
+
+::: callout-warning
+## Uruchomienie kodu w oknie programu
+
+Ctrl+R - wykonanie kodu z edytora **R**
+:::
+
+Wypisanie liczb od 0 do 18 co 3 realizuje poniższy kod.
+
+```{r}
+seq(from = 0, to = 18, by = 3) # komenda seq(0, 18, 3) zwróci identyczny wynik - nie jest konieczne podawanie nazw argumentów
+```
+
+::: callout-warning
+## Parametry w funkcji można podawać w różnej kolejności. Wtedy jednak należy podać ich nazwę.
+
+```{r}
+seq(by = 3, from = 0, to = 18)
+```
+:::
+
+W kodzie **R** jest możliwość wprowadzania komentarzy.
+
+
+```{r}
+# To jest komentarz. Komentarze rozpoczynamy znakiem #
+```
+
+
+::: callout-warning
+## Wywołanie pomocy dotyczącej funkcji `plot` w programie **R**
+
+? seq
+:::
+
+Dla programu **R** opracowano wiele dodatkowych pakietów (bibliotek). 
+Celem skorzystania z funkcji biblioteki należy ją wcześniej zainstalować.
+
+::: callout-warning
+## Instalacja i załadowanie pakietu **ggplot2**
+
+install.packages("ggplot2")
+
+można też zapisać następująco:
+
+install.packages('ggplot2')
+:::
+
+Wyświetlenie tekstu następuje poprzez umieszaczenie tekstu w cudzysłowie:
+
+```{r}
+"Rozpoczynam pracę w programie R"
+```
+
+Wyświetlenie liczb, wyników obliczeń następuje poprzez wpisanie kodu do konsoli lub okna edytora
+
+```{r}
+123
+```
+
+Wyświetlenie tekstu, liczb, obliczeń, wyników funkcji, pętli, instrukcji warunkowych następuje poprzez wykorzystanie komendy `print()`
+
+```{r}
+print("Wszedł kotek na płotek")
+```
+
+::: callout-warning
+## Jeśli kod znajduje się wewnątrz wyrażenia R np. wewnątrz nawiasów klamrowych {} (w przypadku funkcji, pętli itd.), to należy użyć funkcji `print()`, w celu wyświetlenia wyniku.
+:::
+
+### R jako kalukulator
+
+Język **R** pozwala na wykonanie działań arytmetycznych, takich jak dodawanie, odejmowanie, mnożenie, dzielenie, potęgowanie, pierwiastkowanie, logarytmowanie, a także ich kombinacji. W zadanej kolejności działania te realizują kody:
+
+```{r}
+2+2
+20-2
+6*7
+30/5 
+```
+
+::: callout-warning
+## W celu podzielenia jednej liczby przez drugą wykorzystuje się następujący ukośnik **/**
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+30\5 # Ten kod zwróci błąd
+```
+:::
+
+```{r}
+2^5
+sqrt(4)
+
+log(12)
+log(16, 2)
+```
+
+::: callout-warning
+## Wartość logarytmu naturalnego z liczby *a* uzyskuje się podając liczbę *a* jako argument do funkcji `log` tj. `log(a)`. <br> Wartość logarytmu z liczby *a* o podstawie *b* wyznacza się podając dwa argumenty tj. `log(a, b)`. Pierwszy to logarytmowana liczba, a drugi to podstawa logarytmu.
+:::
+
+```{r}
+2*(10-7)^2
+```
+
+Możliwe jest również wykonywanie innych działań, w tym obliczenia wartości bezwzględnej z liczby, reszty z dzielenia za pomocą operatora `%%`, a także wyznaczenia wartości liczby $\pi$, funkcji m.in. trygonometrycznych (m.in. funkcji sinus) oraz wartości symbolu Newtona.
+
+```{r}
+abs(-31)
+10%%3
+pi
+sin(pi)
+```
+
+Symbol Newtona $\binom{4}{2}$ - liczba kombinacji 2-u elementowych ze zbioru liczącego 4 elementy.
+
+```{r}
+choose(4, 2)
+```
+
+### Zaokrąglanie liczb
+
+Język **R** umożliwia zaokrąglanie wyników do preferowanego formatu. Można m.in. zaokrąglić liczbę w górę, w dół lub zgodnie z podstawowymi zasadami matematycznymi wraz ze wskazaniem liczby miejsc po przecinku.
+
+Zaokrąglenie do całości.
+
+```{r}
+round(2.4347)
+```
+
+Zaokrąglenie do 2 miejsc po przecinku.
+
+```{r}
+round(2.4347247, digits=2)
+```
+
+Zaokrąglenie liczb rzeczywistych w górę do najbliższej liczby całkowitej (matematyczna funkcja *sufit*).
+
+```{r}
+ceiling(3.451)
+```
+
+Zaokrąglanie liczb rzeczywistych w dół do najbliższej liczby całkowitej (matematyczna funkcja *podłoga*).
+
+```{r}
+floor(3.451)
+```
+
+::: callout-warning
+## Funkcje `ceiling` i `floor` mają tylko jeden argument. Może być to pojedyncza liczba bądź wektor liczb, macierz lub ramka danych.
+:::
+
+Możliwe jest również całkowite odcięcie części dziesiętnej danej liczby.
+
+```{r}
+trunc(6.40201)
+```
+
+### Przypisywanie wartości do zmiennych
+
+Zmienne służą przechowywania danych i ich późniejszego wykorzystania. Istnieje pięć sposobów tworzenia zmiennych. Wykorzystywane są do tego symbole: `=`, `<-`, `->`, `<<-`, `->>`. Oprócz wyrazów i pojedynczych liczb w zmiennych przechowywane mogą być bardziej skomplikowane obiekty, które zostaną opisane nieco później. W celu wyświetlenia aktualnej wartości zmiennej wystarczy wpisać jej nazwę. Nie ma konieczności korzystania z funkcji `print`. Następujący kod prezentuje proces tworzenia zmiennych i ich wyświetlania.
+
+```{r}
+x = 7
+y <- 10
+2 -> z
+u <<- 'kot'
+3.2 ->> w
+```
+
+::: callout-warning
+## Przypisanie `<<-` i `->>` jest przypisaniem globalnym.
+:::
+
+Możliwe jest wyświetlanie wartości kilku zmiennych jednocześnie.
+
+```{r}
+x; y; z; u; w
+```
+
+Na zmiennych wykonywać można obliczenia.
+
+```{r}
+t = x * y
+t
+```
+
+::: callout-warning
+## Zasady nadawania nazw zmiennych
+
+1)  Duże i małe litery mają znaczenie.
+2)  W nazwie zmiennej mogą wystąpić cyfry i `_`, ale nie na samym początku.
+3)  W nazwie zmiennej mogą wystąpić kropki - również na samym początku.
+4)  Słowa kluczowe (np. TRUE, FALSE, NULL, if) nie mogą być używane jako nazwy zmiennych.
+
+```{r}
+zmienna = 123
+ZMIENNA = 234
+zmienna; ZMIENNA
+
+.zm_1 = 21
+.zm_1
+```
+:::
+
+::: callout-warning
+## W języku R ponowne wykorzystanie tej samej nazwy zmiennej do zdefiniowania innej jest związane z  **nadpisaniem wartości zmiennej**. Oznacza to zmianę jej zawartości na nową wartość.
+
+```{r}
+zm2 = 1
+zm2
+
+zm2 = 2
+zm2
+```
+:::
+
+### Lista nazw zmiennych
+
+W trakcie pisania kodu może wystąpić potrzeba sprawdzenia dotychczas utworzonych zmiennych, m.in. w celu odwołania się do którejś z nich bądź uniknięcia nadpisania wartości zmiennej. Możliwe jest to dzięki następującemu kodowi:
+
+```{r}
+ls()
+```
+
+Zbyt duża liczba zmiennych może prowadzić do potrzeby zmniejszenia ich liczby. Możliwe jest usunięcie pojedynczych zmiennych, ale również wszystkich, co realizują następujące komendy.
+
+```{r}
+rm(ZMIENNA)
+ls()
+
+rm(list = ls())
+ls()
+```
+
+## Typy obiektów
+
+Nie wszystkie zmienne przechowują informacje w ten sam sposób. Zmienne mogą przechowywać dane różnych typów, a na nich można wykonywać różne czynności. Typ zmiennej można zmieniać w czasie.<br>
+Istnieje kilka podstawowych typów zmiennych:
+
+1)  numeryczny (numeric)
+2)  liczba całkowita (integer)
+3)  liczba zespolona (complex)
+4)  znakowy (character)
+5)  logiczny (logical)
+
+### Typ numeryczny (*numeric*)
+
+Typ numeryczny przechowuje zarówno liczby całkowite, jak i dziesiętne.
+
+```{r}
+n1 = 2.4535
+n1
+```
+
+Z liczbami dziesiętnymi związane jest pojęcie cyfr znaczących. Cyframi znaczącymi nazywa się te, które niosą informację o precyzji liczby. Należą do nich niezerowe cyfry. Zero na samym początku liczby nie jest liczone jako cyfra znacząca. Jeżeli koniec liczby tworzą zera, to zostają pominięte przy wyświetlaniu. Ostatni element jest zaokrąglany zgodnie z zasadami matematycznymi.
+
+```{r}
+print(n1, 3)
+```
+
+### Liczby zespolone (*complex*)
+
+```{r}
+c1 <- 2i + 4
+c1
+```
+
+### Typ znakowy (*character*)
+
+Typ znakowy jest bardzo ważny. Niektóre informacje są przechowywane jako tekst, np.: imię, nazwisko, nazwy własne. Oprócz tego jest on potrzebny m.in. do zwracania wyników pętli, funkcji.
+
+```{r}
+t1 = "To jest tekst"
+t1
+```
+
+::: callout-warning
+## Cudzysłowia `""` i `''` są stosowane zamiennie.
+
+```{r}
+t2 = 'To też jest tekst'
+t2
+```
+:::
+
+Pierwotnie tekst jest wyświetlany w cudzysłowie, ale można go usunąć za pomocą następującego kodu.
+
+```{r}
+print(t2, quote = FALSE)
+```
+
+W celu wyświetlenia tekstu w kolejnych linijkach tak, jak w kodzie, wykorzystuje się funkcję `cat`.
+
+```{r}
+t3 = "Smutno mi, Boże! Dla mnie na zachodzie
+Rozlałeś tęczę blasków promienistą;
+Przede mną gasisz w lazurowej wodzie
+Gwiazdę ognistą…"
+cat(t3)
+```
+
+W języku **R** istnieje możliwość wykonywania operacji na tekście.
+
+```{r}
+t4 = "to jest pies"
+```
+
+Zliczanie znaków następuje za pomocą kodu znajdującego się poniżej. Zliczane są również spacje.
+
+```{r}
+nchar(t4)
+```
+
+Możliwa jest również zamiana fragmentu tekstu na inny. Słowo *pies* w zmiennej *t4* zamienia się na słowo *kot* realizując następujący następujący kod.
+
+```{r}
+sub("pies", "kot", t4)
+```
+
+Oprócz powyższych może wystąpić potrzeba złączania tekstu, w tym np. łączenia tekstu i wyniku obliczeń.
+
+```{r}
+paste(t1, "i", t2)
+```
+
+Wyodrębnienie tekstu od 9 do 12 znaku realizuje się korzystając z funkcji `substr`.
+
+```{r}
+substr(t4, 9, 12)
+```
+
+### Typ logiczny (*logical*)
+
+Programowanie w wielu przypadkach korzysta z wartości logicznych. Często wymagana jest wiedza czy określone wyrażenie jest prawdziwe (TRUE) czy fałszywe (FALSE). Może służyć filtrowaniu danych, ale także przy konstrukcji instrukcji warunkowych.
+
+Niektóre zmienne same w sobie mogą mieć przypisaną wartość *TRUE* lub *FALSE*. Można je przypisać wykorzystując pełną nazwę wypisaną drukowanymi literami, pierwszą dużą literę albo korzystając z wartości zero - fałsz i jeden - prawda.
+
+```{r}
+l1 = TRUE
+l2 = T
+l3 = FALSE
+```
+
+
+Do łączenia instrukcji warunkowych są wykorzystywane operatory logiczne jak alternatywa, koniunkcja, zaprzeczenie.
+
+Alternatywa (*lub*) jest wprowadzana następujaco:
+
+```{r}
+l1|l3
+```
+
+Koniunkcja (*i*) jest zapisywana jak ponizej.
+
+```{r}
+l1&l3
+```
+
+Zaprzeczenie (*negacja*) w kodzie **R** zapisuje się z wykorzystaniem znaku $!$.
+
+```{r}
+!l1
+```
+
+W trakcie wykonywania kodu często konieczne jest porównywanie wartości. 
+Porównania dokonuje się na liczbach, obiektach itd., a ich formuła może być nawet bardzo skomplikowana. Do budowania złożonych porównań wykorzystywane mogą być spójniki logiczne, jak i operatory porównań, m.in. znak większe (">"), większe lub równe ("$\ge$").
+
+::: callout-warning
+## W języku R porównując czy elementy są jednakowe wykorzystuje się symbol `==`, a porównując czy są różne symbol `!=`.
+:::
+
+Przykłady porównań przedstawiono poniżej.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+1 == 1 & 17>12
+2 > 3
+25 <= 25
+23 >= 7
+(12>2) & (15!=12)
+```
+
+```{r}
+(sqrt(25) == 13) | (12^2 > 100)
+```
+
+## Klasy obiektów
+
+Znajomość typu obiektu jest istona przy korzystaniu z wielu funkcji. Jako argument funkcje wymagają określonej klasy obiektu. Podanie obiektu niewłaściwej klasy prowadzi do błędu. Dla sprawdzenia klasy obiektu korzysta się z funkcji `class`.
+
+```{r}
+class(t1)
+class(n1)
+```
+
+Sprawdzenie, czy oba obiekty są jednakowe pod względem klasy i zawartości realizuje kod:
+
+```{r}
+identical(t1,n1)
+```
+
+Typ wszystkich zmiennych i ich wartości można zobaczyć wywołując podsumowanie zmiennych.
+
+```{r}
+ls.str()
+```
+
+Zapytanie o klasę może następować w formie zapytania o konkretny typ. Służą do tego funkcje rozpoczynające się od `is.`. Są to funkcje zwracające prawdę ($TRUE$) lub fałsz ($FALSE$).
+
+Zapytanie czy klasa zmiennej *t1* to typ logiczny.
+
+```{r}
+is.logical(t1)
+```
+
+Sprawdzenie czy zmienna *t1* to wartość numeryczna.
+
+```{r}
+is.numeric(t1)
+```
+
+Zapytanie czy zmienna *t1* to typ znakowy.
+
+```{r}
+is.character(t1)
+```
+
+Nieco wcześniej wspomniano, że funkcje wymagają określonych typów danych. Również do wykonania wykresów nieraz dane muszą mieć określoną strukturę. Istnieje możliwość konwersji klasy obiektu na inny. Jedną z możliwości jest wykorzystanie funkcji rozpoczynających się od `as.`. Sposób zamiany typu liczby n1 = 2.4535 z numerycznego na liczbę całkowitą prezentuje poniższy kod. Równocześnie tworzona jest nowa zmienna *n2*.
+
+```{r}
+n2 = as.integer(n1)
+class(n2)
+```
+
+## Podstawowe wykresy - funkcja `plot`
+
+Pakiet **graphics** - dostępny domyślnie w **R** - daje możliwość tworzenia wykresów. Oprócz tego istnieją dodatkowe pakiety, które również pozwalają na opracowanie wykresów, w tym także animacji.
+
+Jedną z podstawowych funkcji tworzących wizualizacje jest `plot`, która służy do tworzenia wykresów obiektów.
+
+W @tbl-p przedstawiono wykaz wybranych argumentów podawanych w funkcji `plot`, z których buduje się wykres:
+
+| Argument | Opis |
+|-------------------|-----------------------------------------------------|
+| x | Współrzędne punktów na wykresie |
+| y | Współrzędne punktów na wykresie |
+| type | Typ wykresu, np. punktowy, liniowy, punktowo-liniowy, histogram itd. |
+| main | Tytuł wykresu |
+| xlab | Tytuł osi x |
+| ylab | Tytuł osi y |
+| col | Kolor punktów, linii itd. |
+| cex | Wielkość punktów |
+| pch | Kształt punktów |
+| lwd | Grubość linii |
+| lty | Rodzaj linii - linia wykropkowana, przerywana i inne |
+
+: Argumenty funkcji `plot` {#tbl-p}
+
+::: callout-warning
+## Ustalanie typu wykresu - wybrane rodzaje
+
+-   punktowy (domyślnie) "p"
+-   liniowy "l"
+-   punktowo-liniowy "b"
+-   histogram "h"
+-   schodkowy "s"
+-   brak wykresu "n"
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+plot(x, type = "l")
+plot(x, type = "b")
+plot(x, type = "h")
+plot(x, type = "s")
+plot(x, type = "n")
+```
+:::
+
+::: callout-warning
+## Domyślna wielkość punktów określona za pomocą parametru `cex` jest równa 1. W celu pomniejszenia punktów należy ustalić wartość `cex` na mniejszą od 1, a gdy chce się je powiększyć - na większą od 1.
+:::
+
+::: callout-warning
+## Kształt punktów można ustalić za pomocą argumentu `pch` - przypisując mu wartość całkowitą od 0 do 25.
+:::
+
+::: callout-warning
+## Grubość linii, a zatem parametr `lwd` przyjmuje wartość domyślną 1. Ustalenie wartości na mniejszą od 1 powoduje, że linia będzie cieńsza, a ustawienie jej na liczbę większą niż 1 powoduje pogrubienie linii.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+plot(x, type = "l", lwd = 3)
+```
+:::
+
+::: callout-warning
+## Ustalanie typu linii - wybrane rodzaje
+
+-   1 solid
+-   2 dashed
+-   3 dotted
+-   4 dotdash
+-   5 longdash
+-   6 twodash
+:::
+
+Przykładowy wykres przedstawiono poniżej.
+
+```{r}
+#| eval: true
+#| echo: true
+#| fig-width: 8
+#| fig-height: 6
+#| label: fig-r01
+#| fig-cap: Wykres uzyskany z wykorzystaniem funkcji plot
+# wiek
+x = c(65, 43, 21, 43, 57)
+# czas sprzątania
+y = c(0, 0.5, 3, 2.2, 5)
+plot(x)
+```
+
+::: callout-warning
+## Komenda `c()` tworzy wektor wartości. Wartości umieszczane są jako argumenty funkcji.
+:::
+
+Wykresy z dodanymi parametrami otrzymuje się następująco.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+plot(x, type="l", col=6)
+plot(x, type="l", col=6, lwd=3)
+plot(x, type="l", col=6, lwd=3, lty=5)
+
+plot(x,y)
+plot(x,y, cex=2)
+
+plot(x, y, main = "Czas sprzątania względem wieku")
+plot(x, y, main = "Czas sprzątania względem wieku", xlab = "wiek")
+plot(x, y, main = "Czas sprzątania względem wieku", xlab = "wiek", ylab = "czas sprzątania")
+```
+
+### Wykres rozrzutu
+
+Wykres rozrzutu przedstawiający czas sprzątania w zależności od wieku wykonano za pomocą następującego kodu. Zmieniono punkty na pełne, zmieniono ich kolor na zielony, dodano tytuł wykresu i opisy osi.
+
+```{r}
+#| eval: true
+#| echo: true
+#| label: fig-r02
+#| fig-cap: Wiek i czas sprzątania. Wykres uzyskany z wykorzystaniem funkcji plot z dodanymi parametrami graficznymi
+#| fig-width: 8
+#| fig-height: 6
+plot(x, y, pch = 16, col = "green", main = "Czas sprzątania względem wieku", xlab = "wiek (w latach)", ylab = "czas sprzątania (w h)")
+```
+
+Bezpośrednio poniżej odwołano sie do zbiorów **cars** i **AirPassengers**.
+
+::: callout-important
+## **cars**
+
+Zbiór **cars** składa się z 2 zmiennych i zawiera 150 obserwacji. Przedstawia prędkość samochodu oraz odległość potrzebną do zatrzymania samochodu.
+:::
+
+Zamiast przeglądać cały zbiór, który nieraz jest zbyt duży do wyświetlenia w jednym oknie, można podejrzeć kilka pierwszych wierszy. Jest to możliwe wywołując komendę `head`. Podając drugi argument (*n*) określa się liczbę wyświetlanych wierszy.
+
+```{r}
+head(cars)
+head(cars, 2)
+```
+
+Sprawdzono klasę obiektu. Jest ona inna od dotychczas poznanych.
+
+```{r}
+class(cars)
+```
+
+Sporządzając wykres zbiór danych automatycznie tworzony jest wykres rozrzutu, za pomocą którego identyfikować można zależności między zmiennymi.
+
+```{r}
+#| eval: true
+#| echo: true
+#| label: fig-r03
+#| fig-cap: Prędkość samochodu i odległość do zatrzymania. Wykres rozrzutu uzyskany z wykorzystaniem funkcji plot dla danych klasy data.frame
+#| fig-width: 8
+#| fig-height: 6
+plot(cars)
+```
+
+### Wykres liniowy dla szeregu czasowego
+
+::: callout-important
+## **AirPassengers**
+
+Zbiór **AirPassengers** zawiera dane o liczbie pasażerów linii lotniczych w milionach w kolejnych miesiącach w latach 1949-1960. Dane są w postaci szeregu czasowego i dlatego po wywołaniu funkcji `plot` wykreślany jest wykres liniowy (por. @fig-Air)
+:::
+
+Szczegółowe informacje o zbiorach danych można uzyskać wywołując system pomocy:
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+?AirPassengers
+```
+
+Poniżej przedstawiono wszystkie obserwacje ze zbioru **AirPassengers**, określono typ tego zbioru i wykonano wykres. Wskazany typ zbioru ("ts") oznacza, że jest to szereg czasowy.
+
+```{r}
+#| fig-cap: Liczba pasażerów linii lotniczych w kolejnych miesiącach w latach1949-1960. Wykres uzyskany z wykorzystaniem funkcji plot dla danych klasy ts
+#| label: fig-Air
+#| fig-width: 8
+#| fig-height: 6
+AirPassengers
+class(AirPassengers)
+
+plot(AirPassengers)
+```
+
+::: callout-warning
+## Wiele linii
+
+W celu wyświetlenia więcej niż jednej linii na wykresie, należy na początku użyć funkcji `plot`, a później funkcji `lines`.
+:::
+
+### Histogram
+
+::: callout-important
+## **trees**
+
+Zbiór **trees** zawiera 3 zmienne po 31 obserwacji. Przedstawia pomiary obwodu pnia czarnej czereśni (Black Cherry), jej wysokości i objętości.
+:::
+
+Histogram to wykres służący poznaniu rozkładu zmiennej, w tym zweryfikowaniu rozrzutu danych ciągłych oraz czy istnieje asymetria w danych. Dzięki niemu możliwe jest również wykrywanie wartości odstających.
+
+Na osi OY znajduje się albo gęstość albo częstość, co ustala się za pomocą parametrów `freq` lub `prob`. Ich zastosowanie prezentuje poniższy kod, przedstawiający histogramy wysokości czarnej czereśni.
+
+```{r}
+#| fig-cap: Histogram wysokości drzew z parametrem `freq`
+#| label: fig-hist01
+#| fig-width: 8
+#| fig-height: 6
+hist(trees$Height, freq = T)
+```
+
+```{r}
+#| fig-cap: Histogram wysokości drzew z parametrem `prob`
+#| label: fig-hist02
+hist(trees$Height, prob = T)
+```
+
+Ustawienie parametrów graficznych następuje również poza funkcją `plot`. Służy do tego funkcja `par`, która pozwala m.in. na podzielenie obszaru wykresu na mniejsze, a zarazem przedstawianie wielu wykresów na jednym.
+
+Parametr `mfrow` wskazuje liczbę wierszy i kolumn, na jakie ma być podzielony obszar wykresu. Liczby podaje się w wektorze - najpierw liczbę wierszy, później liczbę kolumn.
+
+```{r}
+#| fig-cap: Dwa wykresy w jednym oknie graficznym
+#| label: fig-hist03
+par(mfrow = c(1,2))
+hist(trees$Height)
+hist(trees$Height, prob = T)
+```
+
+::: callout-warning
+## Działanie funkcji `par` obowiązuje dopóki się jej nie odwoła
+
+W celu powrócenia do pojedynczego wykresu, należy wykorzystać następujący kod:
+
+```{r}
+par(mfrow = c(1, 1))
+```
+:::
+
+Funkcja `hist` pozwala na wskazanie liczby przedziałów, na które chce się podzielić zbiór danych lub końców przedziałów, co realizują poniższe kody. Nie zawsze wskazanie preferowanej liczby przedziałów przyniesie oczekiwane efekty.
+
+```{r}
+#| fig-cap: Histogramy z ustalonymi przedziałami
+#| label: fig-hist04
+par(mfrow = c(1, 2))
+hist(trees$Height, breaks = 12, col = "pink")
+hist(trees$Height, breaks = c(60, 70, 80, 90, 100))
+```
+
+Kolory służą warstwie estetycznej wizualizacji, ale również pozwalają m.in. rozróżniać grupy. Na dostęp do podstawowych kolorów pozwala komenda.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+colors()
+```
+
+Możliwe jest również wylosowanie wybranej liczby kolorów np.: 10.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+sample(colors(),10)
+```
+
+Funkcja `rainbow` zwraca kolory z wbudowanej palety kolorów. Może służyć do szybkiego generowania wektora kolorów o zadanej długości - co następuje poprzez podanie parametru.
+
+Przykłady zastosowania palet kolorów prezentują poniższe kody.
+
+```{r}
+#| fig-cap: Histogramy z zastosowaną paletą barw
+#| label: fig-hist05
+par(mfrow = c(2, 2))
+
+hist(trees$Height, col = sample(colors(), 6))
+hist(trees$Height, col = rainbow(3))
+hist(trees$Height, col = c("blue", "pink", "yellow"))
+hist(trees$Height, col = c("blue", "pink", "yellow", "grey"))
+```
+
+::: callout-warning
+## Odwołanie się do konkretnej kolumny w zbiorze danych następuje za pomocą symbolu `$`. Najpierw podaje się nazwę zbioru, później symbol dolara, a na koniec nazwę kolumny.
+:::
+
+Oprócz możliwości nadania koloru słupkom histogramu, można ustalić kolor brzegów słupków posługując się parametrem `border`. Dodać można również etykiety do słupków korzystając z parametru `labels`.
+
+```{r}
+#| fig-cap: Histogram z niebieskim obramowaniem słupków i etykietami
+#| label: fig-hist06
+hist(trees$Height, border = "blue", breaks = c(60, 70, 80, 90, 100), col = "pink", labels = TRUE)
+```
+
+### Wykres pudełkowy
+
+Wykres pudełkowy to wykres niezwykle użyteczny, reprezentujący rozkład zmiennej, ale też jej wartości odstające. Zaznaczone są na nim kwartyle, wartość minimalna i maksymalna. Wykres nieco niżej przedstawia rozkład wysokości czarnej czereśni.
+
+```{r}
+#| fig-cap: Wykres pudełkowy
+#| label: fig-wp01
+boxplot(trees$Height, col = "red")
+```
+
+### Macierzowy wykres rozrzutu
+
+Macierz wykresów rozrzutu (scatterplot matrix) jest wykresem, który przedstawia wykres rozrzutu dla wszystkich zmiennych i ich kombinacji.
+
+```{r}
+#| fig-cap: Macierzowy wykres rozrzutu
+#| label: fig-wm01
+pairs(trees)
+```
+
+### Wykres słupkowy
+
+::: callout-important
+## **chickwts**
+
+Zbiór **chickwts** zawiera 2 zmienne po 71 obserwacji. Przedstawia wyniki eksperymentu, polegającego na podawaniu różnych pasz grupom kurczaków. Ramka danych zawiera informacje o wadze kurczaków oraz rodzaju podawanej paszy (casein, horsebean, linseed, meatmeal, soybean, sunflower).
+:::
+
+Wykres słupkowy jest jednym z najczęściej wykorzystywanych sposobów wizualizacji danych. W języku R służy do tego celu funkcja `barplot`.
+
+::: callout-warning
+## Funkcja `barplot` jako zbioru danych oczekuje wektora lub macierzy wartości opisujących słupki tworzące wykres. Formuła `chickwts$feed` zawierająca informacje o rodzaju paszy jest zmienną typu `factor`. Zadanie jej wprost do funkcji `barplot` zwróci błąd.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+barplot(chickwts$feed) # Ten kod zwróci błąd
+```
+:::
+
+Chcąc przedstawić liczbę kurczaków żywionych daną paszą należy najpierw zliczyć wystąpienia każdej z pasz w zbiorze danych, np. w tabeli. Realizuje to poniższy kod.
+
+```{r}
+tab = table(chickwts$feed)
+tab
+```
+
+Wówczas możliwe jest wykonanie wykresu słupkowego.
+
+```{r}
+#| fig-cap: Wykres słupkowy
+#| label: fig-bar1
+barplot(tab)
+```
+
+Funkcja `barplot`, tak jak i funkcja plot pozwala na dodanie tytułu wykresu, nadanie osiom tytułów, zmianę koloru słupków i ich obramowania. Umożliwia również m.in. ustalenie szerokości słupków, odległości między nimi, przypisania nazw pod słupkami, a także rysowania ich horyzontalnie. Wizualizację z dodatkowymi parametrami reprezentuje poniższy kod.
+
+```{r}
+#| fig-width: 12
+#| fig-height: 6
+#| fig-cap: Wykres słupkowy poziomy
+#| label: fig-bar2
+barplot(tab, col = "darkgreen", width = 1.5, space = 0.5, horiz = TRUE, las = TRUE)
+```
+
+::: callout-warning
+## Wybrane parametry wykresu
+
+-   `width` - szerokość słupków,
+-   `space` - odstęp między słupkami,
+-   `horiz` - wykres diagonalny lub horyzontalny,
+-   `las` - obrócenie etykiet osi.
+:::
+
+### Wykres kołowy
+
+Wykresy kołowe służą m.in. zaprezentowaniu udziału danej grupy w całości. Chcąc zwizualizować jaki jest procent kurczaków spożywających daną paszę należy postępować następująco.
+
+Należy ustalić jaki procent całości stanowią konkretne grupy. Służy do tego funkcja `prop.table` zwracająca udział grup w całości. Aby udziały wyrazić w procentach, wartości te mnoży się przez 100.
+
+```{r}
+procenty = round(prop.table(tab) * 100, 1)
+procenty
+```
+
+Jednoczesne wyświetlenie nazwy paszy i jej procentowego udziału w żywieniu kurczaków następuje poprzez złączenie tekstów i liczb.
+
+```{r}
+#| fig-cap: Wykres kołowy
+#| label: fig-kolo
+pie(tab, labels = paste(names(procenty), procenty, "%"))
+```
+
+::: callout-warning
+## Samo wywołanie kodu `pie(tab)` nie pokaże udziału procentowego grup.
+:::
+
+## Import i eksport danych
+
+Dotychczas wykorzystywane były dane dostępne w programie **R** lub wprowadzane bezposrednio przez użytkownika z wykorzystaniem klawiatury. **R** oczywiście umożliwia importowanie zbiorów danych dostępnych w różnych formatach. W tym rozdziale przedstawiony zostanie sposób zapisu i odczytu plików w formatach:
+
+-   txt
+-   csv
+-   xls i xlsx
+-   sav
+
+### Eksport danych
+
+```{r}
+# Uwaga. Przy eksporcie i później imporcie danych należy dostosować ścieżki dostępu 
+# do plików do własnego komputera.
+
+dane = head(swiss)	# Dane do eksportu.
+dane
+```
+
+Eksport do pliku txt przebiega za pomocą funkcji `write.table`, której argumentami są:
+
+-   `x` - zbiór danych do eksportu,
+-   `file` - odpowiednio sformatowana ścieżka dostępu wraz z nazwą eksportowanego pliku i rozszerzeniem wskazującym na typ eksportowanego pliku,
+-   `quote` - parametr odpowiadający za umieszczanie tekstu w cudzysłowie,
+-   `row.names` - parametr odpowiadający za eksport nazw wierszy,
+-   `col.names` - parametr odpowiadający za eksport nazw kolumn,
+-   `sep` - separator.
+
+```{r}
+write.table(dane, file = "swiss_dane.txt", quote = F, row.names = T, col.names = T, sep = "\t")
+
+# Dla zapisania pliku w ustalonym katalogu przykładowa komenda może być następująca:
+# write.table(dane, file = "C:/Users/Ania/Desktop/swiss_dane.txt", quote = F, row.names = T, col.names = T, sep = "\t")
+```
+
+Eksport do pliku w formacie csv następuje dzięki funkcjom `write.csv` i `write.csv2`. Ich zastosowanie zależy od struktury pliku *csv, co jest związane np. z wersją programu Excel (polska lub angielska).
+
+-   Jeśli docelowo separatorem kolumn ma być średnik, a kropką dziesiętną (separatorem dziesiętnym) przecinek, wówczas należy wybrać funkcję `write.csv2` (polska wersja)
+-   Jeśli docelowo kropką dziesiętną ma być kropka, wówczas należy wybrać funkcję `write.csv` (angielska wersja)
+
+```{r}
+write.csv(dane,"swiss_dane2.csv")
+write.csv2(dane,"swiss_dane3.csv")
+
+# Dla zapisania pliku w ustalonym katalogu przykładowe komendy mogą być następujące:
+# write.csv(dane, file = "C:/Users/Ania/Desktop/swiss_dane.csv")
+# write.csv2(dane, file = "C:/Users/Ania/Desktop/swiss_dane.csv")
+```
+
+::: {.callout-note icon="false" appearance="simple"}
+Pakiet **openxlsx** służy do odczytu, edycji i zapisowi plików Excela (z rozszerzeniem xlsx).
+:::
+
+Eksport do pliku xlsx przebiega za pomocą funkcji `write.xlsx` z pakietu **openxlsx**. Wpierw należy najpierw wczytać pakiet, a wcześniej go zainstalować - jeśli nie zostało to wykonane wcześniej.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+
+# install.packages("openxlsx")
+library(openxlsx)
+write.xlsx(dane, "swiss_dane4.xlsx")
+
+# Dla zapisania pliku w ustalonym katalogu przykładowa komenda może być następująca:
+# write.xlsx(dane, file = "C:/Users/Ania/Desktop/swiss_dane4.xlsx")
+```
+
+::: {.callout-note icon="false" appearance="simple"}
+Pakiet **xlsx** służy do odczytu i zapisu plików Excela z rozszerzeniami xls i xlsx (zarówno w starszym, jak i nowszym formacie).
+:::
+
+Eksport do pliku xls można wykonać za pomocą funkcji `write.xlsx2` z pakietu **xlsx**. Najpierw należy zainstalować pakiet - jeśli nie zostało to wykonane wcześniej, a później wczytać pakiet.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+library(xlsx)
+write.xlsx2(dane, "swiss_dane4.xls")
+
+# Dla zapisania pliku w ustalonym katalogu przykładowa komenda może być następująca:
+# write.xlsx2(dane, file = "C:/Users/Ania/Desktop/swiss_dane4.xls")
+```
+
+::: {.callout-note icon="false" appearance="simple"}
+Pakiet **haven** służy do wczytywania i zapisywania danych plików w formatach programów, takich jak SPSS, Stata i SAS.
+:::
+
+W celu eksportu danych do pliku programu SPSS z rozszerzeniem sav należy skorzystać z funkcji `write_sav` z pakietu **haven**. Jako argument należy podać zbiór danych do eksportu, a następnie odpowiednio sformatowaną ścieżkę dostępu.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# install.packages("haven")
+library(haven)
+write_sav(dane, "swiss_dane5.sav")
+
+# Dla zapisania pliku w ustalonym katalogu przykładowa komenda może być następująca:
+# write_sav(dane, file = "C:/Users/Ania/Desktop/swiss_dane4.sav")
+```
+
+### Import danych
+
+Import danych z pliku txt następuje poprzez wykorzystanie funkcji `read.table`, której argumentami są:
+
+-   `file` - odpowiednio sformatowana ścieżka dostępu wraz z nazwą importowanego pliku i rozszerzeniem wskazującym na typ importowanego pliku,
+-   `header` - wartość logiczna wskazująca czy plik zawiera nazwy zmiennych w pierwszym wierszu,
+-   `sep` - separator oddzielający wartości kolejnych zmiennych.
+
+```{r}
+im1 = read.table("swiss_dane.txt",  header = T, sep = "\t")
+
+# Dla odczytu pliku z ustalonego katalogu przykładowa komenda może być następująca:
+# im1 = read.table("C:/Users/Ania/Desktop/swiss_dane.txt", header = T, sep = "\t")
+
+head(im1)
+```
+
+Import danych z pliku csv (separatorem dziesiętnym jest ",")
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+im2 = read.csv2("swiss_dane3.csv")
+
+# Dla odczytu pliku z ustalonego katalogu przykładowa komenda może być następująca:
+# im2 = read.csv2("C:/Users/Ania/Desktop/swiss_dane3.csv")
+```
+
+Import danych z pliku csv (separatorem dziesiętnym jest ".")
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+im3 = read.csv("swiss_dane2.csv")
+
+# Dla odczytu pliku z ustalonego katalogu przykładowa komenda może być następująca:
+# im3 = read.csv("C:/Users/Ania/Desktop/swiss_dane.csv")
+```
+
+Import danych z pliku xlsx
+
+::: callout-warning
+## Wybór arkusza programu Excel następuje dzięki argumentowi `sheet`.
+:::
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+library(openxlsx)
+im4 = read.xlsx("swiss_dane4.xlsx", sheet = 1)
+
+# Dla odczytu pliku z ustalonego katalogu przykładowa komenda może być następująca:
+# im4 = read.xlsx("C:/Users/Ania/Desktop/swiss_dane4.xlsx", sheet = 1)
+```
+
+Import danych z pliku xls
+
+::: callout-warning
+## Wybór arkusza programu Excel następuje dzięki argumentowi `sheetIndex`.
+:::
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+library(xlsx)
+im5 = read.xlsx2("swiss_dane4.xls",  sheetIndex = 1)
+
+# Dla zapisania pliku w ustalonym katalogu przykładowe komenda może być następująca:
+# im5 = read.xlsx2("C:/Users/Ania/Desktop/swiss_dane4.xls", sheetIndex = 1)
+```
+
+Import danych z pliku SPSS o rozszerzeniu sav
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+library(haven)
+im6 = read_sav("swiss_dane5.sav")
+
+# Dla zapisania pliku w ustalonym katalogu przykładowa komenda może być następująca:
+# read_sav("C:/Users/Ania/Desktop/swiss_dane5.sav")
+```
+
+### Wklejanie ze schowka
+
+Import danych za pomocą wklejenia danych ze schowka. Na początku pisze się kod, a następnie kopiuje dane, a potem wykonuje kod. Dane można skopiować również na początku.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+im7 = read.delim2("clipboard", header = T)
+im7
+```
+
+### Katalog roboczy
+
+Katalog roboczy to folder, w którym domyślnie zapisywane i odczytywane są pliki. Dzięki niemu nie trzeba podawać ścieżki dostępu do plików przy imporcie lub eksporcie danych.
+
+Ścieżka dostępu do bieżącego katalogu roboczego.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+getwd()
+```
+
+Zmiana katalogu roboczego lub jego ustalenie następuje poprzez komendę `setwd`.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+setwd("C:/Users/Statystyka/Desktop")
+```
+
+Eksport pliku do folderu o domyślnej lokalizacji.
+
+```{r}
+write.csv2(dane,"iris1.csv")   
+```
+
+::: callout-warning
+## Przy eksporcie nie podaje się już ścieżki dostępu. Do funkcji przekazuje się już tylko dane i nazwę pliku z jego rozszerzeniem (w cudzysłowie).
+:::
+
+Import pliku z folderu o domyślnej lokalizacji.
+
+```{r}
+read.csv2("iris1.csv")
+```
+
+::: callout-warning
+## Przy imporcie nie podaje się już ścieżki dostępu do pliku. Do funkcji przekazuje się już tylko nazwę pliku z jego rozszerzeniem (w cudzysłowie).
+:::
+
+## RStudio
+
+::: callout-note
+## RStudio
+
+**RStudio** to zintegrowane środowisko programistyczne (IDE) dla języka **R**. **RStudio** znacznie ułatwia pracę z tym językiem. Jest powszechnie używane w analizie danych, wizualizacji, statystyce i uczeniu maszynowym dzięki swojej intuicyjnej obsłudze i rozbudowanym funkcjom.
+:::
+
+### Instalacja programu **R Studio**
+
+R Studio jest środowiskiem obsługującym jeżyk programowania R, które posiada przyjazny dla użytkownika interface. Aby móc pisać kod w języku R w **R Studio** należy wpierw mieć zainstalowany **R** na własnym komputerze.\
+
+W celu zaintalowania programu **R Studio** należy wejść na stronę https://posit.co/download/rstudio-desktop/, a następnie wybrać wersję odpowiednią dla systemu operacyjnego dostępnego na swoim komputerze.
+
+::: callout-caution
+## Ćwiczenia do samodzielnego wykonania
+
+1.  Podaj komendę R wypisującą wszystkie liczby parzyste od 2 do 20.
+
+2.  Oblicz liczbę kombinacji 5-cio elementowych ze zbioru liczącego 8 elementów.
+
+3.  Utwórz dowolną zmienną, sprawdź jej typ, a następnie usuń z listy dostępnych zmiennych.
+
+4.  Skonstruuj wykresy pudełkowe wagi kurczków żywiących się danym rodzajem paszy. Dodaj tytuł, opis osi OY i zmień kolor pudełek.
+
+5.  Zapisz na dysku C: w katalogu głównym ("C:/") zbiór danych **cars** w pliku o nazwie 'cars.txt'
+:::
