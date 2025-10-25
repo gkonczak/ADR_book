@@ -1,7 +1,6 @@
 # Struktury danych w **R**
 
 ::: {.callout-note icon="false" appearance="simple"}
-
 Język programowania **R** oferuje kilka podstawowych struktur danych. Każda z nich ma swoje unikalne zastosowania w analizie danych. Te struktury to:
 
 -   wektory (vectors) jednorodne typy danych, np. liczbowe, znakowe lub logiczne,
@@ -17,511 +16,883 @@ Język programowania **R** oferuje kilka podstawowych struktur danych. Każda z 
 
 ## Wektory (vectors)
 
-Wektory są podstawowym typem danych w języku **R** i stanowią uporządkowane zbiory elementów tego samego typu, takich jak liczby, tekst czy wartości logiczne. Pozwalają na przechowywanie i przetwarzanie wielu wartości jednocześnie, co jest niezwykle przydatne w analizie danych. Wektory można tworzyć za pomocą funkcji `c()`, np. `c(1, 2, 3, 4)`, a następnie wykonywać na nich różnorodne operacje arytmetyczne i logiczne. Dzięki wektorom **R** umożliwia efektywne i szybkie przetwarzanie dużych zbiorów danych.
+Wektory są podstawowym typem danych w języku **R** i stanowią uporządkowane zbiory elementów tego samego typu, takich jak liczby, tekst czy wartości logiczne. Pozwalają na przechowywanie i przetwarzanie wielu wartości jednocześnie, co jest niezwykle przydatne w analizie danych. Wektory można tworzyć za pomocą funkcji `c()`, np. `c(1, 2, 3, 4)`, a następnie wykonywać na nich różnorodne operacje arytmetyczne i logiczne. Kolejne elementy wektora oddziela się przecinkiem. Dzięki wektorom **R** umożliwia efektywne i szybkie przetwarzanie dużych zbiorów danych.
 
 ```{r}
-w1=c(10,9,8,7,6,5)
+w1 = c(10, 9, 8, 7, 6, 5)
 w1
 
-w2=c(T,T,F,F)
+w2 = c(T, T, F, F)
 w2
 
-w3=c("Dawid","Wojtek","Robert","Kuba","Klaudia","Luiza")
+w3 = c("Dawid", "Wojtek", "Robert", "Kuba", "Klaudia", "Luiza")
 w3
+```
 
+Wektor z wartościami liczbowymi w sekwencji (co 1) tworzy się z użyciem operatora "`:`".
+
+```{r}
 1:10
 10:1
 
 1.2:20.2
-1.2:20.3
+```
+
+::: callout-warning
+## Uwaga
+
+Zbyt mała wartość końcowa (np. 20.1 zamiast 20.2) sprawia, że sekwencja nie obejmuje końca tj. liczby 20.2.
+
+```{r}
 1.2:20.1
+```
+:::
 
-# ?seq
-seq(16,30,3)
-seq(to=30,by=3,from=16)
+Innym sposobem wygenerowania sekwencji liczb jest skorzystanie z funkcji `seq()`. Ma trzy argumenty `from`, `to` i `by`, które określają początek sekwencji, jej koniec i różnicę między kolejnymi liczbami w sekwencji. Przykład zaprezentowano poniżej (trzy poniższe linijki kodów generują jednakowy wynik). Wygenerowano liczby od 16 do 30 co 3.
 
-w4=seq(to=30,from=16,3)
+```{r}
+seq(16, 30, 3)
+seq(to = 30, by = 3, from = 16)
+w4 = seq(to = 30, from = 16, 3)
 w4
-w5=c(23,23,1,2,3,1)
+```
 
-ls()
-# w1 + w3
-w1;w3
+::: callout-warning
+## Kolejność argumentów w ramach funkcji
 
+Wymiana kolejności argumentów generuje jednakowy wynik, ale wypisane muszą być nazwy argumentów.
+:::
+
+Na wektorach można wykonywać operacje arytmetyczne pod warunkiem, że ich długość jest jednakowa. Przykład kilku operacji arytmetycznych wraz z wynikami zaprezentowano poniżej.
+
+```{r}
+w5 = c(23, 23, 1, 2, 3, 1)
 w1+w5
 w1*w5
+```
 
-w6=seq(7,10,length=10)
+Sprawdzenie liczby składowych wektora realizuje następujacy kod.
+
+```{r}
+w6 = seq(7, 10, length = 10)
 w6
 length(w6)
+```
 
+Możliwe jest zweryfikowanie czy przynajmniej jeden element wektora spełnia pewien warunek - za pomocą funkcji `any()`. W przykładzie sprawdzane jest, czy istnieje co najmniej jeden element wektora *w6*, który jest liczbą mniejszą od zera. Funkcja zwraca pojedynczą wartość logiczną (*TRUE* lub *FALSE*).
+
+```{r}
 any(w6<0)
-any(w6>0)
-w6>0
+```
 
+Możliwe jest sprawdzanie prawdziwości warunku dla kolejnych elementów wektora. Kod będzie zwracał wartość *TRUE*, w przypadku prawdziwości warunku i *FALSE* w przeciwnym przypadku. Poniższy kod weryfikuje czy kolejne liczby w wektorze są większe od liczby 8.
+
+```{r}
+w6>8
+```
+
+Weryfikacja, czy wszystkie elementy wektora spełniają pewien warunek następuje za pomocą funkcji `all()`. W wyniku uzyskuje się pojedynczą wartość *TRUE* lub *FALSE.* Sprawdzenie, czy wszystkie elementy w wektorze *w1* są takie same, co w wektorze *w3* realizuje następujący kod.
+
+```{r}
 all(w1==w3)
 ```
 
 ### Funkcja rep()
 
 ::: callout-tip
-### Wywołanie help
+### Wywołanie help o funkcji *rep*
 
-?rep Informacja 'help' o funkcji *rep*
+?rep 
 :::
 
+Funkcja `rep()` służy do powielania (replikowania) danego elementu, wektora czy listy określoną liczbę razy. Powielenie jedynki dwanaście razy, wektora liczb 1, 2, 3 trzy razy (powielanie sekwencji) i słowa "pies" dwa razy realizują poniższe komendy.
+
 ```{r}
+rep(1, 12)  
+```
 
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+rep(c(1, 2, 3), 3)
+rep("pies", 2)
+```
 
-rep(1,100)  #Powielenie 1-ki sto razy.
+Funkcja `rep()` może powielać elementy wektora nie tylko cyklicznie, ale każdy element z osobna.
 
-rep(c(1,2,3),3)
-rep("pies",2)
+```{r}
+rep(c(1, 2, 3), each = 3)
+```
 
-rep(c(1,2,3),each=3)
+Poznane metody można łączyć, np.: tworząc wektor liczb 9 8 7 9 8 7 2 2 2 1 1 1. Zadanie można rozłożyć na kolejne kroki (tworzenie osobnych wektorów) lub zrealizować w pojedynczej linijce.
 
-
-# Jak uzyskać wektor liczb 9 8 7 9 8 7 2 2 2 1 1 1?
-
-# 1 sposób
-x1=rep(c(9,8,7),2)
-x1
-x2=rep(c(2,1),each=3)
-x2
-c(x1,x2)
-
-# 2 sposób - kod w jednej linijce
-c(rep(c(9,8,7),2),rep(c(2,1),each=3))
+```{r}
+c(rep(c(9, 8, 7), 2), rep(c(2, 1), each = 3))
 ```
 
 ### Sampling - pobieranie próbek
 
+Język **R** umożliwia pobiernie próbek o określonym rozmiarze z wektora elementów, stosując losowanie ze zwracaniem lub bez zwracania. Wektor *s2* będzie stanowił wynik pobrania 5 liczb z wektora liczb pierwszych z przedziału od 1 do 20 (bez zwracania).
+
 ```{r}
-# ?sample
-s1=sample(1:7,10,replace=T)
-s1
-# sample(1:7,10)	
-# Wykonując kod pojawi się błąd, ponieważ zbiór, z którego pobieramy liczby jest za mały.
-
-# Wektor s2 będzie pobierał 5 liczb z wektora liczb pierwszych z przedziału od 1 do 20.
-s2<-sample(c(2,3,5,7,11,13,17,19),5)
+s2 <- sample(c(2, 3, 5, 7, 11, 13, 17, 19), 5)
 s2
-
-s3<-sample(1:4,15,prob=c(0.4,0.1,0.3,0.2),replace=T)
-s3  
-
 ```
+
+Elementy wektora mogą mieć przypisane różne prawdopodobieństwo ich wylosowania (trafienia do próby). Losowanie ze zwracaniem następuje po ustaleniu argumentu `replace = TRUE`. Przykład reprezentuje poniższa komenda.
+
+```{r}
+s3 <- sample(1:4, 15, prob = c(0.4, 0.1, 0.3, 0.2), replace = T)
+s3  
+```
+
+::: callout-warning
+## Zbyt mały zbiór elementów do wyboru
+
+Chcąc wylosować 10 elementów ze zbioru liczb naturalnych od 1 do 7 bez zwracania, program zwróci błąd (co prezentuje poniższy przykład). Jest tak, ponieważ zbiór, z którego pobiera się liczby jest za mały.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+sample(1:7,10)
+```
+:::
 
 ### Maskowanie dla wektorów
 
+Maskowanie wektorów służy wybieraniu elementów z wektora i ich modyfikowaniu przy pomocy warunków logicznych.
+
+Wektor wartości logicznych *M* (spełniający funkcję maski logicznej) wskazuje, które elementy wektora *x* zostaną wybrane (są to te, którym przypisana jest wartość *TRUE*).
+
 ```{r}
-x=c(19,23,27,15,43)
-x
-M=c(T,F,F,T,T)
-M
+x = c(19, 23, 27, 15, 43)
+M = c(T, F, F, T, T)
+
 x[M]
 ```
 
 ### Indeksy dla wektorów
 
+W praktyce często występuje potrzeba wyboru określonych elementów wektora. Można to wykonać odwołując się do pozycji danego elementu w wektorze (podając najpierw nazwę wektora, a poźniej umieszczając pozycję elementu w kwadratowym nawiasie`[]`). Wybranie drugiego elementu dla wektora *x*, elementów od drugiego do piątego (liczby oddziela się symbolem "`:`"), a także pierwszego i piątego (za pomocą zapisu wektorowego) realizują poniższe komendy.
+
 ```{r}
 x[2]
 x[2:5]
-x[c(1,5)]
+x[c(1, 5)]
+```
 
+W trakcie badań może wystąpić również potrzeba wybrania elementu ostatniego, bądź usunięcia elementu z wektora. Pozycję ostatniego elementu uzyskuje się korzystając z funkcji `length()`. Elementy wektora usuwa się poprzez dodanie znaku minus (`-`) przed numerem pozycji elementu.
+
+```{r}
 x[length(x)]
-x[c(1,length(x))]
 
 x[-2]
-x[-c(1,3)]
 x[-(1:3)]
+```
 
-x[4]=-1
+::: callout-warning
+## Usuwanie kilku elementów jednocześnie
 
-x[-4]=0
+Usunięcie elementów może zajść poprzez dodanie `-` przed funkcją tworzącą wektor lub przed samymi numerami pozycji elementów w wektorze.
+
+```{r}
+x[-c(1, 3)]
+x[c(-1, -3)]
+```
+:::
+
+Nadanie nowej wartości elementom następuje poprzez symbol przypisania `=`. Na początku podaje się, który element chce się zmienić, następnie symbol `=` i następnie nową wartość elementu.
+
+Zamianę czwartego elementu wektora `x` na liczbę -1 oraz wszystkich elementów poza czwartym na zera realizują następujące dwie komendy.
+
+```{r}
+x[4] = -1
 x
-
-x=c(19,23,27,15,43)
+x[-4] = 0
 x
+```
 
-x>20
-x[x>20]
+Wybór elementów z wektora o określonych własnościach następuje z wykorzystaniem `[]` oraz podstawowych symboli matematycznych (`=`,`<`,`>` itd.). Poniższy kod zwraca wartości z wektora `x` przekraczające 20.
+
+```{r}
+x = c(19, 23, 27, 15, 43)
+x[x > 20]
 ```
 
 ### Typ czynnikowy (factor)
 
+Typ czynnikowy jest używany do przechowywania zmiennych kategorialnych (posiadających kategorie). Przykładami zmiennych typu czynnikowego są płeć (kategorie: kobieta i mężczyzna), stanowisko (kategorie: młodszy specjalista, specjalista, starszy specjalista, manager, dyrektor). Ustalenie typu zmiennej na czynnikowy umożliwia m.in. grupowanie wartości w ramach tych kategorii i tworzenie wizualizacji.
+
+Zmienną typu czynnikowego tworzy się za pomocą funkcji `factor()`, gdzie jako argument podaje wektor wartości.
+
 ```{r}
-x=c("pop","rock","rap","rap")
-class(x)
-f<-factor(x)
+f <- factor(c("pop", "rock", "rap", "rap"))
 f
+```
 
-factor(x,exclude="pop")
+Poziomy zmiennej wyświetla się z użyciem funkcji `levels()`.
 
-f=factor(x,label=c("1 gatunek","2 gatunek","3 gatunek"))
+```{r}
+levels(f)
+```
+
+Usunięcie elementu *pop* z listy `levels` następuje po użyciu argumentu `exclude` w ramach funkcji `factor()`. Każdy element *pop* w danych zostanie zastąpiony przez *NA*.
+
+```{r}
+factor(c("pop", "rock", "rap", "rap"), exclude = "pop")
+```
+
+Zamianę poziomów zmiennej przeprowadza się za pomocą argumentu `label` w ramach funkcji `factor()`. Etykiety są nadawane do poziomów w kolejności alfabetycznej poziomów oryginalnych. Poniższy kod zamienia *pop* na *1 gatunek*, *rock* na *3 gatunek*, a *rap* na *2 gatunek*.
+
+```{r}
+f = factor(c("pop", "rock", "rap", "rap"), label = c("1 gatunek", "2 gatunek", "3 gatunek"))
 f
+```
 
-f1=factor(c(1,2,1,3,1,2),levels=1:4)
+Poziomy zmiennej dodaje się poprzez użycie parametru `levels` w ramach funkcji `factor()`. Można dodać więcej poziomów niż jest w danych.
+
+W niniejszym przykładzie rozważa się zmienną liczbową, która mogła przyjąć wartości spośród liczb naturalnych od 1 do 5. Każda określała, w jakim stopniu respondent zgadzał się z podanym stwierdzeniem.
+
+```{r}
+f1 = factor(c(1, 2, 5, 2, 1, 3, 1, 2), levels = 1:5)
 f1
+```
 
-levels(f1)=c("nie podoba mi się","średnie","okej","super")
+Zamianę nazw poziomów lub ich nadanie realizuje również funkcja `levels().` Natomiast funkcja `summary()` przedstawia zestawienie liczebności danej kategorii zmiennej.
+
+```{r}
+levels(f1) = c("nie zgadzam się", "raczej się nie zgadzam", "ani się nie zgadzam ani się zgadzam", "raczej się zgadzam", "zgadzam się")
 f1
 
 summary(f1)
+```
 
-f1[length(f1)]="super"
+Zamiana wartości elementu (lub elementów) przebiega tak samo, jak w przypadku wektorów (z użyciem `[]` oraz symbolu przypisania `=`).
+
+Zamiana ostatniego elementu na *nie zgadzam się* jest przeprowadzana za pomocą kodu poniżej.
+
+```{r}
+f1[length(f1)] = "nie zgadzam się"
 f1
-summary(f1)
 
+summary(f1)
+```
+
+Możliwy jest powrót do wartości liczbowych i zamiana na wektor.
+
+```{r}
 as.numeric(f1)
 ```
 
 ## Macierze (matrix)
 
-Macierze w R to dwuwymiarowe struktury danych, w których wszystkie elementy muszą być tego samego typu (np. liczby, tekst lub wartości logiczne). Są one szczególnie przydatne do przechowywania i przetwarzania danych tabelarycznych oraz wykonywania operacji matematycznych, takich jak mnożenie czy transpozycja. Macierze można tworzyć za pomocą funkcji matrix(), określając liczbę wierszy i kolumn, a także wypełniając je odpowiednimi wartościami. R oferuje wiele wbudowanych funkcji do pracy z macierzami.
+Macierze w **R** to dwuwymiarowe struktury danych, w których wszystkie elementy muszą być tego samego typu (np. liczby, tekst lub wartości logiczne). Są one szczególnie przydatne do przechowywania i przetwarzania danych tabelarycznych oraz wykonywania operacji matematycznych, takich jak mnożenie czy transpozycja. Macierze można tworzyć za pomocą funkcji `matrix()`, określając liczbę wierszy i kolumn, a także wypełniając je odpowiednimi wartościami. **R** oferuje wiele wbudowanych funkcji do pracy z macierzami.
 
+Utworzyć macierz można poprzez połączenie wektorów kolumnowo lub wierszowo. W tym celu wykorzystuje się odpowiednio funkcje `cbind()` (c od angielskiego column, czyli kolumna) i `rbind()` (r od angielskiego row, czyli wiersz). Jest to równocześnie sposób na rozbudowę macierzy o kolejne kolumny lub wiersze.
 
+Macierz *m1* składa się z 3 kolumn *a*, *c* i *a*, macierz *m2* z 3 wierszy *c*, *b* i *a*, a macierz *m3* jest rozszerzeniem macierzy *m1* o kolejną kolumnę tj. *c*.
 
 ```{r}
-a=1:5
-b=5:1
-c=c(1,2,34,5,0)
-a;b;c
+a = 1:5
+b = 5:1
+c = c(1, 2, 34, 5, 0)
 
-m1=cbind(a,c,b)
-m2=rbind(c,b,a)
-m3=cbind(m1,c)
+m1 = cbind(a, c, b)
+m2 = rbind(c, b, a)
+m3 = cbind(m1, c)
 
-# cbind(m1,m2) 
-# Niewykonalne ze względu na różne wymiary obiektów.
+m1;m2;m3
+```
 
-# ?matrix
+::: callout-warning
+## Łączenie kolumn lub wierszy
 
-m4=matrix(0,ncol=4,nrow=3)
+Łączenie kolumnowe i wierszowe zachodzi jedynie, gdy liczba włączanych elementów wektora do macierzy jest taka sama, co odpowiednio liczba wierszy i kolumn w takiej macierzy. Niemożliwe jest zatem kolumnowe połączenie macierzy *m1* z *m2.*
+:::
+
+Macierze tworzy się z użyciem funkcji `matrix()`, w której podawane są przede wszystkim:
+
+-   wektor wartości,
+-   `nrow` - liczba wierszy macierzy,
+-   `ncol` - liczba kolumn macierzy,
+-   `byrow` - parametr logiczny wskazujący, czy wartości w macierzy mają być uzupełniane wierszami (*TRUE*) czy kolumnami (*FALSE)*. Domyślnie *FALSE*.
+
+Przykład tworzenia macierzy i uzupełniania danych kolumnami oraz wierszami prezentuje kod.
+
+```{r}
+m4 = matrix(1:12, nrow = 3, ncol = 4)
 m4
 
-m5=matrix(1:12,nrow=3,ncol=4)
-m5
+matrix(1:12, nrow = 3, ncol = 4, byrow = T)
+```
 
-matrix(1:12,nrow=3,ncol=4,byrow=T)
+Macierz diagonalną tworzy funkcja `diag()`. Przekazanie wektora wartości do funkcji spowoduje ich umieszczenie na głównej przekątnej macierzy (diagonali).
 
+```{r}
+diag(c(4, 3, 2, 3))
+```
+
+Jeżeli nie są bezpośrednio wskazywane elementy mające się znaleźć na głównej przekątnej, to zwracana jest macierz jednostkowa. W poniższym przykładzie liczba 4 wskazuje na wymiary macierzy jednostkowej (4x4).
+
+```{r}
 diag(4)
-diag(c(4,3,2,3))
+```
 
+Funkcja `%in%` służy sprawdzeniu, czy element występuje w macierzy.
+
+```{r}
+11 %in% m4
 ```
 
 ### Maskowanie dla macierzy i ramek danych
 
-```{r}
-k=c(F,F,F,T)
-w=c(F,F,T)
+Maskowanie dla macierzy pozwala na selekcję elementów z macierzy i ich modyfikowanie. W tych celach wykorzystywane są warunki logiczne i podstawowe operatory matematyczne. W tym miejscu warto pamiętać, że podając wymiary macierzy zawsze na początku wskazuje się liczbę wierszy, a potem kolumn.
 
-m5[w,k]
+Wektory wartości logicznych *w* (dla wierszy) i *k* (dla kolumn) wskażą, które elementy macierzy *m4* zostaną wybrane (są to te, którym przypisana jest wartość TRUE). W tym przypadku będzie to element macierzy znajdujący się w trzecim wierszu i czwartej kolumnie.
+
+```{r}
+w = c(F, F, T)
+k = c(F, F, F, T)
+
+m4[w, k]
 ```
 
 ### Indeksy dla macierzy i ramek danych
 
+Selekcja wybranych wierszy i kolumn macierzy lub ramek danych jest bardzo ważna. Następuje to poprzez podanie nazwy macierzy, później wykorzystuje się `[]`, a wewnątrz nawiasu podaje się pozycję wybieranego elementu (numer wiersza i kolumny, w których stoi). Należy przy tym pamiętać, że na początku podaje się numer (numery) wiersza (wierszy), a dopiero kolumny (kolumn). Wybór elementu macierzy z 3 wiersza i 2 kolumny macierzy *m4* prezentuje komenda.
+
 ```{r}
+m4[3, 2]
+```
 
-m5[3,2] #Wybór elementu z 3 wiersza i 2 kolumny.
+Pominięcie numeru wiersza lub kolumny oznacza wybranie wszystkich dostępnych odpowiednio wierszy i kolumn.
 
-m5[,2]
+```{r}
+m4[, 2]
 
-m5[1,]
+m4[1,]
+```
 
-m5[1:2,c(1,4)]
+Selekcja wierszy od pierwszego do drugiego oraz kolumn pierwszej i czwartej realizuje kod.
 
-m5[,-3]
-m5
+```{r}
+m4[1:2, c(1, 4)]
+```
 
-m5[2,4]=0
-m5
+Wybór elementów z pominieciem danego wiersza lub kolumny realizuje się poprzez dodanie `-` przed numerem określonego wiersza lub kolumny.
 
-m5>6
+```{r}
+m4[, -3]
+```
 
-m5[m5>6]
+Nadawanie nowych wartości następuje podobnie, jak w przypadku wektorów (za pomocą symbolu przypisania `=`). Na początku wskazuje się pozycję zmienianego elementu lub elementów, symbol `=`, a później nową wartość.
 
-m5[m5>6]=-1
-m5
+```{r}
+m4[2, 4] = 0
+m4
+```
+
+Możliwe jest sprawdzenie prawdziwości warunków dla elementów macierzy - co uzyskuje się z wykorzystaniem operatorów matematycznych takich jak np.: `>` i `<`. Może to posłużyć wyborowi elementów spełniających określony warunek lub przypisaniu tym elementom innej wartości.
+
+Poniższy przykład prezentuje:
+
+1)  sprawdzenie, które elementy macierzy `m4` są większe od 6,
+2)  wybór elementów macierzy `m4` większych od 6,
+3)  zamianę elementów macierzy `m4` większych od 6 na liczbę -1.
+
+```{r}
+m4 > 6
+
+m4[m4 > 6]
+
+m4[m4 > 6] = -1
+m4
 ```
 
 ### Obliczenia na macierzach
 
+Program **R** zapewnia podstawowe funkcje opisujące strukturę macierzy. Funkcja `length()` zwraca liczbę elementów macierzy, `nrow()` liczbę jej wierszy, `ncol()` liczbę jej kolumn, a `dim()` jej wymiary.
+
 ```{r}
-length(m5)
-nrow(m5)
-ncol(m5)
+length(m4)
+nrow(m4)
+ncol(m4)
+dim(m4)
+```
 
-# Mnożenie macierzy
-m=matrix(1:4,2,2)
-mm=matrix(4:1,2,2)
+Dostępne są również podstawowe operacje na macierzach: transpozycja, dodawanie i odejmowanie oraz mnożenie macierzy.
 
-m;mm
-m*mm
-m%*%mm
+Niech będą dane dwie macierze `m` i `mm`.
 
-det(m)
+```{r}
+m = matrix(1:4, 2, 2)
+mm = matrix(4:1, 2, 2)
+
+m; mm
+```
+
+Sumę i różnicę macierzy `m` i `mm` realizują poniższe komendy.
+
+```{r}
+m + mm
+m - mm
+```
+
+Transponowanie macierzy `m` oraz iloczyn macierzy `m` i `mm` wykonują następujące kody.
+
+```{r}
 t(m)
-solve(m)
+m %*% mm
+```
 
+::: callout-warning
+## Symbol `*` nie służy do wyznaczania iloczynu macierzy
+
+Symbol `*` pozwala na pomnożenie wartości elementów dwóch macierzy stojących na tych samych miejscach.
+
+```{r}
+m * mm
+```
+:::
+
+Wyznacznik macierzy zwraca funkcja `det()`, a macierz odwrotną funkcja `solve()`. Komenda `solve(A, b)`, gdzie *A* to macierz współczynników, a *b* to wektor wyrazów wolnych zwróci rozwiązanie układu równań liniowych.
+
+```{r}
+det(m)
+solve(m)
+```
+
+Sumę i średnią wszystkich elementów macierzy wyznaczają poniższe komendy.
+
+```{r}
 sum(m)
 mean(m)
+```
 
+Kolejną ważną funkcją języka *R* jest `apply()`, która służy do powtarzalnego wykonywania określonych operacji na danych z macierzy, ramek danych czy tablic. Może służyć do wyznaczenia np. sumy, średniej, wariancji itd. dla każdego z wierszy lub każdej z kolumn. Funkcja przyjmuje argumenty (tutaj wybrane):
 
-apply(m,1,sum)
-apply(m,2,sum)
-apply(m,1,mean)
+-   `X` - tablica, macierz,\
+-   `MARGIN` - wartość 1 lub 2 (1 - oznacza, że operacja ma być wykonana na wierszach, a 2 na kolumnach),
+-   `FUN`- funkcja, która ma zostać zastosowana.
 
+W przykładach kolejno wyznacza się sumę w wierszach, kolumnach i średnią w wierszach.
+
+```{r}
+apply(m, 1, sum)
+apply(m, 2, sum)
+apply(m, 1, mean)
 ```
 
 ### Przykłady
 
+Niech będą dane dwa wektory:
+
+1)  *plec* - płeć klinetów warzywniaka
+2)  *zakupy* - waga kupionych jabłek (w kg)
+
 ```{r}
-plec=c("M","K","M","M","K")
-zakupy=c(2,0.5,3.2,1.25,3) #Waga kupionych jabłek (w kg)
+plec = c("M", "K", "M", "M", "K")
+zakupy = c(2, 0.5, 3.2, 1.25, 3)
+```
 
-# Ile jabłek w gramach kupili mężczyźni?
-# 1kg=1000g
+Zadaniem jest wyznaczenie wagi kupionych przez mężczyzn jabłek (w g)?
 
+**1kg = 1000g**
+
+Istnieje kilka sposobów rozwiązania zadania.
+
+```{r}
 # 1 sposób
-sum(zakupy[plec=="M"]*1000)
+sum(zakupy[plec == "M"] * 1000)
 
 # 2 sposób
-plec=c(1,0,1,1,0)
-plec*(zakupy*1000)
-sum(plec*(zakupy*1000))
+plec = c(1, 0, 1, 1, 0)
+plec * (zakupy * 1000)
+sum(plec * (zakupy * 1000))
 
 # 3 sposób
-sum(zakupy[c(1,3,4)])*1000
+sum(zakupy[c(1, 3, 4)]) * 1000
 
 # 4 sposób
-sum(zakupy[-c(2,5)])*1000
+sum(zakupy[-c(2, 5)]) * 1000
 
 ```
 
 ## Tablice (array)
 
-Tablice to wielowymiarowe struktury danych, które pozwalają na przechowywanie elementów tego samego typu w więcej niż dwóch wymiarach. W przeciwieństwie do macierzy, które są ograniczone do dwóch wymiarów (wiersze i kolumny), tablice mogą mieć dowolną liczbę wymiarów, co czyni je bardzo elastycznym narzędziem do pracy z bardziej złożonymi danymi. Tablice tworzy się za pomocą funkcji `array()`, podając wektor wartości oraz wektor określający rozmiary poszczególnych wymiarów. Dostęp do elementów tablicy uzyskuje się poprzez podanie indeksów dla każdego wymiaru. 
+Tablice to wielowymiarowe struktury danych, które pozwalają na przechowywanie elementów tego samego typu w więcej niż dwóch wymiarach. W przeciwieństwie do macierzy, które są ograniczone do dwóch wymiarów (wiersze i kolumny), tablice mogą mieć dowolną liczbę wymiarów, co czyni je bardzo elastycznym narzędziem do pracy z bardziej złożonymi danymi. Tablice tworzy się za pomocą funkcji `array()`, podając wektor wartości oraz wektor określający rozmiary poszczególnych wymiarów. Dostęp do elementów tablicy uzyskuje się poprzez podanie indeksów dla każdego wymiaru.
 
+Pierwsza tablica tworzona jest poprzez wylosowanie ze zwracaniem elementów spośród liczb naturalnych od 1 do 100. Będzie zbudowana z 3 wierszy, 2 kolumn i będzie miała 3 warstwy (co określa argument `dim`).
+
+Podanie wyłącznie dwóch wymiarów tworzy macierz.
 
 ```{r}
-t=array(sample(1:100,replace=T),c(3,2,3))
+t = array(sample(1:100, replace = T), dim = c(3, 2, 3))
 t
+```
 
-array(sample(1:100,replace=T),c(3,2))
+Dostęp do elementów tablicy uzyskuje się odwołując się do ich pozycji - podając najpierw nazwę obiektu, nawias `[]`, a do środka pozycje żądanych elementów z tablicy.
 
-t[1,2,3]
-t[,,3]	#Wyświetlenie 3 warstwy z tablicy t.
+Wyświetlenie 1 wiersza, 2 kolumny i 3 warstwy z tablicy *t* realizuje kod.
 
-t[c(1,2),,2]
+```{r}
+t[1, 2, 3]
+```
 
+Wybór wyłącznie trzeciej warstwy, a także wybór pierwszego i drugiego wiersza z drugiej warstwy są generowane za pomocą kodów.
+
+```{r}
+t[,, 3]	
+
+t[c(1, 2),, 2]
+```
+
+Wszystkie wymiary tablic zwraca funkcja `dim()`. Możliwe jest rownież zwrócenie wyłącznie liczby wierszy, kolumn czy warstw. Następuje to dzięki poznanym już funkcjom tj. `nrow()` i `ncol()`. Innym sposobem jest wyfiltrowanie informacji z rezultatu funkcji `dim()` za pomocą `[]`. Przykładowo napisanie `[2]` zwraca liczbę kolumn tablicy, co równocześnie zwraca funkcja `ncol()`.
+
+```{r}
 dim(t)
 
 dim(t)[2]
 ncol(t)
+```
 
-dim(t)=c(3,6)
+Dla tablicy *t* obliczono odpowiednio odchylenie standardowe w kolumnach. Wyznaczono też odchylenie standardowe dla każdej z warstw, a następnie wyfiltrowano jedynie to odpowiadające drugiej warstwie.
+
+```{r}
+apply(t, 2, sd)
+apply(t, 3, sd)[2]
+```
+
+Możliwa jest redukcja liczby wymiarów tablicy np.: do wierszy i kolumn, czyli sprowadzenie jej do macierzy - zadając jej nową liczbę wierszy i kolumn, pomijając liczbę warstw.
+
+```{r}
+dim(t) = c(3, 6)
 t
-
-t=array(sample(1:100,replace=T),c(3,2,3))
-t
-
-apply(t,2,sd) #2 - oznacza kolumny
-apply(t,3,sd)[2]  #3 - oznacza warstwy, co oznacza, że obliczane są odchylenia standardowe dla warstw. [2] pozwala na wybranie 2 elementu z uzyskanego wektora, czyli odchylenia standardowego dla elementów z 2-giej warstwy.
 ```
 
 ## Ramki danych (data.frame)
 
-Ramki danych (data frames) w R należą do najważniejszych i najczęściej używanych struktur danych, szczególnie w analizie danych statystycznych. Pozwalają na przechowywanie danych w postaci tabeli, gdzie każda kolumna może zawierać dane innego typu (np. liczby, tekst, wartości logiczne), a każdy wiersz odpowiada pojedynczej obserwacji. Ramki danych można tworzyć za pomocą funkcji `data.frame()`, a następnie wygodnie przeglądać, filtrować, sortować i modyfikować. 
+Ramki danych (data frames) w **R** należą do najważniejszych i najczęściej używanych struktur danych, szczególnie w analizie danych statystycznych. Pozwalają na przechowywanie danych w postaci tabeli, gdzie każda kolumna może zawierać dane innego typu (np. liczby, tekst, wartości logiczne), a każdy wiersz odpowiada pojedynczej obserwacji. Ramki danych można tworzyć za pomocą funkcji `data.frame()`, a następnie wygodnie przeglądać, filtrować, sortować i modyfikować.
 
+Niech będzie dana ramka danych z informacjami o pracownikach: imię, wiek, wartość logiczna identyfikująca, czy ktoś złożył wypowiedzenie i staż pracy (w latach).
 
 ```{r}
-# Ramka posiada dane o pracownikach: imię, wiek, fakt czy ktoś złożył wypowiedzenie, staż pracy (w latach).
-
-ramka=data.frame(c("Ola","Kamil","Maciek","Asia"),c(21,32,38,40),c(T,F,F,F),seq(2,12,3))
-ramka
-
-names(ramka)
-colnames(ramka)
-
-colnames(ramka)=c("imię","wiek","wypowiedzenie","staż pracy")
-ramka
-
-rownames(ramka)
-
-# Zmiana nazw wierszy na obserwacja 1, obserwacja 2, ... .
-
-# 1 sposób
-t1="Obserwacja"
-t1
-rownames(ramka)=paste(t1,rownames(ramka))
-ramka
-
-# 2 sposób
-rownames(ramka)= paste('obserwacja',1:length(ramka))
-ramka
-
-rownames(ramka)=paste("obs",1:length(ramka),sep="")
-ramka
-
-dimnames(ramka)
-
-ramka[3]
-ramka[[3]]
-
-mean(ramka[[4]])
-
-mean(ramka[4])	#Błąd, ponieważ z takiego typu nie można policzyć średniej - natomiast z wektorów można .
-
-class(ramka[[4]])==class(ramka[4])
-
-ramka["wiek"]
-ramka[["wiek"]]
-
-ramka$wiek
-mean(ramka$wiek)
-
-ramka[2,4]
-ramka
-
-names(ramka)[4]
-names(ramka)[4]="staż"
-ramka
-
-ramka['obs2',]
-
-# Jak wyświetlić dane o osobie, która złożyła wypowiedzenie?
-ramka[,3]==T
-ramka[,"wypowiedzenie"]==T
-
-ramka[ramka[,3]==T,]
-ramka[ramka[,"wypowiedzenie"]==T,]
-
-sapply(ramka,class)
-lapply(ramka,class)
+pracownicy = data.frame(c("Ola", "Kamil", "Maciek", "Asia"),
+                        c(21, 32, 38, 40),
+                        c(T, F, F, F),
+                        seq(2, 12, 3))
+pracownicy
 ```
 
-::: callout-tip
-### Zbiór danych: iris
-data(iris)
-iris
+Nazwy kolumn w ramce danych wywołują funkcje `names()` i `colnames()`. Natomiast zamiana ich na inne następuje przy pomocy symbolu przyrównania `=`.
+
+```{r}
+names(pracownicy)
+colnames(pracownicy)
+
+colnames(pracownicy) = c("imię", "wiek", "wypowiedzenie", "staż pracy")
+colnames(pracownicy)
+```
+
+::: callout-warning
+## Nadanie kolumnom nazw
+
+Nazwy kolumn mogą być już definiowane w funkcji `data.frame()`.
 :::
 
+Możliwe jest również nadanie nowej nazwy konkretnej kolumnie przez `[]` i symbol `=`.
+
 ```{r}
-# View(iris)
-
-head(iris)
-head(iris,2)
-tail(iris)
-
-dim(ramka)
+names(pracownicy)[4] = "staż"
+names(pracownicy)[4]
 ```
 
-::: callout-tip
-### Przyłączenie odłączenie zbioru
-attach(iris)
-Species
+Nazwy wierszy, czyli numery obserwacji zwraca funkcja `rownames()`. Służy ona też zamianie nazw wierszy przy pomocy symbolu `=` i nowch nazw wierszy.
 
+Nadanie wierszom nazw *Obserwacja 1*, *Obserwacja 2* itd. może być przeprowadzone różnymi sposobami. Zaprezentowano dwa z nich.
+
+```{r}
+rownames(pracownicy)
+
+# 1 sposób
+rownames(pracownicy) = paste("Obserwacja", rownames(pracownicy))
+rownames(pracownicy)
+
+# 2 sposób
+rownames(pracownicy) = paste('OBSERWACJA', 1 : nrow(pracownicy))
+rownames(pracownicy)
+```
+
+Można chcieć utworzyć krótszą nazwę wierszy i nie wprowadzać odstępu między słowem, a liczbą. W celu usunięcia odstępu, w funkcji paste wykorzystuje się argument `sep` i ustala go na `""`, czyli brak spacji.
+
+```{r}
+rownames(pracownicy) = paste("obs", 1 : length(pracownicy), sep = "")
+rownames(pracownicy)
+```
+
+Nazwy zarówno wierszy, jak i kolumn zwraca funkcja `dimnames()` (wynik w postaci listy).
+
+```{r}
+dimnames(pracownicy)
+```
+
+W celu uzyskania dostępu do kolumn w ramce danych wykorzystuje się pojedynczy nawias `[]` (kolumna zwracana w formie ramki danych) oraz podwójny nawias `[[]]` (kolumna zwracana w formie wektora). W nim umieszcza się numer kolumny lub jej nazwę w cudzysłowie. Można zastosować również symbol `$`, po którym wprowadzana jest nazwa wybranej kolumny (kolumna zwracana w formie wektora).
+
+Celem jest zwrócenie trzeciej kolumny, tj. *wypowiedzenie*.
+
+```{r}
+pracownicy[3]
+pracownicy[[3]]
+
+pracownicy["wypowiedzenie"]
+pracownicy[["wypowiedzenie"]]
+
+pracownicy[, 3]
+
+pracownicy$wypowiedzenie
+```
+
+::: callout-warning
+## Mierniki można obliczyć dla wektora, ale nie dla ramki danych
+
+`[[]]` zwraca wektor, więc średnia jest możliwa do obliczenia.
+
+```{r}
+mean(pracownicy[[4]])
+```
+
+`[]` zwraca ramkę danych, więc średnia nie jest możliwa do obliczenia. Zwracany będzie błąd.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Wyniki realizacji poniższego kodu nie są wyświetlane
+mean(pracownicy[4])	
+```
+:::
+
+W celu obliczenia średniej wieku pracowników wykorzystuje się funkcję `mean()`.
+
+```{r}
+mean(pracownicy$wiek)
+```
+
+Dostęp do wierszy i kolumn następuje poprzez `[]`. Wewnątrz umieszcza się numer wiersza i kolumny, które chce się odfiltrować. Pozostawiając puste miesce w miejscu numeru wiersza, wybrane zostaną wszystkie wiersze. Analogicznie zachodzi dla kolumn.
+
+```{r}
+pracownicy[2, 4]
+```
+
+Wybór wiersza może zachodzić przez wykorzystanie jego nazwy (podawanej w cudzysłowie).
+
+```{r}
+pracownicy['obs2',]
+```
+
+### Przykład
+
+Indeksowanie służy filtrowaniu danych. Celem może być wyświetlanie informacji o osobach, które złożyły wypowiedzenie.
+
+1)  Na początku należy sprawdzić, które obserwacje w kolumnie *wypowiedzenie* mają wartość *TRUE* (zaproponowano dwa sposoby). Posłuży to wyfiltrowaniu jedynie interesujących wierszy.
+
+```{r}
+pracownicy[, 3] == T
+pracownicy[, "wypowiedzenie"] == T
+```
+
+2)  W miejscu numeru wiersza wpisuje się warunek filtrujący jedynie obserwacje posiadające w 3 kolumnie wartość TRUE (czyli tych z wypowiedzeniem). Nie podaje się numeru kolumny po przecinku, gdyż celem jest wybranie wszystkich informacji o pracownikach (czyli kolumn).
+
+```{r}
+pracownicy[pracownicy[, 3] == T,]
+pracownicy[pracownicy[, "wypowiedzenie"] == T,]
+```
+
+Sprawdzenie klasy zmiennej w każdej z kolumn zachodzi dzięki funkcji `sapply()`.
+
+```{r}
+sapply(pracownicy, class)
+```
+
+::: callout-important
+## **iris**
+
+Zbiór **iris** zawiera pomiary długości i szerokości działek kielicha oraz długości i szerokości płatków (w centymetrach) dla 50 kwiatów z każdego z 3 gatunków irysów. Gatunki te to setosa, versicolor i virginica.
+:::
+
+Program **R** zawiera wbudowane zbiory danych, również w formie ramek danych. Funkcja `View()` wyświetla cały zbiór danych w osobnym oknie.
+
+```{r}
+View(iris)
+```
+
+W pewnych przypadkach przydatnym jest podejrzenie kilku wierszy zbioru danych. Służą do tego dwie funkcje: `head()` i `tail()`. Jako argumenty przyjmują zbiór danych do wyświetlenia oraz liczbę wierszy, którą chce się wyświetlić. Domyślnie (nie podając drugiego argumentu) funkcje te wyświetlają 6 wierszy. Pierwsza z nich wyświetla 6 pierwszych wierszy, a druga 6 ostatnich.
+
+```{r}
+head(iris)
+head(iris, 2)
+tail(iris, 3)
+```
+
+::: callout-warning
+### Przyłączenie i odłączenie zbioru
+
+W programie **R** można dołączyć pewien zbiór do ścieżki wyszukiwania R. Oznacza to, że dostęp do obiektów następuje poprzez przekazanie ich nazw (nie trzeba podawać zbioru danych, z którego pochodzą). Służy do tego funkcja `attach()`, której argumentem jest dołączany zbiór danych.
+
+```{r}
+attach(iris)
+head(Species)
+```
+
+Możliwe jest również odłączenie danego zbioru od ścieżki wyszukiwania R. Wówczas dostęp do kolumn następuje np. poprzez operator `$` i samo podanie nazwy kolumny zwróci błąd. Dany zbiór odłącza się wpisując jego nazwę jako argument do funkcji `detach()`.
+
+```{r}
 detach(iris)
-### Species - Jeśli ponownie wpisze się kod: Species, wówczas wystąpi błąd.
+```
 :::
 
 ### Funkcja subset
 
-```{r}
+Funkcja `subset()` służy zwracaniu wektorów, macierzy czy ramek danych spełniających określone warunki. Innymi słowy służy do filtrowania obserwacji (wierszy).
 
-#Funkcja subset pozwala wybrać wiersze ze  zbioru danych.
-subset(iris,Species=="virginica")
+Jako przykład zaprezentowano wybór podzbioru składającego się wyłącznie z irysów z gatunku *virginica*.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+
+subset(iris, Species == "virginica")
 ```
 
-### Edytowanie danych
+### Edytowanie obiektu
 
-::: callout-tip
-## Edycja obiektu
+Możliwa jest edycja elementów w ramkach danych poprzez funkcje `edit()` i `fix()`. Obie wiążą się z pojawieniem się okna edycyjnego. W nim można zamieniać wartości istniejących obserwacji, ale możliwe jest również wprowadzenie nowej kolumny czy zmiana nazw istniejących kolumn lub wierszy. Funkcja `fix()` od razu zapisuje zmiany wprowadzone do zbioru danych. Natomiast przy funkcji `edit()`, w celu wprowadzenia zmian na stałe należy efekty edycji przypisać do zmiennej.
 
-edit(ramka)
-ramka=edit(ramka)
-fix(ramka)
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
 
-:::
+pracownicy = edit(pracownicy)
+fix(pracownicy)
+```
 
 ## Listy (list)
 
 Listy w języku **R** to bardzo elastyczne struktury danych, które pozwalają na przechowywanie elementów o różnych typach, takich jak liczby, teksty, wektory, ramki danych czy nawet inne listy. Dzięki temu listy są często wykorzystywane do organizowania złożonych danych, na przykład wyników analiz statystycznych. Listę tworzy się za pomocą funkcji `list()`. Do elementów listy można odwoływać się zarówno za pomocą indeksów, jak i nazw.
 
+Niech będzie dana lista zawierająca informacje o dwójce respondentów (imię, pasja, płeć i wiek). W celu zdefiniowania nazw kolejnych poziomów listy można je zadeklarować np. przy jej tworzeniu - za pomocą operatora przypisania `=`.
+
 ```{r}
-x=list(c("Halina","Jan"),c("siatkówka","śpiew"),
-c("k","m"),c(34,40))
-x
-
-x=list(imię=c("Halina","Jan"),hobby=c("siatkówka","śpiew"),
-płeć=c("k","m"),wiek=c(45,30))
-x
-
-names(x)
-str(x)
-
-x$wiek
-x[4]
-x[[4]]
-x[["wiek"]]
-
-
-x[[3]][2] #Wyświetlona zostanie płeć 2 osoby.
-
-
-x$hobby[1]='czytanie' #Zamiana hobby z siatkówka na czytanie.
-x
-
-x[[1]][3]="Ania"
-x
-
-x=c(x,list(konta.w.b=c(1,2)))
-x
-x=x[-5]
-x
-
-x[[1]][c(1,2)]
-
-
-
-lapply(x[1],sort)
-lapply(x,sort)
-
-x=lapply(x,sort)
-x
+badani = list(imię = c("Halina", "Jan"),
+         hobby = c("siatkówka", "śpiew"),
+         płeć = c("k", "m"), 
+         wiek = c(45, 30))
+badani
 ```
 
-::: callout-tip
-### Edycja obiektu
+Nazwy poziomów listy zwraca funkcja `names()`, a `str()` podsumowanie zmiennej.
 
-edit(x)
+```{r}
+names(badani)
+str(badani)
+```
 
-Można edytować - dodawać, usuwać elementy zamieszczone na liście.
-:::
+Dostęp do elementów listy *badani* następuje dzięki operatorowi `$`, a także `[]` i `[[]]`. Przed nawiasami zamieszcza się nazwę listy, a w nawiasie (lub nawiasach) wybrany poziom listy lub jego nazwę. Odwołanie się poprzez `[]` zwraca dane w postaci listy, a `[[]]` w formie wektora. Jest to ważne przy obliczeniach, gdyż **R** nie umożliwia wykonywania obliczeń na liście.
 
+Kolejne komendy realizują zadanie wyfiltrowania wieku respondentów.
+
+```{r}
+badani$wiek
+badani[4]
+badani[[4]]
+badani[["wiek"]]
+```
+
+Wybranie konkretnego elementu bądź elementów z określonego poziomu listy następuje przez:
+
+1)  wybór poziomu listy za pomocą `[[]]` (wynik musi być wektorem),
+2)  wybór elementu wektora.
+
+Poniższy kod wyświetla płeć drugiego respondenta.
+
+```{r}
+badani[[3]][2]
+```
+
+Również i w listach możliwa jest edycja jej elementów. Zamianę hobby pierwszego respondenta na czytanie zaprezentowano poniżej.
+
+```{r}
+badani$hobby[1] = 'czytanie'
+badani[2]
+```
+
+Kolejny poziomy listy definiuje się za pomocą funkcji `append()` lub dołączając do istniejącej listy inną listę.
+
+```{r}
+badani = append(badani, c(158))
+badani = c(badani, list(konta.w.b = c(1, 2)))
+
+badani
+```
+
+Dodać można również kolejny element do danego poziomu listy wskazując jego przyszłą pozycję i wartość. Następujący kod zwróci listę z dopisanym imieniem Anna.
+
+```{r}
+badani[[1]][3] = "Ania"
+badani[1]
+```
+
+Przykład prezentuje sposób wyfiltrowania 1 i 3 imienia z listy.
+
+```{r}
+badani[[1]][c(1, 3)]
+```
+
+Możliwe jest także usunięcie elementów listy, np.: piątego poziomu listy czy trzeciego imienia.
+
+```{r}
+badani = badani[-5]
+badani = badani[[1]][-3]
+
+badani 
+```
+
+Wcześniej poznawaną funkcją przy macierzach i tablicach była funkcja `apply()`. Pewnym odpowiednikiem dla list jest funkcja `lapply()`. Służy do stosowania określonej funkcji do każdego elementu listy, wektora lub ramki danych. Wyniki są zwracane w postaci listy.
+
+Następujące kody sortują:
+
+-   tylko elementy na pierwszym poziomie listy,
+-   wszystkie elementy na liście (każde w ramach danego poziomu).
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+
+lapply(badani[1], sort)
+lapply(badani, sort)
+```
 
 ::: callout-caution
 ## Ćwiczenia do samodzielnego wykonania
 
-1. Utwórz wektor liczb całkowitych od 1 do 20. Wyświetl tylko te elementy, które są podzielne przez 4.
+1.  Utwórz wektor liczb całkowitych od 1 do 20. Wyświetl tylko te elementy, które są podzielne przez 4.
 
-2. Utwórz macierz o wymiarach $4 \times 3$ z liczb od 1 do 12 (wierszami). Wyświetl drugi wiersz tej macierzy.
+2.  Utwórz macierz o wymiarach $4 \times 3$ z liczb od 1 do 12 (wierszami). Wyświetl drugi wiersz tej macierzy.
 
-3. Stwórz ramkę danych z trzema kolumnami: imię (znakowa), wiek (liczbowa), student (logic).  Wprowadź do ramki dane dla 4 osób. Wyświetl dane tylko tych osób, które są studentami.
+3.  Stwórz ramkę danych z trzema kolumnami: imię (znakowa), wiek (liczbowa), student (logic). Wprowadź do ramki dane dla 4 osób. Wyświetl dane tylko tych osób, które są studentami.
 
-4. Utwórz tablicę 3x2x2 z losowych liczb całkowitych z przedziału 1–50. Oblicz średnią wszystkich elementów z drugiej warstwy.
+4.  Utwórz tablicę 3x2x2 z losowych liczb całkowitych z przedziału 1–50. Oblicz średnią wszystkich elementów z drugiej warstwy.
 
-5. Stwórz listę o nazwie moje_dane zawierającą trzy elementy: 
-wektor liczb od 1 do 5,
-macierz 2x2 wypełnioną liczbami od 1 do 4,
-wektor znakowy c("R", "jest", "super").
+5.  Stwórz listę o nazwie moje_dane zawierającą trzy elementy: wektor liczb od 1 do 5, macierz 2x2 wypełnioną liczbami od 1 do 4, wektor znakowy c("R", "jest", "super").
 
-Użyj funkcji `lapply()` oraz `length()`, aby dowiedzieć się, ile elementów znajduje się w każdym obiekcie na liście (ile liczb w wektorze, ile elementów w macierzy, ile słów w drugim wektorze). 
-
-
+Użyj funkcji `lapply()` oraz `length()`, aby dowiedzieć się, ile elementów znajduje się w każdym obiekcie na liście (ile liczb w wektorze, ile elementów w macierzy, ile słów w drugim wektorze).
 :::
-
-
-
-
