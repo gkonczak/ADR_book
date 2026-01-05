@@ -1,7 +1,7 @@
 # Podstawy pracy z programem **R**
 
 ::: {.callout-note icon="false" appearance="simple"}
-**R** to darmowy, open-source'owy język programowania i środowisko obliczeniowe, które jest szczególnie popularne w statystyce, analizie i wizualizacji danych. **R** zostało skonstruowane przez Rossa Ihakę i Roberta Gentlemana na Uniwersytecie w Auckland w Nowej Zelandii. Prace nad **R** rozpoczęły się na początku lat 90. XX wieku, a pierwsza publiczna wersja została wydana w 1995 roku. Oficjalną wersję 1.0 udostępniono w 2000 roku. **R** jest powszechnie używany zarówno w badaniach akademickich, jak i w przemyśle, dzięki swojej wszechstronności oraz ogromnej społeczności dostarczającej pakiety rozszerzające jego możliwości. W kwietniu 2025 roku dostępnych jest ponad 20 tysięcy bibliotek rozszrzających możliwosci programu **R**.
+**R** to darmowy, open-source'owy język programowania i środowisko obliczeniowe, które jest powszechnie wykorzystywane w analizach statystycznych i wizualizacji danych. Język programowania **R** został skonstruowany przez Rossa Ihakę i Roberta Gentlemana na Uniwersytecie w Auckland w Nowej Zelandii. Prace nad **R** rozpoczęły się na początku lat 90. XX wieku, a pierwsza publiczna wersja została wydana w 1995 roku. Oficjalną wersję 1.0 udostępniono w 2000 roku. **R** jest powszechnie używany zarówno w badaniach akademickich, jak i w przemyśle, dzięki swojej wszechstronności oraz ogromnej społeczności dostarczającej pakiety rozszerzające jego możliwości. W styczniu 2026 roku dostępnych jest ponad 23 tysięcy bibliotek rozszrzających możliwosci programu **R**.
 
 W niniejszym rozdziale przedstawiono podstawy pracy z programem **R**, w szczególności opisano następujące zagadnienia:
 
@@ -20,7 +20,7 @@ W niniejszym rozdziale przedstawiono podstawy pracy z programem **R**, w szczeg�
 
 ### Instalacja programu i podstawowe komendy w języku **R**
 
-W celu zainstalowania programu **R** należy odwiedzić stronę <https://cran.r-project.org/>, a następnie wybrać jedną z wersji **R**. Program jest dostępny dla trzech systemów operacyjnych:\
+W celu zainstalowania programu **R** na stronie internetowej <https://cran.r-project.org/> należy wybrać jedną z wersji **R**. Program jest dostępny dla trzech systemów operacyjnych:
 
 1)  Linux,
 
@@ -28,10 +28,9 @@ W celu zainstalowania programu **R** należy odwiedzić stronę <https://cran.r-
 
 3)  Windows.
 
-Przechodząc do kolejnego okna należy wybrać link **base**, a następnie pobrać (Download) aktualną wersję programu i zainstalować na własnym komputerze.
-
-
+Przechodząc do kolejnego okna należy wybrać link **base**, a następnie pobrać (Download) aktualną wersję programu i zainstalować na komputerze.
 Po uruchomieniu programu można przystapić do wprowadzania pierwszych poleceń.
+
 Wypisanie liczb od 1 do 10 z odstępem co 1 można uzyskać następująco:
 
 ```{r}
@@ -146,7 +145,7 @@ log(16, 2)
 2*(10-7)^2
 ```
 
-Możliwe jest również wykonywanie innych działań, w tym obliczenia wartości bezwzględnej z liczby, reszty z dzielenia za pomocą operatora `%%`, a także wyznaczenia wartości liczby $\pi$, funkcji m.in. trygonometrycznych (m.in. funkcji sinus) oraz wartości symbolu Newtona.
+Możliwe jest również wykonywanie innych działań, w tym obliczenia wartości bezwzględnej z liczby, reszty z dzielenia za pomocą operatora `%%`, a także wyznaczenia wartości liczby $\pi$, funkcji m.in. trygonometrycznych (sinus, cosinus, ...) oraz wartości symbolu Newtona.
 
 ```{r}
 abs(-31)
@@ -155,7 +154,8 @@ pi
 sin(pi)
 ```
 
-Symbol Newtona $\binom{4}{2}$ - liczba kombinacji 2-u elementowych ze zbioru liczącego 4 elementy.
+Symbol Newtona $\binom{4}{2}$ - liczba kombinacji 2-u elementowych ze zbioru liczącego 4 elementy wyznaczony jest następująco:
+
 
 ```{r}
 choose(4, 2)
@@ -165,32 +165,33 @@ choose(4, 2)
 
 Język **R** umożliwia zaokrąglanie wyników do preferowanego formatu. Można m.in. zaokrąglić liczbę w górę, w dół lub zgodnie z podstawowymi zasadami matematycznymi wraz ze wskazaniem liczby miejsc po przecinku.
 
-Zaokrąglenie do całości.
+- Zaokrąglenie do całości.
 
 ```{r}
 round(2.4347)
 ```
 
-Zaokrąglenie do 2 miejsc po przecinku.
+- Zaokrąglenie do 2 miejsc po przecinku.
 
 ```{r}
 round(2.4347247, digits=2)
 ```
 
-Zaokrąglenie liczb rzeczywistych w górę do najbliższej liczby całkowitej (matematyczna funkcja *sufit*).
+- Zaokrąglenie liczb rzeczywistych w górę do najbliższej liczby całkowitej (matematyczna funkcja *sufit*).
 
 ```{r}
 ceiling(3.451)
 ```
 
-Zaokrąglanie liczb rzeczywistych w dół do najbliższej liczby całkowitej (matematyczna funkcja *podłoga*).
+- Zaokrąglanie liczb rzeczywistych w dół do najbliższej liczby całkowitej (matematyczna funkcja *podłoga*).
 
 ```{r}
 floor(3.451)
 ```
 
+
 ::: callout-warning
-## Funkcje `ceiling` i `floor` mają tylko jeden argument. Może być to pojedyncza liczba bądź wektor liczb, macierz lub ramka danych.
+## Funkcje `ceiling` i `floor` mają tylko jeden argument. Może być to pojedyncza liczba bądź wektor liczbowy, macierz lub ramka danych.
 :::
 
 Możliwe jest również całkowite odcięcie części dziesiętnej danej liczby.
@@ -201,7 +202,7 @@ trunc(6.40201)
 
 ### Przypisywanie wartości do zmiennych
 
-Zmienne służą przechowywania danych i ich późniejszego wykorzystania. Istnieje pięć sposobów tworzenia zmiennych. Wykorzystywane są do tego symbole: `=`, `<-`, `->`, `<<-`, `->>`. Oprócz wyrazów i pojedynczych liczb w zmiennych przechowywane mogą być bardziej skomplikowane obiekty, które zostaną opisane nieco później. W celu wyświetlenia aktualnej wartości zmiennej wystarczy wpisać jej nazwę. Nie ma konieczności korzystania z funkcji `print`. Następujący kod prezentuje proces tworzenia zmiennych i ich wyświetlania.
+Zmienne służą do przechowywania danych i ich późniejszego wykorzystania. Istnieje pięć sposobów tworzenia zmiennych. Wykorzystywane są do tego symbole: `=`, `<-`, `->`, `<<-`, `->>`. Oprócz wyrazów i pojedynczych liczb w zmiennych przechowywane mogą być bardziej skomplikowane obiekty, które zostaną opisane w dalszej części. W celu wyświetlenia aktualnej wartości zmiennej wystarczy wpisać jej nazwę. Nie ma konieczności korzystania z funkcji `print`. Następujący kod prezentuje proces tworzenia zmiennych i ich wyświetlania.
 
 ```{r}
 x = 7
@@ -232,7 +233,7 @@ t
 ## Zasady nadawania nazw zmiennych
 
 1)  Duże i małe litery mają znaczenie.
-2)  W nazwie zmiennej mogą wystąpić cyfry i `_`, ale nie na samym początku.
+2)  W nazwie zmiennej mogą wystąpić cyfry i znak `_`, ale nie na samym początku.
 3)  W nazwie zmiennej mogą wystąpić kropki - również na samym początku.
 4)  Słowa kluczowe (np. TRUE, FALSE, NULL, if) nie mogą być używane jako nazwy zmiennych.
 
@@ -319,7 +320,7 @@ t1
 ```
 
 ::: callout-warning
-## Cudzysłowia `""` i `''` są stosowane zamiennie.
+## Cudzysłowy `" "` oraz `' '` są stosowane zamiennie.
 
 ```{r}
 t2 = 'To też jest tekst'
@@ -327,7 +328,7 @@ t2
 ```
 :::
 
-Pierwotnie tekst jest wyświetlany w cudzysłowie, ale można go usunąć za pomocą następującego kodu.
+Pierwotnie tekst jest wyświetlany w cudzysłowiu, ale można go usunąć za pomocą następującego kodu.
 
 ```{r}
 print(t2, quote = FALSE)
@@ -482,10 +483,9 @@ class(n2)
 ## Podstawowe wykresy - funkcja `plot`
 
 Pakiet **graphics** - dostępny domyślnie w **R** - daje możliwość tworzenia wykresów. Oprócz tego istnieją dodatkowe pakiety, które również pozwalają na opracowanie wykresów, w tym także animacji.
-
 Jedną z podstawowych funkcji tworzących wizualizacje jest `plot`, która służy do tworzenia wykresów obiektów.
 
-W @tbl-p przedstawiono wykaz wybranych argumentów podawanych w funkcji `plot`, z których buduje się wykres:
+W @tbl-p przedstawiono wykaz wybranych argumentów podawanych w funkcji `plot`, z których buduje się wykres.
 
 | Argument | Opis |
 |-------------------|-----------------------------------------------------|
@@ -618,20 +618,22 @@ Bezpośrednio poniżej odwołano sie do zbiorów **cars** i **AirPassengers**.
 Zbiór **cars** składa się z 2 zmiennych i zawiera 150 obserwacji. Przedstawia prędkość samochodu oraz odległość potrzebną do zatrzymania samochodu.
 :::
 
-Zamiast przeglądać cały zbiór, który nieraz jest zbyt duży do wyświetlenia w jednym oknie, można podejrzeć kilka pierwszych wierszy. Jest to możliwe wywołując komendę `head`. Podając drugi argument (*n*) określa się liczbę wyświetlanych wierszy.
+Zamiast przeglądać cały zbiór, który często jest zbyt duży do wyświetlenia w jednym oknie, można podejrzeć kilka pierwszych wierszy. Jest to możliwe wywołując komendę `head`. Podając drugi argument (*n*) określa się liczbę wyświetlanych wierszy.
 
 ```{r}
 head(cars)
 head(cars, 2)
 ```
 
-Sprawdzono klasę obiektu. Jest ona inna od dotychczas poznanych.
+Dla sprawdzenia klasy obiektu wykorzystuje się funkcję `class`. 
 
 ```{r}
 class(cars)
 ```
 
-Sporządzając wykres zbiór danych automatycznie tworzony jest wykres rozrzutu, za pomocą którego identyfikować można zależności między zmiennymi.
+Klasa oblektu (`data.frame`) jest inna od dotychczas poznanych.
+
+Sporządzając wykres zbioru danych **cars** za pomocą funkcji `plot` automatycznie tworzony jest wykres rozrzutu, za pomocą którego identyfikować można zależności między zmiennymi.
 
 ```{r}
 #| eval: true
@@ -706,6 +708,12 @@ hist(trees$Height, freq = T)
 hist(trees$Height, prob = T)
 ```
 
+
+::: callout-warning
+## Odwołanie się do konkretnej kolumny w zbiorze danych następuje za pomocą symbolu `$`. Najpierw podaje się nazwę zbioru, później symbol dolara, a na koniec nazwę kolumny.
+:::
+
+
 Ustawienie parametrów graficznych następuje również poza funkcją `plot`. Służy do tego funkcja `par`, która pozwala m.in. na podzielenie obszaru wykresu na mniejsze, a zarazem przedstawianie wielu wykresów na jednym.
 
 Parametr `mfrow` wskazuje liczbę wierszy i kolumn, na jakie ma być podzielony obszar wykresu. Liczby podaje się w wektorze - najpierw liczbę wierszy, później liczbę kolumn.
@@ -773,9 +781,6 @@ hist(trees$Height, col = c("blue", "pink", "yellow"))
 hist(trees$Height, col = c("blue", "pink", "yellow", "grey"))
 ```
 
-::: callout-warning
-## Odwołanie się do konkretnej kolumny w zbiorze danych następuje za pomocą symbolu `$`. Najpierw podaje się nazwę zbioru, później symbol dolara, a na koniec nazwę kolumny.
-:::
 
 Oprócz możliwości nadania koloru słupkom histogramu, można ustalić kolor brzegów słupków posługując się parametrem `border`. Dodać można również etykiety do słupków korzystając z parametru `labels`.
 
@@ -787,7 +792,7 @@ hist(trees$Height, border = "blue", breaks = c(60, 70, 80, 90, 100), col = "pink
 
 ### Wykres pudełkowy
 
-Wykres pudełkowy to wykres niezwykle użyteczny, reprezentujący rozkład zmiennej, ale też jej wartości odstające. Zaznaczone są na nim kwartyle, wartość minimalna i maksymalna. Wykres nieco niżej przedstawia rozkład wysokości czarnej czereśni.
+Wykres pudełkowy to wykres niezwykle użyteczny, prezentujący rozkład zmiennej, ale też jej wartości odstające. Zaznaczone są na nim kwartyle, wartość minimalna i maksymalna. Wykres na @fig-wp01 przedstawia rozkład wysokości czarnej czereśni.
 
 ```{r}
 #| fig-cap: Wykres pudełkowy
@@ -797,7 +802,7 @@ boxplot(trees$Height, col = "red")
 
 ### Macierzowy wykres rozrzutu
 
-Macierz wykresów rozrzutu (scatterplot matrix) jest wykresem, który przedstawia wykres rozrzutu dla wszystkich zmiennych i ich kombinacji.
+Macierzowy wykres rozrzutu (scatterplot matrix) to wykresem, który przedstawia w jednym oknie wykresy rozrzutu dla wskazanych zmiennych.
 
 ```{r}
 #| fig-cap: Macierzowy wykres rozrzutu
@@ -816,7 +821,7 @@ Zbiór **chickwts** zawiera 2 zmienne po 71 obserwacji. Przedstawia wyniki ekspe
 Wykres słupkowy jest jednym z najczęściej wykorzystywanych sposobów wizualizacji danych. W języku R służy do tego celu funkcja `barplot`.
 
 ::: callout-warning
-## Funkcja `barplot` jako zbioru danych oczekuje wektora lub macierzy wartości opisujących słupki tworzące wykres. Formuła `chickwts$feed` zawierająca informacje o rodzaju paszy jest zmienną typu `factor`. Zadanie jej wprost do funkcji `barplot` zwróci błąd.
+## Funkcja `barplot` jako zbioru danych wymaga wektora lub macierzy wartości opisujących słupki tworzące wykres. Formuła `chickwts$feed` zawierająca informacje o rodzaju paszy jest zmienną typu `factor`. Zadanie jej wprost do funkcji `barplot` zwróci błąd.
 
 ```{r}
 #| warning: false
@@ -826,7 +831,7 @@ barplot(chickwts$feed) # Ten kod zwróci błąd
 ```
 :::
 
-Chcąc przedstawić liczbę kurczaków żywionych daną paszą należy najpierw zliczyć wystąpienia każdej z pasz w zbiorze danych, np. w tabeli. Realizuje to poniższy kod.
+Chcąc przedstawić liczbę kurczaków żywionych daną paszą należy najpierw zliczyć w tabeli wystąpienia każdej z pasz. Realizuje to poniższy kod.
 
 ```{r}
 tab = table(chickwts$feed)
@@ -841,10 +846,10 @@ Wówczas możliwe jest wykonanie wykresu słupkowego.
 barplot(tab)
 ```
 
-Funkcja `barplot`, tak jak i funkcja plot pozwala na dodanie tytułu wykresu, nadanie osiom tytułów, zmianę koloru słupków i ich obramowania. Umożliwia również m.in. ustalenie szerokości słupków, odległości między nimi, przypisania nazw pod słupkami, a także rysowania ich horyzontalnie. Wizualizację z dodatkowymi parametrami reprezentuje poniższy kod.
+Funkcja `barplot`, tak jak i funkcja `plot` pozwala na dodanie tytułu wykresu, nadanie osiom tytułów, zmianę koloru słupków i ich obramowania. Umożliwia również m.in. ustalenie szerokości słupków, odległości między nimi, przypisania nazw pod słupkami, a także rysowania ich poziomo. Wizualizację z dodatkowymi parametrami reprezentuje poniższy kod.
 
 ```{r}
-#| fig-width: 12
+#| fig-width: 14
 #| fig-height: 6
 #| fig-cap: Wykres słupkowy poziomy
 #| label: fig-bar2
@@ -862,9 +867,7 @@ barplot(tab, col = "darkgreen", width = 1.5, space = 0.5, horiz = TRUE, las = TR
 
 ### Wykres kołowy
 
-Wykresy kołowe służą m.in. zaprezentowaniu udziału danej grupy w całości. Chcąc zwizualizować jaki jest procent kurczaków spożywających daną paszę należy postępować następująco.
-
-Należy ustalić jaki procent całości stanowią konkretne grupy. Służy do tego funkcja `prop.table` zwracająca udział grup w całości. Aby udziały wyrazić w procentach, wartości te mnoży się przez 100.
+Wykresy kołowe służą m.in. do zaprezentowania udziału danej grupy w całości. Chcąc zwizualizować jaki jest procent kurczaków spożywających daną paszę należy  ustalić jaki procent całości stanowią konkretne grupy. Służy do tego funkcja `prop.table` zwracająca udział grup w całości. Aby udziały wyrazić w procentach, wartości te mnoży się przez 100.
 
 ```{r}
 procenty = round(prop.table(tab) * 100, 1)
@@ -893,6 +896,23 @@ Dotychczas wykorzystywane były dane dostępne w programie **R** lub wprowadzane
 -   sav
 
 ### Eksport danych
+
+::: callout-important
+## **swiss**
+
+Zbiór **swiss** zawiera dane demograficzne i społeczno-ekonomiczne dla 47 francuskojęzycznych prowincji Szwajcarii z około 1888 roku. Jest to klasyczny zestaw danych wykorzystywany często do analizy wpływu czynników kulturowych i ekonomicznych na dzietność w okresie transformacji demograficznej.
+Jest to ramka danych (data.frame) składająca się z 47 obserwacji (wierszy) i 6 zmiennych (kolumn):
+
+- Fertility: Standaryzowana miara płodności.
+- Agriculture: Odsetek mężczyzn zatrudnionych w rolnictwie.
+- Examination: Odsetek poborowych, którzy uzyskali najwyższą ocenę z egzaminu wojskowego.
+- Education: Odsetek poborowych posiadających wykształcenie wyższe niż podstawowe.
+- Catholic: Odsetek ludności wyznania katolickiego.
+- Infant.Mortality: Śmiertelność niemowląt.
+
+:::
+
+
 
 ```{r}
 # Uwaga. Przy eksporcie i później imporcie danych należy dostosować ścieżki dostępu 
@@ -1116,14 +1136,14 @@ Zmiana katalogu roboczego lub jego ustalenie następuje poprzez komendę `setwd`
 setwd("C:/Users/Statystyka/Desktop")
 ```
 
-Eksport pliku do folderu o domyślnej lokalizacji.
+Zapisanie pliku w folderze domyślnej lokalizacji.
 
 ```{r}
 write.csv2(dane,"iris1.csv")   
 ```
 
 ::: callout-warning
-## Przy eksporcie nie podaje się już ścieżki dostępu. Do funkcji przekazuje się już tylko dane i nazwę pliku z jego rozszerzeniem (w cudzysłowie).
+## Przy zapisie nie podaje się już ścieżki dostępu. Do funkcji przekazuje się już tylko dane i nazwę pliku z jego rozszerzeniem (w cudzysłowie).
 :::
 
 Import pliku z folderu o domyślnej lokalizacji.
@@ -1146,9 +1166,11 @@ read.csv2("iris1.csv")
 
 ### Instalacja programu **R Studio**
 
-R Studio jest środowiskiem obsługującym jeżyk programowania R, które posiada przyjazny dla użytkownika interface. Aby móc pisać kod w języku R w **R Studio** należy wpierw mieć zainstalowany **R** na własnym komputerze.\
+R Studio jest środowiskiem obsługującym jeżyk programowania **R**, które posiada przyjazny dla użytkownika interface. Aby móc pisać kod w języku R w **R Studio** należy wpierw mieć zainstalowany **R** na własnym komputerze.
 
-W celu zaintalowania programu **R Studio** należy wejść na stronę https://posit.co/download/rstudio-desktop/, a następnie wybrać wersję odpowiednią dla systemu operacyjnego dostępnego na swoim komputerze.
+W celu zaintalowania programu **R Studio** należy ze strony https://posit.co/download/rstudio-desktop/ wybrać wersję odpowiednią dla systemu operacyjnego dostępnego na swoim komputerze.
+
+
 
 ::: callout-caution
 ## Ćwiczenia do samodzielnego wykonania

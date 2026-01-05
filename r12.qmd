@@ -25,19 +25,16 @@ library(gapminder)
 
 ## Charakterystyka pakietu i zbioru **gapminder**
 
-::: callout-tip
+::: callout-note
 ## **gapminder**
 
 Pakiet **gapminder** w programie **R** zawiera dane używane przez Hansa Roslinga, szwedzkiego statystyka i popularyzatora wizualizacji danych, w jego słynnych prezentacjach o rozwoju świata.
 Zbiór danych o nazwie **gapminder** jest głównym elementem pakietu. Dodatkowo są tam zawarte kody państw i odpowiednio przygotowane palety kolorystyczne.
 
-
 :::
 
 W tej części wykorzystywany będzie zbiór danych **gapminder**, który jest dostępny po załadowaniu pakietu o takiej samej nazwie: **gapminder**.
 
-
-🔗 [Opis zbioru `gapminder`](https://vincentarelbundock.github.io/Rdatasets/doc/causaldata/gapminder.html)
 
 ::: callout-important
 ## **gapminder**
@@ -139,7 +136,7 @@ rys +
 ```
 
 
-Nieznaczna modyfikkacja kodu pozwala uzyskać typowy wykres kołowy (por. @fig-liczba6):
+Nieznaczna modyfikacja kodu pozwala uzyskać typowy wykres kołowy (por. @fig-liczba6):
 
 
 ```{r}
@@ -222,11 +219,11 @@ Interesujące może być przedstawienie gęstości czasu trwania życia według 
 gapminder %>%
   filter(year==2007) %>%
   ggplot( aes(x=lifeExp, fill=continent)) +
-  geom_density(alpha=0.3) +
+  geom_density(alpha=0.2) +
   labs(x="Rok", y="oczekiwana długość życia",fill="Kontynent")
 ```
 
-Na @fig-gest przedstawiono oceny gęstości rozkładu przeciętnego czasu trwania życia w roku 2007 według kontynentów. Zauważalne jest, że najkrócej się żyje w Afryce, a najdłużej W Oceani (tylko dwa państwa Australia i Nowa Zelandia) oraz w Europie.
+Na @fig-gest przedstawiono oceny gęstości rozkładu przeciętnego czasu trwania życia w roku 2007 według kontynentów. Zauważalne jest, że najkrócej żyje się w Afryce, a najdłużej W Oceani (tylko dwa państwa Australia i Nowa Zelandia) oraz w Europie.
 
 Ze względu na uproszczenie kolejnych zapisów kodu wygodnie będzie utworzyć obiekt `rys1` zgodnie z następującym kodem:
 
@@ -311,7 +308,7 @@ rys2+
   theme(legend.position='none')
 ```
 
-Na @fig-point_panel przedstawione punkty reprezentują państwa, ale dla jednego kraju jest to aż 12 punktów (lata 1952, 1957, ..., 2007). Przy konstrukcji aniomacji w kolejnych etpach będą widoczne punkty odpowiadające określonemu ustalonym okresom czasowym.
+Na @fig-point_panel przedstawione punkty reprezentują państwa, ale dla jednego kraju jest to aż 12 punktów (lata 1952, 1957, ..., 2007). Przy konstrukcji animacji w kolejnych etpach będą widoczne punkty odpowiadające określonemu ustalonym okresom czasowym.
 
 
 ## Animacje w ggplot2 - pakiet **gganimation**
@@ -322,12 +319,12 @@ Jednym z takich pakietów jest **gganimation**.
 ::: callout-tip
 ## **gganimate**
 
-Program **R** poza zaawansowaną wizualizacją danych umożliwia również konstrukcję dynamicznych animacji. W tym rozdziale zostaną przedstawione podstawowe możliwosci animacji z wykorzystaniem pakietu **gganimate**.
-Animacje takie mogą zostać zamieszczone na stronach internetowych, osadzone w prezentacjach a także w plikach formatu docx.
+Program **R** poza zaawansowaną wizualizacją danych umożliwia również konstrukcję dynamicznych animacji. W tym rozdziale zostaną przedstawione podstawowe możliwości animacji z wykorzystaniem pakietu **gganimate**.
+Animacje takie mogą zostać zamieszczone na stronach internetowych, osadzone w prezentacjach a także w plikach formatu "docx".
 :::
 
 
-### Załadowanie bibliotek dla animacji
+Załadowanie wymaganych bibliotek.
 
 ```{r}
 #| eval: true
@@ -376,12 +373,20 @@ Utworzone zostały dwa obiekty **p1** i **p2**. Obiekty te można animować za p
 
 
 ```{r }
+#| warning: false
+#| echo: true
+#| eval: true
+# Na wydruku nie jest widoczna animacja
 animate(p1, 100, 10)
 ```
 
 Dodatkowo można uruchomić animację z zadanymi wartościami dla wybranych parametrów.
 
 ```{r }
+#| warning: false
+#| echo: true
+#| eval: true
+# Na wydruku nie jest widoczna animacja
 animate(p1, nframes=100, fps=10,height = 20, width = 30, units = "cm",res=150)
 ```
 

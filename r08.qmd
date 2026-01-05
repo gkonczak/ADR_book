@@ -16,127 +16,156 @@ Regresja liniowa to jedna z najważniejszych metod analizy statystycznej. Służ
 
 ## Model liniowy z jedną zmienną objaśniającą
 
-### Zmienna objaśniana: spalanie paliwa, zmienna objaśniająca: waga samochodu.
+Model liniowy jest budowany za pomocą polecenia `lm()`, w ramach którego definiowane są zmienna objaśniana i zmienne objaśniające oraz źródło danych.
+
+::: callout-warning
+## Definiowanie zmiennych zależnych i niezależnych w modelu z 2 zmiennymi objaśniającymi
+
+W funkcji `lm()` określana jest formuła modelu:
+
+`lm(zmienna_zależna ~ zmienna_niezależna + druga_zmienna_niezależna, data = źródło_danych)`.
+:::
+
+W przykładach wykorzystany będzie zbiór danych **mtcars**.
+
+Poniżej zaprezentowano kod tworzący model liniowy wyjaśniający liczbę mil przejechanych na jednym galonie paliwa (zmienna *mpg*) za pomocą wagi samochodu (zmienna *wt*). 
+
 
 ```{r}
-model1<-lm(mpg~wt,data=mtcars)
-
-#Podstawowe informacje.
-model1
-#Rozszerzony widok informacji o modelu.
-summary(model1)
+model <- lm(mpg~wt, data = mtcars)
 ```
 
-### Wyświetlenie wyników
-
-#### Współczynniki
+Podstawowe informacje o modelu (w tym oszacowane współczynniki) zwraca jego wywołanie.
 
 ```{r}
-model1$coefficients
+model
 ```
 
-#### Współczynniki i inne informacje (dotyczące testowania istotności parametrów)
+Więcej informacji o modelu przedstawia funkcja `summary()`. Na wydruku znajdują się m.in. statystyki opisowe wyznaczone dla reszt modelu, współczynniki funkcji regresji, wartości i $p$-wartości statystyk dla testu $t$ Studenta i testu $F$ oraz współczynnik determinacji $R^2$.
 
 ```{r}
-summary(model1)$coefficients
+summary(model)
 ```
 
-#### Wartość współczynnika kierunkowego
+Poszczególne wyniki pobiera się z wyniku za pomocą `$` i nazwy szukanego wyniku. Kolejne komendy przedstawiają, jak wyświetlić wszystkie oszacowane wartości parametrów funkcji regresji (*coefficients* lub *coef*), a później wyraz wolny i współczynnik kierunkowy (`[]`).
 
 ```{r}
-summary(model1)$coefficients[2,1]
-summary(model1)$coef[2,1]
+model$coefficients
+model$coef
+model$coef[1]
+model$coefficients[2]
 ```
 
-#### Wartość wyrazu wolnego
+Środowisko **R** oferuje wyświetlanie poszerzonego wydruku zawierającego oszacowane wartości parametrów funkcji regresji wraz z błędem standardowym oszacowania, wartością statystyki *t* i $p$-wartością dla testu $t$-Studenta (polecenie `summary()`). Również i w tym przypadku możliwe jest wyfiltrowanie samej wartości współczynnika kierunkowego i wyrazu wolnego.
 
 ```{r}
-summary(model1)$coefficients[1,1]
+summary(model)$coefficients
+summary(model)$coefficients[2, 1]
+summary(model)$coef[1, 1]
 ```
-
-#### Współczynnik R-kwadrat
+Jakość dopasowania określona współczynnikiem doterminacji $R^2$ zwraca się poprzez `$r.squared`.
 
 ```{r}
-summary(model1)$r.squared
+summary(model)$r.squared
 ```
 
-##### Reszty
+Reszty modelu liniowego uzyskuje się przez odwołanie `$residuals`. Ich przedstawienie na wykresie pozwala na wizualną ocenę, jak dobrze model dopasowuje się do danych, a także umożliwia sprawdzenie założeń modelu i zidentyfikowanie wzorców, które nie zostały uchwycone.
 
 ```{r}
-model1$residuals
-summary(model1)$residuals
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+model$residuals
+summary(model)$residuals
 ```
 
+```{r}
+#| label: fig-r01
+#| fig-cap: Reszty modelu objaśniającego liczbę mil przejechanych na galonie paliwa za pomocą wagi samochodu
+plot(model$residuals, ylab = "reszty", xlab = "indeks")
+```
+
+Wartości teoretyczne zwracane są dzięki odwołaniu `$fitted.values`.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany
+model$fitted.values
+```
 
 ### Wizualizacja wyników
 
-Wykres punktowy z linią regresji
-```{r}
-#| label: fig-r01
-#| fig-cap: Waga samochodu i liczba mil przejechanych na galonie paliwa
-plot(mtcars$wt, mtcars$mpg, xlab="Waga", ylab="Spalanie (mpg)")
-abline(model1, col="red", lwd=2)
-```
-
-
-
-
-
-##### Wartości teoretyczne
+Wykres rozrzutu dla wagi samochodu i liczby mil przejechanych na galonie paliwa można uzyskać wykonując poniższe polecenie.
 
 ```{r}
 #| label: fig-r02
 #| fig-cap: Waga samochodu i liczba mil przejechanych na galonie paliwa
-model1$fitted.values
-plot(mtcars$mpg,mtcars$wt)
+plot(mtcars$mpg, mtcars$wt,  xlab = "Waga", ylab = "Spalanie (mpg)")
 ```
 
-
-Sprawdzenie założeń modelu liniowego (normalność reszt, homoscedastyczność, obserwacje odstające)
-
-Wykresy diagnostyczne
+Na wykres za pomocą funkcji `abline()` można dodać linię regresji, która tworzona jest na podstawie oszacowanego modelu (*model*).
 
 ```{r}
 #| label: fig-r03
-#| fig-cap: Wykresy diagnostyczne
-par(mfrow=c(2,2))
-plot(model1)
-par(mfrow=c(1,1))
+#| fig-cap: Waga samochodu i liczba mil przejechanych na galonie paliwa
+plot(mtcars$wt, mtcars$mpg, xlab = "Waga", ylab = "Spalanie (mpg)")
+abline(model, col = "red", lwd = 2)
 ```
+
+
+### Wykresy diagnostyczne
+
+Wykresy diagnostyczne (@fig-r04) służą do sprawdzenia założeń modelu liniowego (normalności reszt, homoskedastyczności), ale też jakości dopasowania oszacowanej funkcji do danych empirycznych (obserwacji odstających). 
+
+
+
+
+```{r}
+#| label: fig-r04
+#| fig-cap: Wykresy diagnostyczne
+par(mfrow = c(2, 2))
+plot(model)
+par(mfrow = c(1, 1))
+```
+
+
+> Na pierwszym wykresie przedstawiono na osi OY reszty, a na osi OX wartości teoretyczne. Ułożenie punktów na poziomie 0 oznaczałoby idealne dopasowanie. 
+
+>  Wykres po prawej stronie to wykres kwantylowy dla rozkładu normalnego. Pozwala na wizualną  weryfikację, czy rozkład reszt jest normalny. Im mniejsza odległość punktów od wykropkowanej linii, tym rozkład reszt jest bliższy rozkładowi normalnemu.
+
+> Trzeci wykres pozwala weryfikować założenie o jednorodności wariancji. Im równomierniej rozłożone punkty wzdłuż osi OX, tym bardziej prawdopodobne, że wariancja jest jednorodna.
+
+>  Ostatni wykres służy wykrywaniu obserwacji wpływowych za pomocą odległości Cooka. Jest to miernik stopnia zmiany parametrów funkcji regresji, gdyby dana obserwacja nie byłaby wzięta pod uwagę w obliczeniach.
 
 ### Predykcja
 
-Przykład predykcji dla nowej wagi samochodu
+Możliwe jest stawianie prognoz na podstawie oszacowanego modelu. Przykład predykcji dla innych wag samochodu został zaprezentowany poniżej.
 
 ```{r}
-
 nowe_obs <- data.frame(wt = c(2.5, 3.0, 3.5))
-predict(model1, nowe_obs)
+predict(model, nowe_obs)
 ```
-
-
-
-
 
 
 ## Model liniowy z dwiema zmiennymi objaśniającymi
 
-### Zmienna zależna: spalanie, dwie zmienne niezależne: waga samochodu i przespieszenie
+W środowisku **R** możliwa jest budowa modelu regresji wielorakiej (z więcej niż jedną zmienną objaśniającą). W przykładzie przedstawiony zostanie oszacowany model regresji objaśniający liczbę mil przejechanych na jednym galonie paliwa za pomocą wagi samochodu (*wt*) i przyspieszenia (*qsec*).
 
 ```{r}
-model2<-lm(mpg~wt+qsec,data=mtcars)
-model2
+model2 <- lm(mpg~wt + qsec, data = mtcars)
 summary(model2)
 ```
 
+Współczynnik stojący przy zmiennej *wt* informuje, że liczba mil przejechanych na jednym galonie paliwa spadnie średnio o 5.05 mili, jeśli waga pojazdu wzrośnie o jednostkę (1000 lbs) - przy założeniu, że przyspieszenie pozostanie stałe.
 
-"O ile zmieni się spalanie, jeśli waga wzrośnie o 1 jednostkę, przy założeniu stałego przyspieszenia?". OPISAĆ
 
-
-Porównanie modeli
+W ekonometrii bardzo znanym narzędziem do porównywania modeli jest kryterium informacyjne Akaike (w **R** wywoływane funkcją `AIC()`). Model o niższej wartości AIC jest uważany za lepszy. Porównując ze sobą utworzone modele lepszym jest *model2*. 
 
 ```{r}
-AIC(model1, model2)
+AIC(model, model2)
 ```
 
 

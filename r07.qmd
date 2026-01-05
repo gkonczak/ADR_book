@@ -12,7 +12,7 @@ Jeżeli pakiety **ggplot2** i **patchwork** zostały wcześniej zainstalowane, t
 
 ```{r}
 #| warning: false
-#| echo: false
+#| echo: true
 #| eval: true
 library(ggplot2)
 library(patchwork)
@@ -22,25 +22,8 @@ library(gridGraphics)
 library(ggthemes)
 ```
 
-Dla konstrukcji wykresów w tej części wykorzystano dostępny w **R** zbiór **iris**.
+Dla konstrukcji wykresów w tej części wykorzystano dostępny w **R** zbiór **iris** (por. p. 2.2).
 
-🔗 [Opis zbioru `iris`](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/iris)
-
-::: callout-important
-## **iris**
-
-Zbiór danych **iris** (znany także jako Iris Fishera) jest jednym z najbardziej klasycznych i najczęściej wykorzystywanych zbiorów danych w statystyce, uczeniu maszynowym i eksploracji danych. Został zebrany przez Edgara Andersona, a spopularyzowany przez Ronalda Fishera w 1936 roku. Zbiór ten jest dostępny bezpośrednio w środowisku **R**.
-
-Liczba obserwacji: 150
-
-Liczba zmiennych: 5
-
--   *Sepal.Length* - długość działki kielicha (w centymetrach)
--   *Sepal.Width* - szerokość działki kielicha (w centymetrach)
--   *Petal.Length* - długość płatka korony (w centymetrach)
--   *Petal.Width* - szerokość płatka korony (w centymetrach)
--   *Species* - gatunek irysa - zmienna czynnikowa (factor) z trzema poziomami odpowiadającymi nazwom gatunków (setosa, versicolor, virginica)
-:::
 
 Zbiór **iris** liczy 150 obserwacji, a pierwsze 5 Przedstawiono poniżej:
 
@@ -84,7 +67,7 @@ W kolejnym kroku konstruowane sa obiekty **p2** i **p3**. Histogram długości p
 
 ```{r}
 #| warning: false
-#| echo: false
+#| echo: true
 #| eval: true
 #| label: fig-iris2
 #| fig-cap: Długość płatka według gatunku
@@ -99,7 +82,7 @@ p2
 
 ```{r}
 #| warning: false
-#| echo: false
+#| echo: true
 #| eval: true
 #| label: fig-iris3
 #| fig-cap: Szerokość płatka według gatunku
@@ -183,7 +166,7 @@ p9 <- ggplot(iris, aes(Species, Petal.Width, fill = Species)) +
   theme_minimal()
 ```
 
-Dla wyświetlenia czterech obiektów (**p2** i **p3** w górnym wierszu oraz **p4** i **p5** w dolnym wierszu należy wykonć poniższą komendę, a jej rezultat przedstawia @fig-iris5.
+Dla wyświetlenia czterech obiektów (**p2** i **p3** w górnym wierszu oraz **p4** i **p5** w dolnym wierszu należy wykonać poniższą komendę, a jej rezultat przedstawia @fig-iris5.
 
 ```{r}
 #| warning: false
@@ -208,7 +191,7 @@ W obszarze wykresu można dodać tytuł i podtytuł wykorzystując `plot_annotat
 )
 ```
 
-Wykresy nie muszą być umieszczane w kratkach o takim samym rozmiarze. Poniższy kod przedstawia kostrukcję, gdzie w pierwszel linii jest jeden duży wykres, a w drugiej linii dwa mniejsze (@fig-usun3).
+Wykresy nie muszą być umieszczane w kratkach o takim samym rozmiarze. Poniższy kod przedstawia kostrukcję, gdzie w pierwszej linii jest jeden duży wykres, a w drugiej linii dwa mniejsze (@fig-usun3).
 
 ```{r}
 #| warning: false
@@ -307,7 +290,7 @@ p6 + plot_spacer() +p7 + p2 +p1 +  p3 +
   plot_layout(ncol = 3)
 ```
 
-Funkcja `plot_layout()` pozwala także na określenie szerokoscvi lub wysokości poszczególnych pól wykresu. Przykład z ustaleniem dwukrotnie większej szerokości środkowego pola przedstawia ponizszy kod, którego rezultat jest na @fig-lay.
+Funkcja `plot_layout()` pozwala także na określenie szerokości lub wysokości poszczególnych pól wykresu. Przykład z ustaleniem dwukrotnie większej szerokości środkowego pola przedstawia ponizszy kod, którego rezultat jest na @fig-lay.
 
 ```{r}
 #| fig-cap: Deklaracja szerokości obszarów. Długość i szerokość płatka według gatunku
@@ -318,7 +301,7 @@ Funkcja `plot_layout()` pozwala także na określenie szerokoscvi lub wysokości
 
 ## Układ wykresów według wzorca użytkownika
 
-Pakiet **patchwork** umożliwia deklarowanie układu użytkownika, zgodnie z którym następnie będą rozmieszcane kolejne wykresy. W pierwszym kroku należy określić odpowiedni wzorzec, jak np.:
+Pakiet **patchwork** umożliwia deklarowanie układu użytkownika, zgodnie z którym następnie będą rozmieszczane kolejne wykresy. W pierwszym kroku należy określić odpowiedni wzorzec, jak np.:
 
 ```{r }
 layout <- '

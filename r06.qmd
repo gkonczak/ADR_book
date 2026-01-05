@@ -36,7 +36,7 @@ Dla konstrukcji wykresów w tym rozdziale wykorzystano dostępny w **R** zbiór 
 Zbiór **mtcars** składa się z 11 zmiennych i zawiera 32 obserwacje (modele samochodów). 
 Jest to zestaw danych używany często do nauki analizy danych, modelowania statystycznego i uczenia maszynowego.
 
-W zbiorze wyróżniono 11 następujacych zmiennych:
+W zbiorze wyróżniono 11 następujących zmiennych:
 
 - *mpg*	- liczba mil przejechanych na galonie paliwa	(mile/galon)
 - *cyl*	- liczba cylindrów	
@@ -96,8 +96,6 @@ Wykorzystując funkcję `plot` z pakietu **graphics** można skonstruować wykre
 
 ```{r}
 #| echo: true
-#| fig-width: 10
-#| fig-height: 4
 #| label: fig-plot1
 #| fig-cap: Waga samochodu i liczba mil przejechanych na galonie paliwa 
 plot(mpg ~ wt, data = mtcars, pch = 19, xlab='Waga', ylab='Liczba mil')
@@ -116,7 +114,7 @@ Dla efektywnej pracy z **ggplot2** niezbędne jest poznanie zasad konstrukcji wy
 
 W @tbl-gg przedstawiono wykaz składników, z których buduje się wykres:
 
-: Przykłady zapisu wzorów w Quarto {#tbl-gg}
+: Składniki gramatyki grafiki w **ggplot2** {#tbl-gg}
 
 | Składnik            | Opis                                                                 |
 |---------------------|----------------------------------------------------------------------|
@@ -246,14 +244,14 @@ ggplot(mtcars,aes(mpg))+
   geom_histogram(binwidth=2,fill='yellow',color='blue')
 ```
 
-Wprowadzając kolor ze względu na wybraną zmienną uzuskuje się możliwość przekazania na wykresie dodatkowych informacji. Takie rozwiązanie przedstawia poniższy kod, a wynik jest przedstawiony na @fig-hist3.
+Wprowadzając kolor ze względu na wybraną zmienną uzyskuje się możliwość przekazania na wykresie dodatkowych informacji. Takie rozwiązanie przedstawia poniższy kod, a wynik jest przedstawiony na @fig-hist3.
 
 ```{r }
 #| echo: true
 #| label: fig-hist3
 #| fig-cap: Konstrukcja histogramu z powiązaniem koloru z liczbą cylindrów.  Liczba mil przejechanych na galonie paliwa według liczby cylindrów 
 ggplot(mtcars,aes(mpg,fill=cyl))+
-  geom_histogram(binwidth=.8,)
+  geom_histogram(binwidth=.8)
 ```
 
 Do najczęściej wykorzystywanych w prezentacjach graficznych należą wykresy słupkowe. Dla konstrukcji takiego wykresu można  wykorzystać reprezentację geometryczną `geom_bar()`.
@@ -302,7 +300,7 @@ ggplot(mtcars,aes(cyl,mpg))+
   geom_boxplot()
 ```
 
-Reprezentacje geometryczne często można stosować łącznie. Jeśli do poprzedniego kodu dodana zostanie reprezentacja geometryczna `geom_point()`, to na wykresie poza "pudełkami" zostaną przedstawione również punkty reprezentujace pojedyncze obserwacje (por. @fig-box2).
+Reprezentacje geometryczne często można stosować łącznie. Jeśli do poprzedniego kodu dodana zostanie reprezentacja geometryczna `geom_point()`, to na wykresie poza "pudełkami" zostaną przedstawione również punkty reprezentujące pojedyncze obserwacje (por. @fig-box2).
 
 ```{r }
 #| echo: true
@@ -313,7 +311,7 @@ ggplot(mtcars,aes(cyl,mpg))+
   geom_point()
 ```
 
-Przy znacznej liczbie obserwacji wiele punktów może się nakładać. Może to znacznie utrudnić odbiór przekazywanych informacji. Dla pominięcia tego problemu zamiast reprezentacji `geom_point()` można zastosowac reprezentację `geom_jitter()`. Zastosowanie tego rozwiązania prowadzi do "rozrzucenia" punktów (zob. @fig-box3).
+Przy znacznej liczbie obserwacji wiele punktów może się nakładać. Może to znacznie utrudnić odbiór przekazywanych informacji. Dla pominięcia tego problemu zamiast reprezentacji `geom_point()` można zastosować reprezentację `geom_jitter()`. Zastosowanie tego rozwiązania prowadzi do "rozrzucenia" punktów (zob. @fig-box3).
 
 ```{r }
 #| echo: true
@@ -452,7 +450,7 @@ ggplot(mtcars, aes(x=wt, y=mpg)) +
   geom_point() +
   facet_wrap(~cyl) 
 ```
-Wykorzystanie warstwy `facet_grid()` pozwala na uwzględnienie dwóch zmiennych przy konstrukcji paneli. Poniższy kod prowadzi do konstrukcji wykresów rozrzutu, gdzie panele są ze względu na liczbę cylindrów (*cyl*) i liczbę biegów (*gear*). Rezulta przedstawia  @fig-pan2.
+Wykorzystanie warstwy `facet_grid()` pozwala na uwzględnienie dwóch zmiennych przy konstrukcji paneli. Poniższy kod prowadzi do konstrukcji wykresów rozrzutu, gdzie panele są ze względu na liczbę cylindrów (*cyl*) i liczbę biegów (*gear*). Rezultat przedstawia  @fig-pan2.
 
 
 ```{r}
@@ -464,7 +462,7 @@ ggplot(mtcars, aes(x=wt, y=mpg)) +
   facet_grid(cyl ~ gear) 
 ```
 
-Przykład umieszczenia histogramu w ujeciu w panelach przedstawiono na @fig-pan3.
+Przykład umieszczenia histogramu w ujęciu w panelach przedstawiono na @fig-pan3.
 
 
 ```{r}
@@ -476,7 +474,7 @@ ggplot(mtcars, aes(x=mpg)) +
   facet_wrap(~cyl) 
 ```
 
-Liczę przejechanych mil na galonie paliwa względfem typu skrzyni biegów w ujęciu paneli ze wzgledu na liczbę cylindrów i biegów przedstawia @fig-pan4.
+Liczbę przejechanych mil na galonie paliwa względem typu skrzyni biegów w ujęciu paneli ze względu na liczbę cylindrów i biegów przedstawia @fig-pan4.
 Wykres pozwala określić wpływ typu skrzyni biegów na spalanie w zależności od konfiguracji silnika (liczba cylindrów i biegów). Wykres uwidacznia interakcje między zmiennymi, które nie byłyby widoczne w uśrednionych statystykach.
 
 ```{r}
@@ -485,7 +483,7 @@ Wykres pozwala określić wpływ typu skrzyni biegów na spalanie w zależności
 #| fig-cap: Konstrukcja wykresu pudełkowego w ujęciu panelowym. Liczba mil przejechanych na galonie paliwa według liczby cylindrów i liczby biegów
 ggplot(mtcars, aes(x=factor(am), y=mpg)) +
   geom_boxplot(fill="salmon", color="black") +
-  labs(x='Skrzynia biegów: 0 - automatyczna, 1 - ręczna')+
+  labs(x='Typ skrzyni biegów: 0 - automatyczna, 1 - ręczna')+
   facet_grid(cyl ~ gear) 
 
 ```

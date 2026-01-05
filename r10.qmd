@@ -1,62 +1,48 @@
 # Weryfikacja hipotez statystycznych
 
 ::: {.callout-note icon="false" appearance="simple"}
+Program **R** umożliwia testowanie hipotez na podstawie odpowiednich danych próbkowych. W tym rozdziale zaprezentowane są praktyczne przykłady zastosowania różnych testów statystycznych, które są fundamentalne w analizie danych. Przedstawiono m.in. przykłady zastosowania testów statystycznych:
 
+-   testu $t$-Studenta dla jednej próby,
+-   testu $t$-Studenta dla dwóch prób niezależnych,
+-   testu $t$-Studenta dla dwóch prób zależnych,
+-   testu $F$ równości wariancji,
+-   testu niezależności chi-kwadrat,
+-   testu normalności Shapiro-Wilka.
 
-Program **R** umożliwia testowanie hipotez ma podstawie odpowiednich danych próbkowych.
-W tym rozdziale zaprezentowane są praktyczne przykłady zastosowania różnych testów statystycznych, które są fundamentalne w analizie danych.
-Przedstawiono m.in. przykłady zastosowania testów statystycznych:
-
-- test $t$-Studenta dla jednej próby,
-- test $t$-Studenta dla dwóch prób niezależnych,
-- test $t$-Studenta dla dwóch prób zależnych,
-- test $F$ równości wariancji,
-- test niezależności chi-kwadrat,
-- test normalności Shapiro-Wilka.
-
-Pierwszy z wymienionych testów został przeprowadzony z obliczeniami "krok po kroku". 
-We wszystkich następnych wykorzystano odpowiednie funkcje programu **R**.
-
+Pierwszy z wymienionych testów został przeprowadzony z obliczeniami "krok po kroku". We wszystkich następnych wykorzystano odpowiednie funkcje programu **R**.
 :::
 
-W przykładach przedstawionych w tym rozdziale przyjęto, że analizowane dane pochodzą z prostej próby losowej. 
+W przykładach przedstawionych w tym rozdziale przyjęto, że analizowane dane pochodzą z prostej próby losowej.
 
 ## Test dla wartości oczekiwanej w populacji
 
-
 Przeprowadzono badanie miesięcznych wydatków studentów na pieczywo. Wylosowano 16 studentów. Wydatki studentów na pieczywo w lutym 2026 były następujące (w zł):
-80,42,110,75,44,57,33,90,57,75,44,73,82,43,73,48.
 
-Przyjmując poziom istotności $\alpha=0,05$ zweryfikować hipotezę, 
-że rzeczywista średnia kwota wydatków studentów w lutym 2026 na pieczywo wynosiła 50 zł. Rozważyć hipotezy alternatywne:
+80, 42, 110, 75, 44, 57, 33, 90, 57, 75, 44, 73, 82, 43, 73, 48.
 
-a) dwustronną ($H_1: \mu \ne 50$),
+Przyjmując poziom istotności $\alpha=0,05$ zweryfikować hipotezę, że rzeczywista średnia kwota wydatków studentów w lutym 2026 na pieczywo wynosiła 50 zł. Rozważyć hipotezy alternatywne:
 
-b) prawostronną ($H_1: \mu > 50$),
+a)  dwustronną ($H_1: \mu \ne 50$),
 
-c) lewostronną ($H_1: \mu < 50$).
+b)  prawostronną ($H_1: \mu > 50$),
 
 
-Do weryfikacji postawionej hipotezy zostanie wykorzystany test t-Studenta dla jednej próby.
+Do weryfikacji postawionej hipotezy zostanie wykorzystany test $t$-Studenta dla jednej próby.
 
 Na wstępie należy wprowadzić dane:
 
 ```{r}
-wydatki=c(80,42,110,75,44,57,33,90,57,75,44,73,82,43,73,48)
+wydatki = c(80, 42, 110, 75, 44, 57, 33, 90, 57, 75, 44, 73, 82, 43, 73, 48)
 ```
-
-
 
 Ad a)
 
-$$H_0: \mu = 50$$
-$$H_1: \mu \ne 50$$
-
+$$H_0: \mu = 50$$ $$H_1: \mu \ne 50$$
 
 Statystyka testowa ma postać:
 
-$$t=\frac{\overline{X}-m_0}{ \hat{S} } \sqrt{n}$$
-gdzie:
+$$t=\frac{\overline{X}-m_0}{ \hat{S} } \sqrt{n}$$ gdzie:
 
 $\overline{X}=\frac{1}{n}\sum_{i=1}^nX_i$,
 
@@ -64,145 +50,210 @@ $\hat{S}=\frac{1}{n-1}\sum_{i=1}^n(X_i-\overline{X})^2$,
 
 $n$ - liczba obserwacji.
 
-Po ustaleniu wartości testowanej $mu$ oraz poziomu istotności $alpha$ kolejno wyznaczane są: liczba obserwacji $n$, średnia z próby $xsr$, odchylenie standardowe  z próby $s$, a następnie wartość statystyki testowej $T$.
+Przy założeniu hipotezy $H_0$ statystyka testowa $t$ ma rozkład $t$-Studenta o 15 stopniach swobody.
+
+Po ustaleniu wartości testowanej $\mu_0$ oraz poziomu istotności $\alpha$ kolejno wyznaczane są: liczba obserwacji $n$, średnia z próby $xsr$, odchylenie standardowe z próby $s$, a następnie wartość statystyki testowej $t$.
 
 ```{r}
-mu=50
-alpha=0.05
+mu = 50
+alpha = 0.05
 
-n=length(wydatki)
-xsr=mean(wydatki)
-s=sd(wydatki)
+n = length(wydatki)
+xsr = mean(wydatki)
+s = sd(wydatki)
 
-T=(xsr-mu)/s*sqrt(n)
-T
+t = (xsr - mu)/s*sqrt(n)
+t
 ```
 
 W kolejnym kroku wyznaczany jest obszar krytyczny dwustronny.
 
 ```{r}
-t.alpha=qt(alpha/2,n-1,lower.tail = F)
-c(-t.alpha,t.alpha)
+t.alpha = qt(alpha/2, n - 1, lower.tail = F)
+c(-t.alpha, t.alpha)
 ```
-
 
 Obszar krytyczny to zbiór $(-\infty ;  -t_{\alpha/2})  \cup  (t_{\alpha/2}; \infty)$.
 
-Wartość statystyki testowej znajduje się w obszarze krytycznym. 
-Należy odrzucić hipotezę $H_0$ na rzecz $H_1$. 
-Można twierdzić, że rzeczywista średnia kwota wydatków na pieczywo studentów 
-w lutym 2026 była różna od 50 zł.
-
+Wartość statystyki testowej ($t$ = `r t`) znajduje się w obszarze krytycznym. Należy odrzucić hipotezę $H_0$ na rzecz $H_1$. Można twierdzić, że rzeczywista średnia kwota wydatków na pieczywo studentów w lutym 2026 nie wynosiła 50 zł.
 
 Test można przeprowadzić za pomocą wbudowanej funkcji.
+
 ```{r}
-t.test(wydatki,mu=50)
+t.test(wydatki, mu = 50)
 ```
 
 Uzyskuje się dokładnie taką samą wartość statystyki testowej $t$.
 
+W wyniku nie jest jednak zwracany obszar krytyczny, ale $p$-wartość. Wyciąganie wniosków w oparciu o $p$-wartość przebiega następująco:
 
+-   $p > \alpha$ brak podstaw do odrzucenia $H_0$ (nie należy tego traktować jako potwierdzenie hipotezy $H_0$),
+-   $p \le \alpha$ odrzuca się $H_0$ na rzecz $H_1$.
 
-Ad b)                     
+::: callout-warning
+## Przedział ufności
 
-$$H_0: \mu = 50$$
-$$H_1: \mu > 50$$
+W wyniku prezentowany jest również 95-procentowy (domyślnie) przedział ufności. Chcąc wyznaczyć 99-procentowy przedział ufności dla wartości średniej, należy zdefiniować argument `conf.level = 0.99`. Zwrócenie wyłącznie przedziału ufności następuje poprzez odwołanie do wyniku z wykorzystaniem znaku `$`.
 
 ```{r}
-t.test(wydatki,mu=50,alternative = "greater")
+t.test(wydatki, conf.level = 0.99)$conf.int[c(1,2)]
+```
+:::
+
+Ad b)
+
+$$H_0: \mu = 50$$ $$H_1: \mu > 50$$
+
+```{r}
+t.test(wydatki, mu = 50, alternative = "greater")
 ```
 
 Otrzymana $p$-wartość jest mniejsza niż 0,05, więc należy odrzucić hipotezę zerową. Świadczy to o tym, że średnie wydatki studentów na pieczywo przekraczają 50 zł.
 
-
-Ad c) 
-
-$$H_0: \mu = 50$$
-$$H_1: \mu < 50$$
-
+W celu wyświetlenia wyłącznie $p$-wartości z całego wyniku, należy odwołać się poprzez `$p.value`, aby zwrócić wartość statystyki można użyć `$statistic`. Możliwe jest też wykorzystanie krótszych form tych nazw, np. `$p.val`, `$stat`.
 
 ```{r}
-t.test(wydatki,mu=50,alternative = "less")
+t.test(wydatki, mu = 50, alternative = "greater")$p.value
+t.test(wydatki, mu = 50, alternative = "greater")$statistic
 ```
-
-
-Otrzymana $p$-wartość jest większa niż 0,05, zatem nie ma podstaw do odrzucenia hipotezy zerowej. 
 
 
 
 ## Test dla równości wartości dwóch oczekiwanych dla prób niezależnych
 
+::: callout-warning
+## Hipotezy
 
-Zbadano wzrost kobiet (żon) i mężczyzn (mężów). Celem jest sprawdzenie, czy przeciętny wzrost mężów jest większy niż żon. Przyjęto poziom istotności $\alpha=0,05$
+Weryfikacja hipotez dotyczących równości dówch wartości oczekiwanych może uwzględniać hipotezę alternatywną niekierunkową lub hipotezy kierunkowe. Poniżej umieszczono zapis hipotez aternatywnych na dwa sposoby. Pierwszy odpowiada klasycznemu zapisowi, a drugi podejściu zaproponowanemu w programie R.
 
+1)  Hipoteza dwustronna $\mu_x \neq \mu_y$ ($\mu_x - \mu_y \neq 0$)
 
-$$ H_0: \mu_M=\mu_K$$
-$$ H_1: \mu_M > \mu_K$$
+2)  Hipoteza jednostronna $\mu_x < \mu_y$ ($\mu_x - \mu_y < 0$)
+
+3)  Hipoteza jednostronna $\mu_x > \mu_y$ ($\mu_x - \mu_y > 0$)
+:::
+
+Zbadano wzrost kobiet (żon) i mężczyzn (mężów). Celem jest sprawdzenie, czy przeciętny wzrost mężów jest większy niż żon. Przyjęto poziom istotności $\alpha = 0,05$.
+
+$$ H_0: \mu_M=\mu_K$$ $$ H_1: \mu_M > \mu_K$$
 
 ```{r}
 library(foreign)
 # Import danych zapisanych w pliku programu SPSS ze strony stat.ue.katowice.pl
-wzrost<-read.spss("http://stat.ue.katowice.pl/dane1/heights.sav")
+wzrost <- read.spss("http://stat.ue.katowice.pl/dane1/heights.sav")
 
 attach(wzrost)
-Husband
-Wife
-
-t.test(Husband,Wife,alternative = "greater")
 ```
 
-p-wartość  jest mniejsza od 0,05. Należy odrzucić hipotezę $H_0$. Można twierdzić, że średni wzrost mężów jest większy niż żon.
+::: callout-warning
+## Funkcja `attach`
 
+Funkcja `attach` dołącza zbiór danych do ścieżki wyszukiwania. Dzięki temu do kolumn zbioru danych można odwoływać się wyłącznie po ich nazwie - bez potrzeby używania nazwy zbioru.
+:::
+
+```{r}
+t.test(Husband, Wife, alternative = "greater")
+```
+
+$P$-wartość jest mniejsza od przyjętego poziomu istotności $\alpha = 0,05$. Należy odrzucić hipotezę $H_0$. Można twierdzić, że średni wzrost mężów jest większy niż żon.
+
+::: callout-warning
+## Kolejność podawania zbiorów *x* i *y*
+
+Podczas wykonywania testu t-Studenta ważna jest kolejność podawania porównywanych prób.
+
+Komendy `t.test(x, y, alternative = "less")` i `t.test(y, x, alternative = "less")` zwrócą inne wyniki.
+
+Należy pamiętać, aby przy hipotezach kierunkowych podawać zbiory w następujący sposób:
+
+1)  Hipoteza jednostronna $\mu_x < \mu_y$ (w wyniku zapisana jako $\mu_x - \mu_y < 0$)
+
+        `t.test(x, y, alternative = "less")`
+
+2)  Hipoteza jednostronna $\mu_x > \mu_y$ (w wyniku zapisana jako $\mu_x - \mu_y > 0$)
+
+        `t.test(x, y, alternative = "greater")`
+:::
+
+## Test dla równości wartości dwóch oczekiwanych dla prób niezależnych przy równych wariancjach
+
+W rozważanych przykładach domyślnie założono, że wariancje w populacjach są różne. Program **R** przeprowadza wówczas korektę Welcha dla statystyki $t$. W niniejszym przykładzie zakłada się, że wariancje w populacjach są równe. W celu sprawdzenia, czy przeciętny wzrost mężów jest większy niż żon, przy równej wariancji w dwóch populacjach, dodaje się argument `var.equal = TRUE`. Przyjęto poziom istotności $\alpha = 0,05$.
+
+$$ H_0: \mu_M=\mu_K$$ $$ H_1: \mu_M > \mu_K$$
+
+```{r}
+t.test(Husband, Wife, alternative = "greater", var.equal = TRUE)$p.value
+```
+
+$p$-wartość jest mniejsza od $\alpha$, zatem średni wzrost mężczyzn jest istotnie większy od średniego wzrostu żon.
 
 ## Test dla równości dwóch wartości oczekiwanych dla prób zależnych
 
-Przeprowadzono badano skuteczność leku na obniżenie ciśmienia rozkurczowego.
-U 8 pacjentów zmierzono ciśnienie rozkurczowe przed i po tygodniowym stosowaniu leku. 
-Sprawdzić, czy podanie leku ma wpływ na zmniejszenie tego ciśnienia.
-Przyjąć poziom istotności $\alpha=0,05$.
+::: warning-callout
+Weryfikując hipotezę o równości średnich dla prób zależnych $(X_i, Y_i) \text{ dla } i = 1, 2, \ldots, n$ stawia się hipotezę $H_0: \mu_Z  = 0$ wobec hipotez alternatywnych:
+
+-   $H_1: \mu_Z \neq 0$
+-   $H_1: \mu_Z > 0$
+-   $H_1: \mu_Z < 0$
+
+gdzie:
+
+$$z_i = y_i-x_i$$
+:::
+
+Badano skuteczność leku na obniżenie ciśnienia rozkurczowego. U 8 pacjentów zmierzono ciśnienie rozkurczowe przed i po tygodniowym stosowaniu leku. Przyjmując poziom istotności $\alpha = 0,05$, zweryfikować, czy podanie leku ma wpływ na zmniejszenie ciśnienia rozkurczowego.
 
 Poniweważ pomiary dotyczą tych samych pacjentów dla dwóch różnych okresów czasowych (przed podaniem i po podaniu leku) należy zastosować test $t$-Studenta dla par skojarzonych.
 
 ```{r}
-przed <-c(85,90,86,92,88,86,91,89)
-po <-c(86,86,88,82,88,82,84,85)
+przed <-c(85, 90, 86, 92, 88, 86, 91, 89)
+po <-c(86, 86, 88, 82, 88, 82, 84, 85)
 
-t.test(przed,po,paired = T,alternative="greater")
+t.test(po, przed, paired = T, alternative = "less")$p.value
 ```
 
 Otrzymana $p$-wartość jest mniejsza niż 0,05 należy odrzucić hipotezę $H_0$. Można twierdzić, że lek powoduje statystycznie istotny spadek ciśnienia rozkurczowego.
 
+::: callout-warning
+## Test t-Studenta dla par skojarzonych
 
+W celu przeprowadzenia testu $t$-Studenta dla par skojarzonych, w funkcji `t.test()` definiuje się argument `paired` jako *TRUE*.
+:::
 
 ## Test F dla równości dwóch wariancji
 
-Sprawdzić, czy wariancje wzrostu kobiet i mężczyzn są sobie równe.
+W przykładzie ponownie wykorzystany zostanie zbiór danych dotyczący wzrostu żon i mężów. Sprawdzić, czy wariancje wzrostu mężczyzn i kobiet są jednakowe. Przyjąć poziom istotności $\alpha = 0,05$. Weryfikowane są następujące hipotezy.
 
+$$H_0: \sigma_M^2=\sigma_K^2$$
 
-$$H_0: \sigma_K^2=\sigma_M^2$$
-
-$$H_1: \sigma_K^2>\sigma_M^2$$
+$$H_1: \sigma_M^2>\sigma_K^2$$
 
 ```{r}
-var.test(Wife,Husband,alternative="greater")
+var.test( Husband, Wife,alternative = "greater")$p.value
 ```
 
+Wyznaczona $p$-wartość jest większa niż 0.05. Nie ma podstaw do odrzucenia hipotezy $H_0$.
 
-Wyznaczona $p$-wartość jest większa niż 0.05. Nie ma podstaw do odrzucenia hipoteztu $H_0$.
+
+::: callout-warning
+## Test $F$ dla równości dwóch wariancji
+
+Przeprowadzając test $F$ dla równości dwóch wariancji hipotezę alternatywną określa się jako "większe", a jako pierwszą zmienną należy zapisać tę, która ma większą wariancję próbkową.
+:::
 
 
 ## Test niezależności chi-kwadrat
 
-
-Zbadano zależność między płcią a preferencją stylu muzycznego (Pop, R&B, Rock). Zweryfikować hipotezę głoszącą, że płeć nie ma wpływu na preferencje stylu muzycznego. Przyjąć poziom istotności $\alpha=0,05$.
+Zapytano respondentów o płeć i ich ulubiony styl muzyczny (Pop, R&B, Rock). 
+W wyniku przeprowadzonego badania uzyskano 362 odpowiedzi, a wyniki przedstawiono poniżej.
 
 
 ```{r}
-# Wprowadzenie danych.
-muzyka <- matrix(c(67, 57, 68,34, 59, 77),ncol=3,byrow=T)
-dimnames(muzyka) <- list(c("K", "M"),c("Pop","R&B", "Rock"))
+muzyka <- matrix(c(67, 57, 68,34, 59, 77), ncol = 3, byrow = T)
+dimnames(muzyka) <- list(c("K", "M"), c("Pop", "R&B", "Rock"))
 muzyka
 ```
+Zweryfikować hipotezę głoszącą, że płeć nie ma wpływu na preferencje stylu muzycznego. Przyjąć poziom istotności $\alpha=0,05$.
 
 Formalnie hipotezy można zapisać następująco:
 
@@ -212,27 +263,19 @@ $H_1$: zmienne są zależne (płeć ma wpływ na preferencje stylu muzycznego)
 
 ```{r}
 chisq.test(muzyka)
-
 ```
 
-Wyznaczona $p$-wartość jest mniejsza od poziomu istotności $\alpha$.
-Należy odrzucić hipotezę $H_0$ na rzecz hipotezy alternatywnej $H_1$. 
-Można twierdzić, że istnieje zależność między płcią i preferowanym stylem muzycznym.
-
-
+Wyznaczona $p$-wartość jest mniejsza od poziomu istotności $\alpha$. Należy odrzucić hipotezę $H_0$ na rzecz hipotezy alternatywnej $H_1$. Można twierdzić, że istnieje zależność między płcią i preferowanym stylem muzycznym.
 
 ## Test normalności Shapiro-Wilka
 
-Dla przeprowadzenia wielu testów statystycznych niezbędne jest sprawdzenie założenia dotyczącego normalności rozkładu badanej zmiennej. Do najczęściej wykorzystywanych testów normalnosci należy test Shapiro-Wilka.
+Dla przeprowadzenia wielu testów statystycznych niezbędne jest sprawdzenie założenia dotyczącego normalności rozkładu badanej zmiennej. Do najczęściej wykorzystywanych testów normalności należy test Shapiro-Wilka.
 
-Z wykorzystaniem tego testu zostanie sprawdzona normalność rozkładu  wydatków studentów (por. p. 10.1).
-Hipotezy mogą zostać zapisane następujaco:
+Z wykorzystaniem tego testu zostanie sprawdzona normalność rozkładu wydatków studentów (por. p. 10.1). Hipotezy mogą zostać zapisane następująco:
 
 $H_0$: wydatki studentów mają rozkład normalny
 
 $H_1$: wydatki studentów nie mają rozkładu normalnego
-
-
 
 ```{r}
 shapiro.test(wydatki)
@@ -240,45 +283,36 @@ shapiro.test(wydatki)
 shapiro.test(wydatki)$p.value
 ```
 
-Uzyskana $p$-wartość = 0,34 > 0.05. Nie ma podstaw do odrzucenia hipotezy $H_0$.
-
+Uzyskana $p$-wartość = 0,34 jest większa od 0.05. Brak podstaw do odrzucenia hipotezy $H_0$.
 
 ::: callout-caution
 ## Ćwiczenia do samodzielnego wykonania
 
-1. Wylosowano próbę 20 studentów i zmierzono ich czas dojazdu na uczelnię (w minutach): 45, 40, 20, 70, 30, 60, 10, 15, 12, 8, 30, 40, 10, 15, 50, 10, 8, 12, 30, 35.
-Na poziomie istotności 0,05 zweryfikować hipotezę, że przeciętny czas dojazdu wynosi 30 minut.
+1.  Wylosowano próbę 20 studentów i zmierzono ich czas dojazdu na uczelnię (w minutach): 45, 40, 20, 70, 30, 60, 10, 15, 12, 8, 30, 40, 10, 15, 50, 10, 8, 12, 30, 35. Na poziomie istotności 0,05 zweryfikować hipotezę, że przeciętny czas dojazdu wynosi 30 minut.
 
-2. Porównaj średnie wyniki testu z matematyki dwóch grup studentów (grupa A i grupa B) za pomocą testu $t$-Studenta dla prób niezależnych.
+2.  Porównaj średnie wyniki testu z matematyki dwóch grup studentów (grupa A i grupa B) za pomocą testu $t$-Studenta dla prób niezależnych.
 
-Grupa A: 75, 80, 78, 82, 77, 81, 79, 83.
+        Grupa A: 75, 80, 78, 82, 77, 81, 79, 83.
 
-Grupa B: 72, 77, 75, 79, 74, 78, 76, 80.
+        Grupa B: 72, 77, 75, 79, 74, 78, 76, 80.
 
-3. Przeprowadzono badanie nad skutecznością kursu językowego. Przed i po kursie zmierzono poziom znajomości języka (w punktach) u 10 uczestników.
+3.  Przeprowadzono badanie nad skutecznością kursu językowego. Przed i po kursie zmierzono poziom znajomości języka (w punktach) u 10 uczestników.
 
-Przed: 45, 50, 48, 52, 47, 51, 49, 53, 46, 50.
+        Przed: 45, 50, 48, 52, 47, 51, 49, 53, 46, 50.
 
-Po: 55, 60, 58, 62, 57, 61, 59, 63, 56, 60.
+        Po: 55, 60, 58, 62, 57, 61, 59, 63, 56, 60.
 
-Czy kurs był skuteczny? Przyjąć poziom istotności α=0,05.
+        Czy kurs był skuteczny? Przyjąć poziom istotności α=0,05.
 
 4.  Przeprowadzono ankietę dotyczącą preferencji marki telefonów wśród mężczyzn i kobiet. Wyniki przedstawiono w tabeli:
 
 | Marka | Kobiety | Mężczyźni |
-| :---- | :------ | :-------- |
+|:------|:--------|:----------|
 | A     | 45      | 35        |
 | B     | 30      | 40        |
 | C     | 25      | 25        |
 
+        Czy istnieje zależność między płcią a preferencjami marki telefonu? Przyjąć poziom istotności α = 0.05?
 
-Czy istnieje zależność między płcią a preferencjami marki telefonu? (α=0.05)?
-
-5. Sprawdź, czy można przyjąć, że próba:
-
-15, 18, 22, 19, 17, 20, 21, 16, 18, 20, 19, 22, 17, 18, 21, 20, 19, 18, 20, 17,
-
-została pobrana z populacji o rozkładzie normalnym. Przyjąć poziom istotności α=0,05.
-
-
+5.  Sprawdź, czy można przyjąć, że próba: 15, 18, 22, 19, 17, 20, 21, 16, 18, 20, 19, 22, 17, 18, 21, 20, 19, 18, 20, 17 została pobrana z populacji o rozkładzie normalnym. Przyjąć poziom istotności α = 0,05.
 :::

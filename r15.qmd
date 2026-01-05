@@ -2,7 +2,7 @@
 
 ::: {.callout-note icon="false" appearance="simple"}
 
-Quarto to narzędzie do publikowania dokumentów i raportów naukowych, które pozwala na integrację kodu, tekstu i wykresów w jednym pliku. Jego elastyczność sprawia, że jest popularne w środowiskach związanych z analizą danych, nauką i badaniami. 
+**Quarto** to narzędzie do publikowania dokumentów i raportów naukowych, które pozwala na integrację kodu, tekstu i wykresów w jednym pliku. Jego elastyczność sprawia, że jest popularne w środowiskach związanych z analizą danych, nauką i badaniami. 
 
 
 **Quarto** umożliwia integrację tekstu z następującymi językami programowania:
@@ -23,7 +23,7 @@ Quarto to narzędzie do publikowania dokumentów i raportów naukowych, które p
 W rozdziale przedstawiono kluczowe możliwości, które oferuje **Quarto**.
 :::
 
-Przed rozpoczęciem pracy niezbędne jest załadowanie wykorzystywanych w tym rozdziale bibliotek. Realizują to następujace komendy:
+Przed rozpoczęciem pracy niezbędne jest załadowanie wykorzystywanych w tym rozdziale bibliotek. Realizuje to następująca komenda:
 
 
 ```{r}
@@ -31,9 +31,9 @@ library(ggplot2)
 ```
 
 
-Formaty dokumentów możliwe do uzyskania w Quarto prezentuje @tbl-formaty.
+Formaty dokumentów możliwe do uzyskania w **Quarto** prezentuje @tbl-formaty.
 
-: Przykłady zapisu wzorów w **Quarto** {#tbl-formaty}
+: Formaty wyjściowe dokumentów w **Quarto** {#tbl-formaty}
 
 | Typ  | Format         |
 |-------------------|------------------|
@@ -43,15 +43,13 @@ Formaty dokumentów możliwe do uzyskania w Quarto prezentuje @tbl-formaty.
 | Wikis             |MediaWiki, DokuWiki, ZimWiki, JiraWiki, XWiki   |
 | Inne formaty  |JATS (Journal Article Tag Suite), Jupyter, ConTeXt, RTF, reST, AsciiDoc, Org-Mode, Muse, GNU TexInfo, Groff Man Page, Groff Manuscript, Haddock markup, OPML, Textile, DocBook, InDesign, TEI Simple, FictionBook |
 
-https://quarto.org/docs/output-formats/all-formats.html
+Źródło: https://quarto.org/docs/output-formats/all-formats.html
 
 
 **Quarto** może łączyć kod analityczny z tekstem, co pozwala na dynamiczne tworzenie analiz danych. Można z łatwością wprowadzać wykresy, tabele i inne elementy wizualne.
 
 
-Utworzenie dokumentu **Quarto** w **RStudio**.
-
-Z menu programu należy wybrać kolejno: 
+W celu utworzenia dokumentu **Quarto** w **RStudio** należy z menu programu kolejno wybrać: 
 
 - *Plik* 
 
@@ -100,8 +98,6 @@ Rys. 15.1. Zawartość dokumentu Quarto (po lewej) i rezultat w formacie html (p
 
 Zmiana formatu w kodzie (rys. 15.1) z "html" na "docx" pozwoli na uzyskanie dokumentu w formacie Microsoft Word, a zmiana na "pptx" na uzyskanie prezentacji w formacie Power Point.
 Dokument renderowany jest do wybranego formatu (HTML, PDF, Word, prezentacja itp.). Quarto automatycznie uruchamia kod, wstawia wyniki i generuje końcowy dokument.
-
-Wykaz dostępnych formatów przedstawia @tbl-formaty.
 
 
 ## Wybrane elementy składni Quarto
@@ -152,7 +148,7 @@ Wybrane sposoby formatowania tekstu przedstawia @tbl-formatowanie
 |-------------------------------------------------|-----------------------|
 | `*italics*`, `**bold**`, `***bold italics***` | *italics*, **bold**, ***bold italics*** |
 | `indeks_górny^2^` / `indeks_dolny~2~` | indeks_górny^2^ / indeks_dolny~2~ |
-| `~~strikethrough~~` | ~~strikethrough~~ |
+| `~~przekreślone~~` | ~~przekreślone~~ |
 | `verbatim code` | `verbatim code` |
 
 
@@ -462,7 +458,7 @@ Przykłady konstrukcji takich bloków oraz widoczny efekt zostały przedstawione
 ### Podział treści na kolumny {.unnumbered}
 
 **Quarto** umożliwia podział treści na kolumny.
-Wprowadza sie je w poniżej opisany sposób.
+Wprowadza się je w poniżej opisany sposób.
 
 
 ```markdown
@@ -633,7 +629,7 @@ Wprowadzony zapis:
 
 `::: {.callout-note appearance="simple"}`
 
-`To jest callout bez ikony i tytułu.`
+`To jest callout bez tytułu.`
 
 `:::`
 
@@ -645,7 +641,7 @@ Wprowadzony zapis:
 Efekt zapisu:
 
 ::: {.callout-note appearance="simple"}
-To jest callout bez ikony i tytułu.
+To jest callout bez  tytułu.
 :::
 
 :::

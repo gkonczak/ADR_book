@@ -18,7 +18,7 @@ Pakiet **lattice** dostępny w języku **R** to jeden z głównych systemów do 
 
 
 ## Rodzaje wykresów - szablony graficzne
-W @tbl-p przedstawiono funkcje tworzace różne typy wykresów.
+W @tbl-p przedstawiono funkcje pozwalające utworzyć różne typy wykresów.
 
 :Szablony graficzne pakietu `lattice` {#tbl-p}
 
@@ -26,13 +26,13 @@ W @tbl-p przedstawiono funkcje tworzace różne typy wykresów.
 |----------------|------------------------------------------------------------|
 | barchart       | Wykres kolumnowy i słupkowy             |
 | bwplot         | Wykres pudełko-wąsy, skrzypcowy o pochodne |
-| densityplot    | Jądrowy estymator gęstości, czyli wykres gęstości rozkładu |
+| densityplot    | Estymator gęstości rozkładu |
 | dotplot        | Wykres kropkowy |
 | histogram      | Histogram|
 | qqmath         | Wykres kwantylowy dla jednej próby|
 | stripplot      | Wykres paskowy |
 | qq             | Wykresy kwantylowe do porównywania dwóch rozkładów | 
-| xyplot         | Wykresy rozrzutu i wykresy szeregów czasowych (i potencjalnie więcej) |
+| xyplot         | Wykresy rozrzutu i wykresy szeregów czasowych  |
 | levelplot      | Wykres typu mapa ciepła |
 | contourplot    | Wykres konturowy |
 | cloud          | Trójwymiarowy wykres rozrzutu |
@@ -54,12 +54,15 @@ Na wstępie konieczne jest zainstalowanie i wczytanie pakietu **lattice**. Reali
 library(lattice) 
 ```
 
+
+
 ```{r}
 #| echo: true
 #| eval: false
 install.packages("lattice")
 library(lattice) 
 ```
+
 
 
 
@@ -110,12 +113,14 @@ Wynik został przedstawiony na @fig-r01.
 
 ::: callout-warning
 ## Formuły 
-Formuła podawana jako pierwszy argument funkcji pozwala na nadanie roli zmiennym. Określa, która zmienna będzie przedstawiana na osi OY, a która na OX. Oprócz tego dane mogą być prezentowane w podziale na grupy,za co odpowiada zmienna grupująca. Składnia formuł jest następująca:
+Formuła podawana jako pierwszy argument funkcji pozwala na nadanie roli zmiennym. Określa, która zmienna będzie przedstawiana na osi OY, a która na OX. Oprócz tego dane mogą być prezentowane w podziale na grupy, za co odpowiada zmienna grupująca. Składnia formuł jest następująca:
 
   $y \sim x \mid z * u$
 
-$y$ - zmienna objaśniana \
-$x$ - zmienne objaśniające \
+$y$ - zmienna objaśniana 
+
+$x$ - zmienne objaśniające 
+
 $z, u$ - zmienne grupujące (1, 2 lub więcej)
 :::
 
@@ -125,18 +130,12 @@ Dla porównania rozkładów temperatury w poszczególnych miesiącach, utworzyć
 ```{r}
 #| label: fig-r02
 #| eval: true
-#| echo: false
+#| echo: true
 #| fig-cap: Jądrowy estymator gęstości zmiennej Temp osobno dla każdego z miesięcy
 densityplot(~Temp|Month, data = aq_data, layout = c(3, 2))
 ```
 
-```{r}
-#| label: fig-r02b
-#| eval: false
-#| echo: true
-#| fig-cap: Jądrowy estymator gęstości zmiennej Temp osobno dla każdego z miesięcy
-densityplot(~Temp|Month, data = aq_data)
-```
+
 
 Wykres @fig-r02 przedstawia rozkład maksymalnej temperatury (*Temp*) dla każdego z miesięcy (od maja do września) na oddzielnych panelach. Dzięki temu można łatwo porównać kształt rozkładów między miesiącami.
 Układ wykresów można modyfikować a także dodawać opisy osi oraz tytuł.
@@ -233,7 +232,7 @@ Funkcja `splom` (scatterplot matrix) tworzy siatkę wykresów rozrzutu, pokazuj�
 
 ```{r}
 #| label: fig-r06
-#| fig-cap: Macierzowy wykres rozrzutu. Poziom ozonu , prędkość wiatru i temperatura. 
+#| fig-cap: Macierzowy wykres rozrzutu. Poziom ozonu, prędkość wiatru i temperatura. 
 splom(aq_data[, c("Ozone", "Wind", "Temp")])
 
 ```
@@ -332,7 +331,7 @@ Dla wykonania poniższych poleceń odwołaj się do danych ze zbioru **airqualit
 
 3. Zbuduj wykres pudełkowy dla zmiennej *Wind* w zależności od *Month*. 
 
-4. Wykorzystaj histogram do zbadania rozkładu zmiennej *SO2*. Użyj argumentu *breaks* do zmiany liczby przedziałów.
+4. Wykorzystaj histogram do zbadania rozkładu zmiennej *Solar.R*. Użyj argumentu *breaks* do zmiany liczby przedziałów.
 
 5. Użyj `xyplot` do zbadania zależności *Ozone* od *Wind* dla wszystkich miesięcy.
 

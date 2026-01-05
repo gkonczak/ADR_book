@@ -49,7 +49,7 @@ Wielokrotnie w dalszej części będzie wykorzystywany operator `pipe` (`%>%`).
 
 ## Pakiet **dplyr**
 
-Jeden z wazniejszych pakietów wchodzących w sklad pakietu **tidyverse** jest **dplyr**. Krótka charakterystyka tego pakietu i wybrane przykłady zastosowań zamieszczono ponizej, a w dalszej części podobne informacje dla pozostałych pakietów.
+Jeden z wazniejszych pakietów wchodzących w sklad pakietu **tidyverse** jest **dplyr**. Krótka charakterystyka tego pakietu i wybrane przykłady zastosowań zamieszczono poniżej.
 
 ::: callout-note
 ## **dplyr**
@@ -67,7 +67,7 @@ Najważniejsze i najbardziej przydatne funkcje tego pakietu to:
 -   *group_by()* – grupowanie danych na podstawie jednej lub więcej zmiennych.
 -   *join()* – łączenie dwóch zakresów danych na podstawie wspólnych kolumn (np. left_join(), inner_join()).
 
-Ponizej przedstawiono przykłady zastosowania wyżej wyminienionych wymienionych funkcji.
+Poniżej przedstawiono przykłady zastosowania wyżej wyminienionych wymienionych funkcji.
 
 - filtrowanie danych
 
@@ -236,7 +236,7 @@ Poniżej przedstawiono przykłady zastosowań wskazanych funkcji.
 
 
 ```{r}
-# library(readr)
+library(readr)
 ```
 
 Odczyt danych zapisanych w formacie *.csv może być zrealizowany z wykorzystaniem funkcji `read_csv()`.
@@ -254,8 +254,8 @@ Dane mogą  być wprowadzane z dysku lokalnego, ale również można odczytywać
 
 ```{r}
 # Odczyt danych on-line w formacie CSV.
-dane <- read_csv("https://raw.githubusercontent.com/plotly/datasets/master/iris.csv")
-dane
+dane <- read_csv("http://stat.ue.katowice.pl/dane1/cars.csv")
+head(dane,3)
 ```
 
 
@@ -292,7 +292,7 @@ Pierwszy przykład dotyczy mapowania funkcji  `sqrt` do każdego elementu wektor
 #| warning: false
 #| echo: true
 #| eval: true
-# library(purrr)
+library(purrr)
 x <- c(1, 4, 9, 16)
 wynik <- map(x, sqrt)
 wynik
@@ -304,7 +304,6 @@ Kolejny przykład wskazuje mozliwość zastosowania funkcji do obliczenia sumy k
 #| warning: false
 #| echo: true
 #| eval: true
-
 x <- c(1, 2, 3)
 y <- c(4, 5, 6)
 wynik <- map2(x^2, y^2, sum)
@@ -317,7 +316,6 @@ Ostatni z przykładów dotyczy zastosowania `pmap()` do obliczania sumy funkcji 
 #| warning: false
 #| echo: true
 #| eval: true
-
 x <- c(1, 2, 3)
 y <- c(4, 5, 6)
 z <- c(7, 8, 9)
@@ -331,7 +329,7 @@ wynik
 ::: callout-note
 ## **tibble**
 
-Pakiet **tibble** oferuje rozszerzenie tradycyjnej klasy danych ramka danych (data.frame). Tibble to nowoczesna wersja data.frame, która poprawia niektóre ograniczenia tej klasy, czyniąc pracę z danymi bardziej intuicyjną i wydajną. Głównym celem pakietu tibble jest ułatwienie pracy z danymi.
+Pakiet **tibble** oferuje rozszerzenie tradycyjnej klasy danych ramki danych (data.frame). Tibble to nowoczesna wersja data.frame, która poprawia niektóre ograniczenia tej klasy, czyniąc pracę z danymi bardziej intuicyjną i wydajną. Głównym celem pakietu **tibble** jest ułatwienie pracy z danymi.
 Najważniejsze funkcje tego pakietu to:
 
 -   *tibble()* - utworzenie obiektu tibble z nazwami kolumn jako argumenty funkcji. Kolumny mogą zawierać różne typy danych, takie jak liczby zmiennoprzecinkowe, łańcuchy znaków czy całkowite,
@@ -345,7 +343,7 @@ Poniżej przedstawiono przykłady zastosowań wskazanych funkcji.
 - utworzenie tibble
 
 ```{r}
-# library(tibble)
+library(tibble)
 dane <- tibble(
   Name = c("Anna", "Piotr", "Zofia"),
   Age = c(25, 30, 22),
@@ -406,7 +404,7 @@ Poniżej przedstawiono przykłady zastosowania wskazanych funkcji.
 - długość ciągu znaków
 
 ```{r}
-# library(stringr)
+library(stringr)
 tekst <- "Analiza danych z programem R"
 długość <- str_length(tekst)
 długość
@@ -442,27 +440,28 @@ nowy_tekst2
 ::: callout-note
 ## **forcats**
 
-Pakiet **forcats** został zaprojektowany dla ułatwienia pracy z danymi jakosciowymi, szczególnie z czynnikami (ang. factors). Pakiet dostarcza funkcje, które pozwalają na manipulację, modyfikowanie i porządkowanie zmiennych jakościowych w sposób bardziej intuicyjny i spójny w porównaniu do tradycyjnych operacji na czynnikach w **R**.
+Pakiet **forcats** został zaprojektowany dla ułatwienia pracy z danymi jakościowymi, szczególnie z czynnikami (ang. factors). Pakiet dostarcza funkcje, które pozwalają na manipulację, modyfikowanie i porządkowanie zmiennych jakościowych w sposób bardziej intuicyjny i spójny w porównaniu do tradycyjnych operacji na czynnikach w **R**.
 Najważniejsze funkcje tego pakietu to:
 
 -   fct_inorder() – tworzenie czynników na podstawie kolejności,
--   fct_reorder() – zmiana porzadku poziomów faktora na podstawie innej zmiennej,
+-   fct_reorder() – zmiana porzadku poziomów czynnika na podstawie innej zmiennej,
 -   fct_colllapse() – łączenie poziomów czynnika,
 -   fct_rev() – odwracanie kolejności poziomów,
 -   fct_expand() – dodawanie nowych poziomów do czynnika.
 :::
 
-Przykłady zastosowań:
-
 ```{r}
-# library(forcats)
+library(forcats)
 dane <- c("mały", "średni", "duży", "średni", "mały")
 factors <- fct_inorder(dane)
 factors
 ```
 
+Przykłady zastosowań:
+
+- zmiana poziomów czynnika na podstawie zadanych wartości:   
+
 ```{r}
-# Zmiana poziomów czynnika na podstawie zadanych wartości   
 dane <- data.frame(
   kategoria = c("B", "A", "C", "B", "A"),
   wartość = c(2, 5, 3, 7, 3)
@@ -471,15 +470,17 @@ dane$kategoria <- fct_reorder(dane$kategoria, dane$wartość)
 dane
 ```
 
+- łączenie poziomów czynnika
+
 ```{r}
-# Łączenie poziomów faktora
 dane <- factor(c("A", "B", "C", "B", "A", "C", "B"))
 dane_gr <- fct_collapse(dane, gr1 = c("A", "B"), gr2 = "C")
 dane_gr
 ```
 
+- odwracanie kolejności poziomów czynnika
+
 ```{r}
-# Odwracanie kolejności poziomów
 dane <- factor(c("A", "B", "C", "B", "A", "C"))
 dane
 
@@ -488,8 +489,9 @@ dane_2
 
 ```
 
+- dodawanie nowych poziomów do faktora
+
 ```{r}
-# Dodawanie nowych poziomów do faktora
 dane <- factor(c("A", "B", "A"))
 dane_2 <- fct_expand(dane, "C", "D")
 dane_2

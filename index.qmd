@@ -1,5 +1,13 @@
 ## Tylko notatki {.unnumbered}
 
+Opracowanie:
+
+Grzegorz Kończak roz. 6,7 oraz 11-16
+
+Martyna Kosińska roz. 1-5 oraz 8-10.
+
+
+
 Notacja:
 
 Pakiety: **ggplot2** - później zostanie zrobione consolas
@@ -57,14 +65,14 @@ Tu zamieszczono zadania do materiału z rozdziału
 :::
 
 ::: callout-caution
-## Dodatkowe informacje / obliczenia przez Czytelnika 
+## Dodatkowe informacje  obliczenia przez Czytelnika 
 
 callout-caution
 :::
 
 
 ::: callout-tip icon="false" appearance="simple"}
-## Zadanie // przykład 
+## Zadanie  przykład 
 
 Treść przykładu
 
@@ -158,6 +166,56 @@ Tu zamieszczono pytania testowe z jedną poprawną odpowiedzią do materiału z 
 -   r13.qmd \# Odpowiedzi
 -   r14.qmd \# Next
 -   references.qmd
+
+
+
+
+
+::: {.callout-tip icon="false"}
+## Wykonaj to samodzielnie
+:::
+
+Wykonaj to samodzielnie - kod bez wyników.
+
+::: {.callout-tip icon="false"}
+## \*\*\*
+:::
+
+To jest informacja o końcu przykładu.
+
+Twierdzenia i wnioski
+
+::: callout-important
+## Twierdzenia i wnioski
+
+To jest twierdzenie lub wniosek
+:::
+
+Dla zadań i pytań zamieszczonych na zakończenie rozdziałów 2-7 przyjęto następujace oznaczenia.
+
+::: {.callout-warning icon="false" size="2"}
+## Zadania
+
+Tu zamieszczono zadania do materiału z rozdziału
+:::
+
+::: {.callout-tip icon="false"}
+## Pytania problemowe
+
+Tu zamieszczono pytania problemowe do materiału z rozdziału
+:::
+
+::: {.callout-caution icon="false"}
+## Prawda czy fałsz?
+
+Tu zamieszczono pytania typu "Tak / Nie " do materiału z rozdziału
+:::
+
+::: {.callout-important icon="false"}
+## Pytania testowe
+
+Tu zamieszczono pytania testowe z jedną poprawną odpowiedzią do materiału z rozdziału
+:::
 
 
 

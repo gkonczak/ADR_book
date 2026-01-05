@@ -1,8 +1,6 @@
 # Instrukcje warunkowe oraz iteracyjne
 
 ::: {.callout-note icon="false" appearance="simple"}
-
-
 Program **R** jest wyposażony w różne funkcje i zbiory danych. W programie są dostępne różne instrukcje warunkowe i instrukcje petli, które sa bardzo pomocne przy opracowywaniu kodów programów.
 
 Instrukcje warunkowe służą do podejmowania decyzji podczas wykonywania kodu: jeśli jakiś warunek jest spełniony, wykonywane jest określony zestaw poleceń; jeśli nie – wykonuje się inny zestaw poleceń.
@@ -10,6 +8,7 @@ Instrukcje warunkowe służą do podejmowania decyzji podczas wykonywania kodu: 
 W programie **R** udostępnione są następujące instrukcje warunkowe:
 
 -   `if`
+-   `if... else if...`
 -   `if...else`
 -   `ifelse`
 -   `switch`
@@ -26,288 +25,365 @@ Najważniejsze instrukcje iteracyjne dostępne w programie **R**:
 
 ## Instrukcje warunkowe
 
-Instrukcje warunkowe w **R** pozwalają na podejmowanie decyzji podczas wykonywania kodu, umożliwiając wykonywanie różnych działań w zależności od spełnienia określonych warunków. Najczęściej używaną konstrukcją jest `if`, która sprawdza, czy dany warunek logiczny jest prawdziwy, a jeśli tak, wykonuje określony blok kodu. Instrukcje warunkowe są niezbędne do tworzenia bardziej złożonych i elastycznych programów w R.
-
+Instrukcje warunkowe w **R** pozwalają na podejmowanie decyzji podczas wykonywania kodu, umożliwiając wykonywanie różnych działań w zależności od spełnienia określonych warunków. Najczęściej używaną konstrukcją jest `if`, która sprawdza, czy dany warunek logiczny jest prawdziwy, a jeśli tak, wykonuje określony blok kodu. Instrukcje warunkowe są niezbędne do tworzenia bardziej złożonych i elastycznych programów w **R**.
 
 ### Instrukcja `if`
 
-```{r}
-x=12
-if(x>10)
-{print("nierówność jest prawdziwa",quote=F)}
+Pierwsza tworzona instrukcja sprawdza czy dana liczba jest większa od 10. Jeżeli spełniałniona będzie nierówność, to program będzie zwracał komunikat *x jest większe od 10*. W przeciwnych przypadkach, nie będzie nic zwracane.
 
-if(x>10) print("nierówność jest prawdziwa")
+W języku **R** do definiowania zakresu instrukcji warunkowej używa się nawiasów klamrowych { }. Jednak przy wykonywaniu tylko jednej komendy po instrukcji `if` można je pominąć.
+
+```{r}
+x = 12
+if (x > 10) {
+  print("x jest większe od 10", quote = F)
+}
 ```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany, ale jest taki sam, jak dla kodu powyżej
+if (x > 10) print("x jest większe od 10")
+```
+
+### Instrukcja `if... else if...`
+
+Instrukcja warunkowa może zawierać kilka warunków. W celu wprowadzenia kolejnego wykorzystuje się formułę `else if`. Poniższy przykład będzie zwracał komunikat: *x jest większe od 10* i *x jest równe 10*, jeśli spełnione jest odpowiedni warunek. Jeżeli liczba będzie mniejsza od 10, wówczas **R** nie będzie zwracał nic.
+
+```{r}
+x = 7
+if (x > 10) {
+  print("x jest większe od 10")
+} else if (x == 10) {
+    print("x jest równe 10")
+}
+```
+
+::: callout-warning
+## `else if`
+
+W programie **R** instrukcję `else if` można wykorzystać dowloną liczbę razy.
+:::
 
 ### Instrukcja `if... else...`
 
+Wykorzystanie instrukcji `else` przechwytuje wszystkie pozostałe, nierozważone przypadki.
+
+Następujący przykład jest poszerzeniem poprzedniego. Rozważa również przypadki, w których liczba jest mniejsza od 10.
+
 ```{r}
-x=7
-if(x>10){
-print("nierówność jest prawdziwa")
-}else {
-print("nierówność jest fałszywa")
+x = sample(1 : 100, 1)
+
+if (x > 10) {
+  print("x jest większe niż 10")
+} else if (x == 10) {
+    print("x jest równe 10")
+} else {
+    print("x jest mniejsze od 10")
 }
-
-liczba=sample(1:100,1)
-liczba
-x=34
-
-if(x==liczba) {
-print(paste("wybrana liczba x jest równa",liczba))
-}else{
-	if(x>liczba){
-	print(paste("wybrana liczba x jest większa od",liczba))
-	}else{
-	print(paste("wybrana liczba x jest mniejsza od", liczba))
-}}
 ```
 
 ### Instrukcja `ifelse`
 
-```{r}
-x=8:12
+Instrukcję `ifelse` stosuje się w celu sformułowania warunków w postaci jednego wyrażenia.
+Tym razem formuła będzie sprawdzała zadane warunki dla liczb naturalnych od 9 do 11 włącznie
 
-nierówność=ifelse(x>10,"nierówność jest prawdziwa","nierówność jest fałszywa")
+```{r}
+x = 9:11
+
+nierówność = ifelse (x > 10, "x jest większe od 10", "x jest mniejsze lub równe 10")
 nierówność
-data.frame(nierówność)
+
 ```
 
+Instrukcje takie mogą być bardziej rozbudowane - składać się z większej liczby warunków. Wówczas ponownie stosuje się instrukcję `ifelse`.
+
+```{r}
+x = 9:11
+
+nierówność = ifelse (x > 10, "x jest większe od 10", ifelse(x == 10, "x jest równe 10", "x jest mniejsze od 10"))
+nierówność
+```
+
+::: callout-warning
+## W instrukcjach warunkowych można wykorzystywać operatory logiczne
+
+```{r}
+x = -5
+if (x > -10 & x < 10) print("liczba jest z przedziału (-10, 10)")
+```
+:::
 
 ## Instrukcje w pętli
 
-
-Instrukcje w pętli pozwalają na wielokrotne wykonywanie tego samego fragmentu kodu, aż do spełnienia określonego warunku. W języku **R** najczęściej używa się pętli `for`, `while` oraz `repeat`. Wewnątrz pętli można umieszczać różne instrukcje, takie jak przypisania, wywołania funkcji, instrukcje warunkowe czy operacje na danych. Dzięki temu możliwe jest automatyczne przetwarzanie dużych zbiorów danych lub wykonywanie powtarzalnych obliczeń. 
-
+Instrukcje w pętli pozwalają na wielokrotne wykonywanie tego samego fragmentu kodu, aż do spełnienia określonego warunku. W języku **R** najczęściej używa się pętli `for`, `while` oraz `repeat`. Wewnątrz pętli można umieszczać różne instrukcje, takie jak przypisania, wywołania funkcji, instrukcje warunkowe czy operacje na danych. Dzięki temu możliwe jest automatyczne przetwarzanie dużych zbiorów danych lub wykonywanie powtarzalnych obliczeń.
 
 ### Pętla `for`
 
+Pętla iteracyjna `for` służy wielokrotnemu wykonywaniu określonych poleceń np. dla kolejnych elementów wektora, listy czy jeszcze innej struktury danych. Tworzona jest za pomocą wyrażenia `for(i in ...)`. Wewnątrz okrągłego nawiasu wskazuje się iterator (obiekt, który pozwala na sekwencyjny przegląd i dostęp do elementów innego obiektu). Iteratorem może być obiekt lub liczby. Po tym, określane jest polecenie, które zamierza się wykonać lub otwierany jest nawias klamrowy `{}`. W nim można zamieścić więcej instrukcji do wykonania, w tym m.in. instrukcje warunkowe.
+
+W pierwszym przykładzie przedstawiono pętlę, która wyświetla kolejne elementy wektora (wszystkie). Iteratorem w tym przypadku został wektor *zwierze*.
+
 ```{r}
-for(i in 1:5) print(i)
+zwierze = c("pies", "kot", "okapi", "beluga")
 
-for(i in 1:5) 
-{
-print(i)
+for(i in zwierze) print(i)
+```
+
+Iteratorem mogłyby być liczby. Wówczas iterator `i` byłby ustalony od 1 do liczby elementów wektora *zwierze* (żeby zwrócić pozycję ostatniego elementu). W ten sposób można wówczas za pomocą indeksów wyświetlić nazwę każdego zwierzęcia z wektora.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+# Rezultat wykonania kodu nie jest wyświetlany, ale jest taki sam, jak dla kodu powyżej
+for(i in 1:length(zwierze)) print(zwierze[i])
+```
+
+W pętli for znaleźć mogą się również polecenia `break` i `next`. Polecenie `break` powoduje, że dana iteracja oraz kolejne nie zostaną wykonane. Za to dzięki komendzie `next` pomijana jest dana iteracja, ale algorytm pętli nie jest zatrzymywany. Przy obu poleceniach definiuje się przypadki, w których są one stosowane. W dwóch przykładach zaprezentowano ich działanie. W pierwszym pętla jest zatrzymywana, jeśli kolejnym elementem wektora jest *okapi*. W drugim pomijane są iteracje, jeśli elementami, na które się trafi są *okapi* lub *pies*.
+
+```{r}
+for(i in zwierze) {
+  if (i == "okapi") {
+    break
+  }
+  print(i)
 }
 
-
-z=5:8
-for(i in z) 
-{
-print(i*10)
+for(i in zwierze) {
+  if (i == "okapi" | i == "pies") {
+    next
+  }
+  print(i)
 }
+```
 
-# Wyznaczenie sumy pierwszych 20 liczb naturalnych (bez zera).
-suma=0
-liczby=1:20
+#### Przykłady {.unnumbered}
+
+Należy wyznaczyć sumę pierwszych dwudziestu liczb naturalnych (bez zera). Konieczne jest utworzenie zmiennej dodatkowej *suma*, która będzie sumą kolejnych liczb z wektora *liczby*. Iterator `i` z każdą iteracją przyjmuje kolejną wartość z wektora liczby.
+
+```{r}
+suma = 0
+liczby = 1:20
+
 for(i in liczby)
 {
-suma=suma+i
+  suma = suma + i
 }
 suma
+```
 
-# Wyznaczenie sumy elementów wektora x.
-x=c(23,45,13,22,11,-54)
-suma=0
-for(i in 1:length(x))
+Niech będzie dany wektor liczb *y*.
+
+```{r}
+y = c(23, 45, 13, 22, 11, -54)
+```
+
+Wyznaczenie sumy elementów wektora *y*.
+
+```{r}
+suma = 0
+
+for(i in 1:length(y))
 {
-suma=suma+x[i]
+  suma = suma + y[i]
 }
 suma
+```
 
-# Wyznaczenie sumy różnic elementów wektora x.
-x=c(12,34,4,-15,4,0)
-suma=0
-for(i in 2:length(x))
+Wyświetlenie kolejnych różnic elementów wektora *y*.
+
+```{r}
+for(i in 2:length(y))
 {
-suma=suma+(x[i]-x[i-1])	#Nawias tutaj jest niepotrzebny, ale podkreśla czynność odejmowania.
+  print(y[i] - y[i-1])
+}
+```
+
+::: callout-warning
+## Iteracja nie musi się zaczynać od 1
+
+W pewnych przypadkach `i` nie iteruje się od 1. W przykładzie powyżej iteracja została rozpoczęta od 2, ponieważ wówczas wyświetlana jest różnica `y[2] - y[1]`. Gdyby ustalić `i` na 1, wówczas wyświetlana musiałaby być różnica `y[1] - y[0]`, a `y[0]` nie istnieje (**R** indeksuje elementy od 1).
+:::
+
+Wyznaczenie sumy różnic elementów wektora *y*. Otwarty nawias umieszczony przy obliczaniu różnicy wyrazów jest niepotrzebny, ale umieszczony w celu podkreślenia czynności odejmowania.
+
+```{r}
+suma = 0
+
+for(i in 2:length(y))
+{
+  suma = suma + (y[i] - y[i - 1])	
 }
 suma
-
-# Wyświetlenie kolejnych różnic elementów wektora x.
-x=c(12,34,4,-15,4,0)
-for(i in 2:length(x))
-{
-print(x[i]-x[i-1])
-}
 ```
 
 ### Pętla `while`
 
-```{r}
-# Wyświetlenie pierwszych 9 liczb naturalnych (bez 0).
-i=1
-while(i<10)
-{
-print(i)
-i=i+1
-}
+Pętla `while` służy do wykonywania określonego zestawu instrukcji, dopóki zadany warunek jest spełniony. Rozważany typ pętli wymaga wcześniej zdefiniowania zmiennej `i`. W samej pętli `while` należy pamiętać o zwiększaniu wartości `i`. W przeciwnym razie działanie pętli trwać będzie w nieskończoność. Jeżeli uruchomiono nieskończoną pętlę, to należy można ją zatrzymać wciskając klawisz Esc.
 
-# Wyznaczenie sumy elementów wektora x.
-x=c(12,-30,4,2,67,-18)
-i=1
-suma=0
-while(i<=length(x))
-{
-suma=suma+x[i]
-i=i+1
+Celem będzie wyznaczenie sumy elementów wektora *z*. Oprócz wcześniejszego zdefiniowania zmiennej `i` należy też utworzyć zmienną *suma*, która będzie przechowywać sumę.
+
+```{r}
+z = c(12, -30, 4, 2, 67, -18)
+i = 1
+suma = 0
+
+while(i <= length(z)){
+  suma = suma + z[i]
+  i = i + 1
 }
 suma
-
-sum(x)	#Sprawdzenie poprawności uzyskanych wyników.
 ```
+
+::: callout-warning
+## Polecenia `break`, `next` i instrukcje warunkowe
+
+W ramach pętli `while` można wykorzystywać polecenia `break`, `next` oraz instrukcje warunkowe.
+:::
 
 ### Pętla `repeat`
 
+Pętla `repeat` wykonuje podane polecenia aż do spełnienia określonego warunku, który musi być jawnie zdefiniowany wewnątrz pętli za pomocą instrukcji `break`.
+Jej działanie zostanie przedstawione na przykładzie, którego celem będzie utworzenie komunikatów: *powtórzenie nr. 1*, *powtórzenie nr. 2* itd. (komunikaty mają być najwyżej 4).
+
 ```{r}
-i=1
-repeat
-{
-print(paste("powtórzenie nr.",i))
-i=i+1
-if(i>5) break     
+i = 1
+
+repeat{
+  print(paste("powtórzenie nr.", i))
+  i = i + 1
+  if(i > 4) break     
 }
 
 ```
 
-#### Przykład 1
+
+### Przykłady zastosowania funkcji iteracyjnych
+
+#### Przykład 1 {.unnumbered}
+
+Zadaniem jest wyświetlenie kolejnych 4 potęg liczby 2. Przykłady będą wykonane dwoma sposobami. W pierwszym wyniki mają być wyświetlone po kolei, a w drugim zapisane do wektora *y*, który później będzie mógł zostać jeszcze wykorzystany.
+
+-   pętla `for`
 
 ```{r}
-# Wyświetlić kolejne 10 potęg liczby 2 za pomocą:
-
-#Pętli for
-
-#1 sposób
-for(i in 1:10)
-{
-print(2^i)
-}
-
-#2 sposób
-x=1:10
-x
-y=c()
-
-for(i in 1:length(x))
-{
-y[i]=2^x[i]
-}
-y
+for(i in 1:4) print(2^i)
 
 
-#Pętli while
+x = 1:4
+y = c()
 
-#1 sposób
-i=1
-while(i<=5)
-{
-print(2^i)
-i=i+1
-}
-
-#2 sposób
-i=1
-y=c()
-while(i<=length(x))
-{
-y[i]=2^x[i]
-i=i+1
-}
-y
-
-
-#Pętli repeat
-
-#1 sposób
-i=1
-repeat
-{
-print(2^i)
-i=i+1
-if(i>10) break
-}
-
-#2 sposób
-i=1
-y=c()
-repeat
-{
-y[i]=2^x[i]
-i=i+1
-if(i>length(x))break
+for(i in 1:length(x)){
+  y[i] = 2^x[i]
 }
 y
 ```
 
-#### Przykład 2
+-   pętla `while`
 
 ```{r}
-# Napisać pętlę, która będzie wyświetlała kolejne 10 potęg liczby 3 
-# i będzie pokazywała komunikat: 3 do potęgi… wynosi….
+i = 1
 
-x=1:10
-x
-y=c()
-for(i in 1:length(x))
-{
-y[i]=2^x[i]
-print(paste("2 do potęgi",i,"wynosi",y[i]))
+while(i <= 4){
+  print(2^i)
+  i = i + 1
+}
+
+i = 1
+y = c()
+
+while(i <= length(x)){
+  y[i] = 2^x[i]
+  i = i + 1
+}
+y
+```
+
+-   pętla `repeat`
+
+```{r}
+i = 1
+
+repeat{
+  print(2^i)
+  i = i + 1
+  if(i > 4) break
+}
+
+
+i = 1
+y = c()
+
+repeat{
+  y[i] = 2^x[i]
+  i = i + 1
+  if(i > length(x)) break
+}
+y
+```
+
+#### Przykład 2 {.unnumbered}
+
+Zadaniem jest napisanie pętli, która będzie wyświetlała kolejne 4 potęgi liczby 3 i zwracała komunikat: *3 do potęgi… wynosi…*.
+
+```{r}
+x = 1 : 4
+y = c()
+
+for(i in 1:length(x)){
+  y[i] = 3^x[i]
+  print(paste("3 do potęgi", i, "wynosi", y[i]))
 }
 ```
 
-### Inne przykłady
+#### Przykład 3 {.unnumbered}
 
-#### Pętla `for` i instrukcja `if`
+W zadaniu wykorzystana będzie pętla `for` i instrukcja `if`.
+
+Zadaniem jest utworzenie pętli zwracającej komunikat: *liczba ... jest parzysta* lub *liczba ... jest nieparzysta*, w zależności od elementów wektora *x*.
 
 ```{r}
-# Pętla wyświetlająca komentarz: "liczba ... jest parzysta" 
-# lub "liczba ... jest nieparzysta", w zależności od elementów wektora x.
-x=c(21,52,35,12,25)
+x = c(21, 52, 35, 12, 25)
 
-for(i in 1:length(x))
-{
-if(x[i]%%2==0){
-print(paste("Liczba",x[i],"jest parzysta"))
-}else{
-print(paste("Liczba",x[i],"jest nieparzysta"))
-}
+for(i in 1:length(x)){
+  if(x[i] %% 2 == 0){
+    print(paste("Liczba", x[i], "jest parzysta"))
+  }else{
+    print(paste("Liczba", x[i], "jest nieparzysta"))
+  }
 }
 ```
 
-#### Zagnieżdżona pętla `for`
+#### Przykład 4 {.unnumbered}
+
+W zadaniu wykorzystana zostanie zagnieżdżona pętla `for`.
+
+Celem jest napisanie kodu wyświetlającego najpierw sumę pierwszego elementu z wektora *x* z kolejnymi elementami wektora *y*. Następnie sumę drugiego elementu wektora *x* z kolejnymi elementami wektora *y* itd.
 
 ```{r}
-# Napisać kod wyświetlający najpierw sumę pierwszego elementu z wektora x 
-# z kolejnymi elementami wektora y, 
-# a później sumę drugiego elementu wektora x z kolejnymi elementami wektora y itd. 
+x = c(12, 2, 3, 4)
+y = c(5, 4, 8, 7)
 
-x=c(12,2,3,4)
-y=c(5,4,8,7)
-
-for(i in 1:length(x))
-{
-for(j in 1:length(y))
-{
-print(x[i]+y[j])
-}
+for(i in 1:length(x)){
+  for(j in 1:length(y)){
+    print(x[i] + y[j])
+  }
 }
 ```
-
 
 ::: callout-caution
 ## Ćwiczenia do samodzielnego wykonania
 
-1. Napisz pętlę `for`, która z wykorzystaniem funkcji `if` dla liczb od 1 do 20 wyświetli informację, czy liczba jest parzysta, czy nieparzysta
+1.  Napisz pętlę `for`, która z wykorzystaniem funkcji `if` dla liczb od 1 do 20 wyświetli informację, czy liczba jest parzysta, czy nieparzysta
 
-2. Wygeneruj wektor liczb od 1 do 50. Za pomocą pętli `while` oblicz sumę wszystkich liczb podzielnych przez 7.
+2.  Wygeneruj wektor liczb od 1 do 50. Za pomocą pętli `while` oblicz sumę wszystkich liczb podzielnych przez 7.
 
-3. Dla wektora x = c(15, 19, 7, 20, 3, 5), użyj funkcji `ifelse`, aby utworzyć nowy wektor tekstowy, w którym dla każdej liczby pojawi się napis "duża" (jeśli liczba > 10) lub "mała" (jeśli liczba ≤ 10)
+3.  Dla wektora x = c(15, 19, 7, 20, 3, 5), użyj funkcji `ifelse`, aby utworzyć nowy wektor tekstowy, w którym dla każdej liczby pojawi się napis "duża" (jeśli liczba \> 10) lub "mała" (jeśli liczba ≤ 10)
 
-4. Za pomocą pętli `repeat` wypisz potęgi liczby 4 (od 4¹ do 4¹⁰) w formacie: "4 do potęgi ... wynosi ...".
+4.  Za pomocą pętli `repeat` wypisz potęgi liczby 4 (od 4¹ do 4¹⁰) w formacie: "4 do potęgi ... wynosi ...".
 
-5. Dla wektora x = c(3, 5, 8, 3, 12, 7), napisz pętlę `for`, która obliczy sumę różnic między kolejnymi elementami, czyli: x[2]-x[1], x[3]-x[2], ....
-
-
+5.  Dla wektora x = c(3, 5, 8, 3, 12, 7), napisz pętlę `for`, która obliczy sumę różnic między kolejnymi elementami, czyli: x\[2\]-x\[1\], x\[3\]-x\[2\], ....
 :::
-
-

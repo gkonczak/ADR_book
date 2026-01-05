@@ -16,7 +16,7 @@ library(ggplot2)
 
 ## Elementy strujące
 
-W aplikacjach opracowanych w **shiny** kluczową rolę odgrywają komponenty interface użytkownia (UI) pozwalające na wprowadzanie danych:
+W aplikacjach opracowanych w **shiny** kluczową rolę odgrywają komponenty interface użytkownika (UI) pozwalające na wprowadzanie danych:
 
 -   textInput() – pole tekstowe
 -   numericInput() – pole do wprowadzania liczb.
@@ -31,7 +31,7 @@ W aplikacjach opracowanych w **shiny** kluczową rolę odgrywają komponenty int
 -   actionButton() – przycisk akcji.
 -   submitButton() – przycisk do potwierdzania danych wejściowych.
 
-Poza wymienionymi komponentami wejściowymi do utworzenia aplikacji **shiny** niezbędne są elementy wyjściowe pozwlające na wyświetlanie wyników i prezentację wykresów.
+Poza wymienionymi komponentami wejściowymi do utworzenia aplikacji **shiny** niezbędne są elementy wyjściowe pozwalające na wyświetlanie wyników i prezentację wykresów.
 
 Wyświetlanie wyników:
 
@@ -42,7 +42,7 @@ Wyświetlanie wyników:
 
 Prezentacja wykresów:
 
--   plotOutput() – wyświetlanie statycznych wykresów generowanych przez ggplot2 lub base R.
+-   plotOutput() – wyświetlanie statycznych wykresów generowanych przez pakiety **ggplot2** lub **base**.
 -   imageOutput() – wyświetlanie obrazów.
 -   htmlOutput() – wyświetlanie zawartości HTML.
 
@@ -54,10 +54,18 @@ Interaktywność i reakcje:
 -   isolate() – tworzenie izolacji reaktywności.
 -   observeEvent() – reagowanie na określone zdarzenia wejściowe.
 
+W przykładach zostanie wykorzystany zbiór **rivers**.
+
+::: callout-important
+## **rivers**
+
+Zbiór **rivers** jest wbudowanym zbiorem danych w **R**, zawierającym informacje o długościach 141 głównych rzek Ameryki Północnej (Stanów Zjednoczonych, Kanady i Meksyku). Dane wyrażone są w milach. Zbiór ma bardzo prostą strukturę – jest to wektor numeryczny.
+
+:::
 
 ## Konstrukcja aplikacji
 
-Poniżej przedstawiony przykład to bardzo prosta konstrukacja bez wprowadzania elementów interface wejściowego: 
+Poniżej przedstawiony przykład to bardzo prosta konstrukcja bez  elementów interface wejściowego: 
 
 ```{r}
 #| echo: true
@@ -76,7 +84,7 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
-Wyniki realizacji powyższego kodu został przedstawiony na @fig-riv1
+Wynik realizacji powyższego kodu został przedstawiony na @fig-riv1
 
 ![Długość największych rzek Ameryki Północnej](pic/riv1.png){#fig-riv1 fig-cap="Długość największych rzek Ameryki Północnej"}
 
@@ -131,7 +139,7 @@ server <- function(input, output) {
 # Uruchomienie aplikacji
 shinyApp(ui = ui, server = server)
 ```
-Wyniki realizacji powyższego kodu został przedstawiony na @fig-riv2. Po zmianie położenia suwaka widocznego w lewej części okna aplikacji zmienia się liczba przedziałów histogramu, a rezultat jest automatycznie aktualizowany na wykresie.
+Wynik realizacji powyższego kodu został przedstawiony na @fig-riv2. Po zmianie położenia suwaka widocznego w lewej części okna aplikacji zmienia się liczba przedziałów histogramu, a rezultat jest automatycznie aktualizowany na wykresie.
 
 ![Długość największych rzek Ameryki Północnej - prezentacja dynamiczna](pic/riv2.png){#fig-riv2 fig-cap="Długość największych rzek Ameryki Północnej - prezentacja dynamiczna"}
 

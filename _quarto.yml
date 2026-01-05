@@ -35,9 +35,9 @@ csl: apa.csl
 
 
 format:
-  html:
+  docx:
     prefer-html: true
-  #  reference-doc: ue20.docx
+    reference-doc: ue20.docx
     lot: true  # Dodaje wykaz rysunków
     lof: true  # Dodaje wykaz tabel
     number-equations: true
@@ -48,8 +48,8 @@ format:
     number-sections: true
  #   embed-resources: true
 
-    theme: simple # morph - było spacelab superhero yeti solarized simplex cosmo darkly simplex  ## beige blood dark default league moon night serif simple sky
-    highlight-style: tango # tango kate pygments espresso zenburn (czarne) kate monochrome breezedark haddock
+    theme: simple # simple morph - było spacelab superhero yeti solarized simplex cosmo darkly simplex  ## beige blood dark default league moon night serif simple sky
+    highlight-style: tango # tango kate pygments espresso zenburn (czarne)  monochrome breezedark haddock
     fig-width: 8
     fig-height: 6
     fig-cap-location: bottom
@@ -70,6 +70,6 @@ format:
 knitr:
   opts_chunk:
     comment: "#"
-prefer-html: true
+# prefer-html: true
 editor: visual
 
